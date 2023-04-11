@@ -42,7 +42,7 @@ exports.getAllRequests = async (req, res, next) => {
         res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
     } catch (err) {
         if (!err.statusCode) {
-            err.statusCode = 500;
+            err.statusCode = 500;//
         }
         next(err);
     }
