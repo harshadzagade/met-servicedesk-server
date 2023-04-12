@@ -30,6 +30,11 @@ exports.getAllStaff = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
         const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
         if (staff.role === 'admin') {
             const dept = staff.department.split(',');
             const totalStaff = await Staff.findAll({ where: { department: dept } });
@@ -88,6 +93,11 @@ exports.getOutgoingRequests = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
         const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
         if (staff.role !== 'admin') {
             const error = new Error('Unauthorised staff');
             error.statusCode = 401;
@@ -107,6 +117,11 @@ exports.getIncomingRequests = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
         const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
         if (staff.role !== 'admin') {
             const error = new Error('Unauthorised staff');
             error.statusCode = 401;
@@ -126,6 +141,11 @@ exports.getOutgoingComplaints = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
         const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
         if (staff.role !== 'admin') {
             const error = new Error('Unauthorised staff');
             error.statusCode = 401;
@@ -145,6 +165,11 @@ exports.getIncomingComplaints = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
         const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
         if (staff.role !== 'admin') {
             const error = new Error('Unauthorised staff');
             error.statusCode = 401;

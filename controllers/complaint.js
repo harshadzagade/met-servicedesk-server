@@ -50,15 +50,24 @@ exports.getAllComplaints = async (req, res, next) => {
 exports.getComplaintsFromDepartment = async (department, next) => {
     try {
         let staffs = [];
-        const departments = department.split(',');
-        for (let j = 0; j < departments.length; j++) {
-            const department = departments[j];
+        if (department.includes(',')) {
+            const departments = department.split(',');
+            for (let j = 0; j < departments.length; j++) {
+                const department = departments[j];
+                const staff = await Staff.findAll({
+                    where: {
+                        department: department
+                    }
+                });
+                staffs = staffs.concat(staff);
+            }
+        } else {
             const staff = await Staff.findAll({
                 where: {
                     department: department
                 }
             });
-            staffs = staffs.concat(staff);
+            staffs = staff;
         }
         let allComplaints = [];
         for (let i = 0; i < staffs.length; i++) {

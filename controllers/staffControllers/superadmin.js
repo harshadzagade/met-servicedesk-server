@@ -92,9 +92,7 @@ exports.updateStaff = async (req, res, next) => {
                 email: email
             }
         });
-        console.log(isEmailExist.email);
         const staff = await Staff.findByPk(staffId);
-        console.log(staff.email);
         if (!staff) {
             const error = new Error('Staff not found');
             error.statusCode = 401;
