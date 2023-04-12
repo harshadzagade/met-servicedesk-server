@@ -91,7 +91,8 @@ exports.getRequestsToDepartment = async (department, next) => {
                 const singleDepartment = departments[i];
                 const requests = await Request.findAll({
                     where: {
-                        department: singleDepartment
+                        department: singleDepartment,
+                        approval1: true
                     }
                 });
                 multipleDepartmentsRequests = multipleDepartmentsRequests.concat(requests);
