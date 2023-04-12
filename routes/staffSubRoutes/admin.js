@@ -12,6 +12,12 @@ router.get('/staffdetails/:staffId', adminController.getStaffDetails);
 
 router.put('/staffdetails/updateStaff/:staffId', adminController.updateStaff);
 
-router.get('/requests/:staffId', adminController.getIncomingRequests);
+router.get('/requests/incoming/:staffId', adminController.getIncomingRequests);
+
+router.get('/requests/outgoing/:staffId', adminController.getOutgoingRequests);
+
+router.get('/complaints/incoming/:staffId', adminController.getIncomingComplaints);
+
+router.get('/complaints/outgoing/:staffId', adminController.getOutgoingComplaints);
 
 module.exports = router;

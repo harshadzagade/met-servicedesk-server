@@ -1,4 +1,5 @@
 const Request = require('../models/request');
+const Staff = require('../models/staff');
 
 exports.sendRequest = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -42,26 +43,68 @@ exports.getAllRequests = async (req, res, next) => {
         res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
     } catch (err) {
         if (!err.statusCode) {
-            err.statusCode = 500;//
+            err.statusCode = 500;
         }
         next(err);
     }
 };
 
-exports.getRequestsByDepartment = async (department, next) => {
+exports.getRequestsFromDepartment = async (department, next) => {
+    try {
+        let staffs = [];
+        if (department.includes(',')) {
+            const departments = department.split(',');
+            for (let j = 0; j < departments.length; j++) {
+                const department = departments[j];
+                const staff = await Staff.findAll({
+                    where: {
+                        department: department
+                    }
+                });
+                staffs = staffs.concat(staff);
+            }
+        } else {
+            const staff = await Staff.findAll({
+                where: {
+                    department: department
+                }
+            });
+            staffs = staff;
+        }
+        let allRequests = [];
+        for (let i = 0; i < staffs.length; i++) {
+            const singleStaff = staffs[i];
+            const requests = await Request.findAll({
+                where: {
+                    staffId: singleStaff.id
+                }
+            });
+            allRequests = allRequests.concat(requests);
+        }
+        return allRequests;
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getRequestsToDepartment = async (department, next) => {
     try {
         if (department.includes(',')) {
             let departments;
-            let multipleDepartmentsRequests;
+            let multipleDepartmentsRequests = [];
             departments = department.split(',');
             for (let i = 0; i < departments.length; i++) {
                 const singleDepartment = departments[i];
                 const requests = await Request.findAll({
                     where: {
-                        department: singleDepartment
+                        department: singleDepartment,
+                        approval1: true
                     }
                 });
-                multipleDepartmentsRequests.concat(requests);
+                multipleDepartmentsRequests = multipleDepartmentsRequests.concat(requests);
             }
             return multipleDepartmentsRequests;
         }
@@ -71,6 +114,34 @@ exports.getRequestsByDepartment = async (department, next) => {
             }
         });
         return requests;
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.ownRequests = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const requests = await Request.findAll({
+            where: {
+                staffId: staffId
+            }
+        });
+        if (!requests) {
+            const error = new Error('No requests found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Staff created!', requests: requests });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

@@ -1,6 +1,7 @@
 const Staff = require("../../models/staff");
 const { getStaffDetailsCommon } = require("../../utils/functions");
-const { getRequestsByDepartment } = require("../request");
+const { getRequestsToDepartment, getRequestsFromDepartment } = require("../request");
+const { getComplaintsFromDepartment, getComplaintsToDepartment } = require("../complaint");
 
 exports.getAdmin = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -29,6 +30,11 @@ exports.getAllStaff = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
         const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
         if (staff.role === 'admin') {
             const dept = staff.department.split(',');
             const totalStaff = await Staff.findAll({ where: { department: dept } });
@@ -83,13 +89,94 @@ exports.updateStaff = async (req, res, next) => {
     }
 };
 
+exports.getOutgoingRequests = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (staff.role !== 'admin') {
+            const error = new Error('Unauthorised staff');
+            error.statusCode = 401;
+            throw error;
+        }
+        const requests = await getRequestsFromDepartment(staff.department, next);
+        res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
 exports.getIncomingRequests = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
         const staff = await Staff.findByPk(staffId);
-        const requests = await getRequestsByDepartment(staff.department, next);
-        console.log(requests);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (staff.role !== 'admin') {
+            const error = new Error('Unauthorised staff');
+            error.statusCode = 401;
+            throw error;
+        }
+        const requests = await getRequestsToDepartment(staff.department, next);
         res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getOutgoingComplaints = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (staff.role !== 'admin') {
+            const error = new Error('Unauthorised staff');
+            error.statusCode = 401;
+            throw error;
+        }
+        const complaints = await getComplaintsFromDepartment(staff.department, next);
+        res.status(200).json({ message: 'Fetched all complaints successfully.', complaints: complaints });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+exports.getIncomingComplaints = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (staff.role !== 'admin') {
+            const error = new Error('Unauthorised staff');
+            error.statusCode = 401;
+            throw error;
+        }
+        const complaints = await getComplaintsToDepartment(staff.department, next);
+        res.status(200).json({ message: 'Fetched all requests successfully.', complaints: complaints });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
