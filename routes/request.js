@@ -10,4 +10,6 @@ router.get('/allrequests', requestController.getAllRequests);
 
 router.get('/ownrequests/:staffId', requestController.ownRequests);
 
+router.put('/approval1/:requestId', requestController.putApproval1);
+
 module.exports = router;

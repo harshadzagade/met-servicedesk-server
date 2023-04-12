@@ -19,6 +19,7 @@ exports.sendRequest = async (req, res, next) => {
             status: 'pending',
             behalf: behalf,
             behalfId: behalfId,
+            assigned: null,
             department: department,
             category: category,
             priority: priority,
@@ -136,11 +137,6 @@ exports.ownRequests = async (req, res, next) => {
                 staffId: staffId
             }
         });
-        if (!requests) {
-            const error = new Error('No requests found');
-            error.statusCode = 401;
-            throw error;
-        }
         res.status(200).json({ message: 'Staff created!', requests: requests });
     } catch (err) {
         if (!err.statusCode) {
@@ -149,3 +145,32 @@ exports.ownRequests = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.putApproval1 = async (req, res, next) => {
+    const requestId = req.params.requestId;
+    const approval = req.body.approval;
+    try {
+        const request = await Request.findByPk(requestId);
+        if (!request) {
+            const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (approval === true) {
+            request.approval1 = true;
+            request.status = 'pending';
+        } else {
+            request.approval1 = false;
+            request.status = 'closed';
+        }
+        const result = await request.save();
+        res.status(200).json({ message: 'Staff details updated', request: result });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.putApproval2 = (req, res, next) => {};
