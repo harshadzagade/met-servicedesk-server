@@ -1,6 +1,6 @@
 const Staff = require("../../models/staff");
 const { getStaffDetailsCommon } = require("../../utils/functions");
-const { getRequestsByDepartment } = require("../request");
+const { getRequestsToDepartment, getRequestsFromDepartment } = require("../request");
 
 exports.getAdmin = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -83,12 +83,25 @@ exports.updateStaff = async (req, res, next) => {
     }
 };
 
+exports.getOutgoingRequests = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        const requests = await getRequestsFromDepartment(staff.department, next);
+        res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
 exports.getIncomingRequests = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
         const staff = await Staff.findByPk(staffId);
-        const requests = await getRequestsByDepartment(staff.department, next);
-        console.log(requests);
+        const requests = await getRequestsToDepartment(staff.department, next);
         res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
     } catch (err) {
         if (!err.statusCode) {

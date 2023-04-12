@@ -1,4 +1,5 @@
 const Request = require('../models/request');
+const Staff = require('../models/staff');
 
 exports.sendRequest = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -42,13 +43,39 @@ exports.getAllRequests = async (req, res, next) => {
         res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
     } catch (err) {
         if (!err.statusCode) {
-            err.statusCode = 500;//
+            err.statusCode = 500;
         }
         next(err);
     }
 };
 
-exports.getRequestsByDepartment = async (department, next) => {
+exports.getRequestsFromDepartment = async (department, next) => {
+    try {
+        const staff = await Staff.findAll({
+            where: {
+                department: department
+            }
+        });
+        let allRequests = [];
+        for (let i = 0; i < staff.length; i++) {
+            const singleStaff = staff[i];
+            const requests = await Request.findAll({
+                where: {
+                    staffId: singleStaff.id
+                }
+            });
+            allRequests = allRequests.concat(requests);
+        }
+        return allRequests;
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getRequestsToDepartment = async (department, next) => {
     try {
         if (department.includes(',')) {
             let departments;
