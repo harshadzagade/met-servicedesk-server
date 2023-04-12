@@ -19,7 +19,7 @@ exports.sendComplaint = async (req, res, next) => {
             status: 'pending',
             behalf: behalf,
             behalfId: behalfId,
-            assigned: null,
+            assign: null,
             department: department,
             category: category,
             priority: priority,

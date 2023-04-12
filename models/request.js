@@ -26,8 +26,8 @@ const Request = sequelize.define('request', {
     type: Sequelize.INTEGER,
     allowNull: true
   },
-  assigned: {
-    type: Sequelize.STRING,
+  assign: {
+    type: Sequelize.INTEGER,
     allowNull: true
   },
   department: {

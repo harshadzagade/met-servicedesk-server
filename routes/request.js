@@ -12,4 +12,6 @@ router.get('/ownrequests/:staffId', requestController.ownRequests);
 
 router.put('/approval1/:requestId', requestController.putApproval1);
 
+router.put('/approval2/:requestId', requestController.putApproval2);
+
 module.exports = router;

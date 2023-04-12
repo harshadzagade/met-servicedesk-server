@@ -19,7 +19,7 @@ exports.sendRequest = async (req, res, next) => {
             status: 'pending',
             behalf: behalf,
             behalfId: behalfId,
-            assigned: null,
+            assign: null,
             department: department,
             category: category,
             priority: priority,
@@ -156,7 +156,7 @@ exports.putApproval1 = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (approval === true) {
+        if (approval) {
             request.approval1 = true;
             request.status = 'pending';
         } else {
@@ -173,4 +173,51 @@ exports.putApproval1 = async (req, res, next) => {
     }
 };
 
-exports.putApproval2 = (req, res, next) => {};
+exports.putApproval2 = async (req, res, next) => {
+    const requestId = req.params.requestId;
+    let staffId = null;
+    const approval = req.body.approval;
+    try {
+        if (approval) {
+            staffId = req.body.staffId;
+            const staff = await Staff.findByPk(staffId);
+            if (!staff) {
+                const error = new Error('Staff not found');
+                error.statusCode = 401;
+                throw error;
+            }
+            if (staff.role !== 'technician') {
+                const error = new Error('Staff is not a technician');
+                error.statusCode = 401;
+                throw error;
+            }
+        }
+        const request = await Request.findByPk(requestId);
+        if (!request) {
+            const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (!request.approval1) {
+            const error = new Error('No approval from department admin');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (approval) {
+            request.approval2 = true;
+            request.assign = staffId;
+            request.status = 'assigned';
+        } else {
+            request.approval2 = false;
+            request.assign = null;
+            request.status = 'closed';
+        }
+        const result = await request.save();
+        res.status(200).json({ message: 'Staff details updated', request: result });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
