@@ -133,11 +133,6 @@ exports.ownComplaints = async (req, res, next) => {
                 staffId: staffId
             }
         });
-        if (!complaints) {
-            const error = new Error('No complaints found');
-            error.statusCode = 401;
-            throw error;
-        }
         res.status(200).json({ message: 'Staff created!', complaints: complaints });
     } catch (err) {
         if (!err.statusCode) {
