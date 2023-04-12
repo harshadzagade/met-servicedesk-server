@@ -52,15 +52,24 @@ exports.getAllRequests = async (req, res, next) => {
 exports.getRequestsFromDepartment = async (department, next) => {
     try {
         let staffs = [];
-        const departments = department.split(',');
-        for (let j = 0; j < departments.length; j++) {
-            const department = departments[j];
+        if (department.includes(',')) {
+            const departments = department.split(',');
+            for (let j = 0; j < departments.length; j++) {
+                const department = departments[j];
+                const staff = await Staff.findAll({
+                    where: {
+                        department: department
+                    }
+                });
+                staffs = staffs.concat(staff);
+            }
+        } else {
             const staff = await Staff.findAll({
                 where: {
                     department: department
                 }
             });
-            staffs = staffs.concat(staff);
+            staffs = staff;
         }
         let allRequests = [];
         for (let i = 0; i < staffs.length; i++) {
