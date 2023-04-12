@@ -1,4 +1,5 @@
 const Complaint = require('../models/complaint');
+const Staff = require('../models/staff');
 
 exports.sendComplaint = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -38,6 +39,63 @@ exports.getAllComplaints = async (req, res, next) => {
     try {
         const complaints = await Complaint.findAll();
         res.status(200).json({ message: 'Fetched all requests successfully.', complaints: complaints });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getComplaintsFromDepartment = async (department, next) => {
+    try {
+        const staff = await Staff.findAll({
+            where: {
+                department: department
+            }
+        });
+        let allComplaints = [];
+        for (let i = 0; i < staff.length; i++) {
+            const singleStaff = staff[i];
+            const complaints = await Complaint.findAll({
+                where: {
+                    staffId: singleStaff.id
+                }
+            });
+            allComplaints = allComplaints.concat(complaints);
+        }
+        return allComplaints;
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getComplaintsToDepartment = async (department, next) => {
+    try {
+        if (department.includes(',')) {
+            let departments;
+            let multipleDepartmentsComplaints;
+            departments = department.split(',');
+            for (let i = 0; i < departments.length; i++) {
+                const singleDepartment = departments[i];
+                const complaints = await Complaint.findAll({
+                    where: {
+                        department: singleDepartment
+                    }
+                });
+                multipleDepartmentsComplaints.concat(complaints);
+            }
+            return multipleDepartmentsComplaints;
+        }
+        const complaints = await Complaint.findAll({
+            where: {
+                department: department
+            }
+        });
+        return complaints;
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

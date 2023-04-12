@@ -1,6 +1,7 @@
 const Staff = require("../../models/staff");
 const { getStaffDetailsCommon } = require("../../utils/functions");
 const { getRequestsToDepartment, getRequestsFromDepartment } = require("../request");
+const { getComplaintsFromDepartment, getComplaintsToDepartment } = require("../complaint");
 
 exports.getAdmin = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -103,6 +104,34 @@ exports.getIncomingRequests = async (req, res, next) => {
         const staff = await Staff.findByPk(staffId);
         const requests = await getRequestsToDepartment(staff.department, next);
         res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getOutgoingComplaints = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        const complaints = await getComplaintsFromDepartment(staff.department, next);
+        res.status(200).json({ message: 'Fetched all complaints successfully.', complaints: complaints });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+exports.getIncomingComplaints = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        const complaints = await getComplaintsToDepartment(staff.department, next);
+        res.status(200).json({ message: 'Fetched all requests successfully.', complaints: complaints });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
