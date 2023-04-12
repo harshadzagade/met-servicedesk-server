@@ -51,14 +51,20 @@ exports.getAllRequests = async (req, res, next) => {
 
 exports.getRequestsFromDepartment = async (department, next) => {
     try {
-        const staff = await Staff.findAll({
-            where: {
-                department: department
-            }
-        });
+        let staffs = [];
+        const departments = department.split(',');
+        for (let j = 0; j < departments.length; j++) {
+            const department = departments[j];
+            const staff = await Staff.findAll({
+                where: {
+                    department: department
+                }
+            });
+            staffs = staffs.concat(staff);
+        }
         let allRequests = [];
-        for (let i = 0; i < staff.length; i++) {
-            const singleStaff = staff[i];
+        for (let i = 0; i < staffs.length; i++) {
+            const singleStaff = staffs[i];
             const requests = await Request.findAll({
                 where: {
                     staffId: singleStaff.id
@@ -79,7 +85,7 @@ exports.getRequestsToDepartment = async (department, next) => {
     try {
         if (department.includes(',')) {
             let departments;
-            let multipleDepartmentsRequests;
+            let multipleDepartmentsRequests = [];
             departments = department.split(',');
             for (let i = 0; i < departments.length; i++) {
                 const singleDepartment = departments[i];
@@ -88,7 +94,7 @@ exports.getRequestsToDepartment = async (department, next) => {
                         department: singleDepartment
                     }
                 });
-                multipleDepartmentsRequests.concat(requests);
+                multipleDepartmentsRequests = multipleDepartmentsRequests.concat(requests);
             }
             return multipleDepartmentsRequests;
         }
