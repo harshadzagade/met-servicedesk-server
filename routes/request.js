@@ -8,4 +8,6 @@ router.post('/', requestController.sendRequest);
 
 router.get('/allrequests', requestController.getAllRequests);
 
+router.get('/ownrequests/:staffId', requestController.ownRequests);
+
 module.exports = router;

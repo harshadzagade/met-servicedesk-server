@@ -121,3 +121,31 @@ exports.getRequestsToDepartment = async (department, next) => {
         next(err);
     }
 };
+
+exports.ownRequests = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const requests = await Request.findAll({
+            where: {
+                staffId: staffId
+            }
+        });
+        if (!requests) {
+            const error = new Error('No requests found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Staff created!', requests: requests });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
