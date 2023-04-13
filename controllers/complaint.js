@@ -1,5 +1,6 @@
 const Complaint = require('../models/complaint');
 const Staff = require('../models/staff');
+const Op = require('sequelize').Op;
 
 exports.sendComplaint = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -19,6 +20,7 @@ exports.sendComplaint = async (req, res, next) => {
             status: 'pending',
             behalf: behalf,
             behalfId: behalfId,
+            assign: null,
             department: department,
             category: category,
             priority: priority,
@@ -88,7 +90,58 @@ exports.getComplaintsFromDepartment = async (department, next) => {
     }
 };
 
-exports.getComplaintsToDepartment = async (department, next) => {
+exports.ownComplaints = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const complaints = await Complaint.findAll({
+            where: {
+                [Op.or]: [
+                    { staffId: staffId },
+                    { category: 'general' }
+                ]
+            }
+        });
+        res.status(200).json({ message: 'Staff created!', complaints: complaints });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getIncomingComplaints = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        console.log(staff.role);
+        if ((staff.role === 'user')) {
+            const error = new Error('Unauthorised staff');
+            error.statusCode = 401;
+            throw error;
+        }
+        const complaints = await getComplaintsToDepartment(staff.department, next);
+        res.status(200).json({ message: 'Fetched all requests successfully.', complaints: complaints });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+const getComplaintsToDepartment = async (department, next) => {
     try {
         if (department.includes(',')) {
             let departments;
@@ -111,29 +164,6 @@ exports.getComplaintsToDepartment = async (department, next) => {
             }
         });
         return complaints;
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
-    }
-};
-
-exports.ownComplaints = async (req, res, next) => {
-    const staffId = req.params.staffId;
-    try {
-        const staff = await Complaint.findByPk(staffId);
-        if (!staff) {
-            const error = new Error('Staff not found');
-            error.statusCode = 401;
-            throw error;
-        }
-        const complaints = await Complaint.findAll({
-            where: {
-                staffId: staffId
-            }
-        });
-        res.status(200).json({ message: 'Staff created!', complaints: complaints });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

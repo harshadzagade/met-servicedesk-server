@@ -1,5 +1,6 @@
 const Request = require('../models/request');
 const Staff = require('../models/staff');
+const Op = require('sequelize').Op;
 
 exports.sendRequest = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -19,6 +20,7 @@ exports.sendRequest = async (req, res, next) => {
             status: 'pending',
             behalf: behalf,
             behalfId: behalfId,
+            assign: null,
             department: department,
             category: category,
             priority: priority,
@@ -133,15 +135,31 @@ exports.ownRequests = async (req, res, next) => {
         }
         const requests = await Request.findAll({
             where: {
-                staffId: staffId
+                [Op.or]: [
+                    { staffId: staffId },
+                    { category: 'general' }
+                ]
             }
         });
-        if (!requests) {
-            const error = new Error('No requests found');
+        res.status(200).json({ message: 'Staff created!', requests: requests });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getRequestDetails = async (req, res, next) => {
+    const requestId = req.params.requestId;
+    try {
+        const request = await Request.findByPk(requestId);
+        if (!request) {
+            const error = new Error('Request not found');
             error.statusCode = 401;
             throw error;
         }
-        res.status(200).json({ message: 'Staff created!', requests: requests });
+        res.status(200).json({ message: 'Request fetched successfully!', request: request });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
