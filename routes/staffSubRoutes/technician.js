@@ -6,8 +6,4 @@ const technicianController = require('../../controllers/staffControllers/technic
 
 router.get('/:staffId', technicianController.getTechnician);
 
-// router.get('/requests/outgoing/:staffId', technicianController.getOutgoingRequests);
-
-// router.get('/complaints/outgoing/:staffId', technicianController.getOutgoingComplaints);
-
 module.exports = router;
