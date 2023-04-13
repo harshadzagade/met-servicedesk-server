@@ -149,3 +149,21 @@ exports.ownRequests = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.getRequestDetails = async (req, res, next) => {
+    const requestId = req.params.requestId;
+    try {
+        const request = await Request.findByPk(requestId);
+        if (!request) {
+            const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Request fetched successfully!', request: request });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
