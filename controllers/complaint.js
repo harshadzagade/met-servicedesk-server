@@ -90,7 +90,58 @@ exports.getComplaintsFromDepartment = async (department, next) => {
     }
 };
 
-exports.getComplaintsToDepartment = async (department, next) => {
+exports.ownComplaints = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const complaints = await Complaint.findAll({
+            where: {
+                [Op.or]: [
+                    { staffId: staffId },
+                    { category: 'general' }
+                ]
+            }
+        });
+        res.status(200).json({ message: 'Staff created!', complaints: complaints });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getIncomingComplaints = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        console.log(staff.role);
+        if ((staff.role === 'user')) {
+            const error = new Error('Unauthorised staff');
+            error.statusCode = 401;
+            throw error;
+        }
+        const complaints = await getComplaintsToDepartment(staff.department, next);
+        res.status(200).json({ message: 'Fetched all requests successfully.', complaints: complaints });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+const getComplaintsToDepartment = async (department, next) => {
     try {
         if (department.includes(',')) {
             let departments;
@@ -113,32 +164,6 @@ exports.getComplaintsToDepartment = async (department, next) => {
             }
         });
         return complaints;
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
-    }
-};
-
-exports.ownComplaints = async (req, res, next) => {
-    const staffId = req.params.staffId;
-    try {
-        const staff = await Staff.findByPk(staffId);
-        if (!staff) {
-            const error = new Error('Staff not found');
-            error.statusCode = 401;
-            throw error;
-        }
-        const complaints = await Complaint.findAll({
-            where: {
-                [Op.or]: [
-                    { staffId: staffId },
-                    { category: 'general' }
-                ]
-            }
-        });
-        res.status(200).json({ message: 'Staff created!', complaints: complaints });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

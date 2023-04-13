@@ -160,30 +160,6 @@ exports.getOutgoingComplaints = async (req, res, next) => {
         }
         next(err);
     }
-}
-
-exports.getIncomingComplaints = async (req, res, next) => {
-    const staffId = req.params.staffId;
-    try {
-        const staff = await Staff.findByPk(staffId);
-        if (!staff) {
-            const error = new Error('Staff not found');
-            error.statusCode = 401;
-            throw error;
-        }
-        if (staff.role !== 'admin') {
-            const error = new Error('Unauthorised staff');
-            error.statusCode = 401;
-            throw error;
-        }
-        const complaints = await getComplaintsToDepartment(staff.department, next);
-        res.status(200).json({ message: 'Fetched all requests successfully.', complaints: complaints });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
-    }
 };
 
 exports.putApproval1 = async (req, res, next) => {
