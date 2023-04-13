@@ -12,4 +12,6 @@ router.put('/changerequeststatus/:requestId', technicianController.changeRequest
 
 router.put('/selfassigncomplaint/:complaintId', technicianController.selfAssignComplaint);
 
+router.put('/changecomplaintstatus/:complaintId', technicianController.changeComplaintStatus);
+
 module.exports = router;
