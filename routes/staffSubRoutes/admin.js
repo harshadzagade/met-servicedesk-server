@@ -20,4 +20,8 @@ router.get('/complaints/incoming/:staffId', adminController.getIncomingComplaint
 
 router.get('/complaints/outgoing/:staffId', adminController.getOutgoingComplaints);
 
+router.put('/approval1/:requestId', adminController.putApproval1);
+
+router.put('/approval2/:requestId', adminController.putApproval2);
+
 module.exports = router;

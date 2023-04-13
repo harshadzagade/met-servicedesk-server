@@ -2,6 +2,7 @@ const Staff = require("../../models/staff");
 const { getStaffDetailsCommon } = require("../../utils/functions");
 const { getRequestsToDepartment, getRequestsFromDepartment } = require("../request");
 const { getComplaintsFromDepartment, getComplaintsToDepartment } = require("../complaint");
+const Request = require("../../models/request");
 
 exports.getAdmin = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -177,6 +178,87 @@ exports.getIncomingComplaints = async (req, res, next) => {
         }
         const complaints = await getComplaintsToDepartment(staff.department, next);
         res.status(200).json({ message: 'Fetched all requests successfully.', complaints: complaints });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.putApproval1 = async (req, res, next) => {
+    const requestId = req.params.requestId;
+    const approval = req.body.approval;
+    try {
+        const request = await Request.findByPk(requestId);
+        if (!request) {
+            const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (approval) {
+            request.approval1 = true;
+            request.status = 'pending';
+        } else {
+            request.approval1 = false;
+            request.status = 'closed';
+        }
+        const result = await request.save();
+        res.status(200).json({ message: 'Staff details updated', request: result });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.putApproval2 = async (req, res, next) => {
+    const requestId = req.params.requestId;
+    let staffId = null;
+    const approval = req.body.approval;
+    try {
+        const request = await Request.findByPk(requestId);
+        if (!request) {
+            const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (!request.approval1) {
+            const error = new Error('No approval from department admin');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (approval) {
+            staffId = req.body.staffId;
+            const staff = await Staff.findByPk(staffId);
+            if (!staff) {
+                const error = new Error('Staff not found');
+                error.statusCode = 401;
+                throw error;
+            }
+            if (staff.role !== 'technician') {
+                const error = new Error('Staff is not a technician');
+                error.statusCode = 401;
+                throw error;
+            }
+            if (staff.department !== request.department) {
+                const error = new Error('Not assigned department staff');
+                error.statusCode = 401;
+                throw error;
+            }
+        }
+        if (approval) {
+            request.approval2 = true;
+            request.assign = staffId;
+            request.status = 'assigned';
+        } else {
+            request.approval2 = false;
+            request.assign = null;
+            request.status = 'closed';
+        }
+        const result = await request.save();
+        res.status(200).json({ message: 'Staff details updated', request: result });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
