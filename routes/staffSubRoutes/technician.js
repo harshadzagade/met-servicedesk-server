@@ -8,6 +8,8 @@ router.get('/:staffId', technicianController.getTechnician);
 
 router.get('/getassignedrequests/:staffId', technicianController.getAssignedRequests);
 
-router.put('/changerequeststatus/:requestId', technicianController.changeRequestStatus)
+router.put('/changerequeststatus/:requestId', technicianController.changeRequestStatus);
+
+router.put('/selfassigncomplaint/:complaintId', technicianController.selfAssignComplaint);
 
 module.exports = router;

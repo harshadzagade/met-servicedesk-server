@@ -1,5 +1,6 @@
 const Staff = require("../../models/staff");
 const Request = require("../../models/request");
+const Complaint = require("../../models/complaint");
 
 exports.getTechnician = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -117,6 +118,44 @@ exports.changeRequestStatus = async (req, res, next) => {
         }
         const result = await request.save();
         res.status(200).json({ message: 'status updated successfully!', request: result });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.selfAssignComplaint = async (req, res, next) => {
+    const complaintId = req.params.complaintId;
+    const staffId = req.body.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const complaint = await Complaint.findByPk(complaintId);
+        if (!complaint) {
+            const error = new Error('Complaint not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (complaint.assign !== null) {
+            const error = new Error('Complaint already assigned');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (staff.department !== complaint.department) {
+            const error = new Error('Staff does not belong to expected department');
+            error.statusCode = 401;
+            throw error;
+        }
+        complaint.status = 'assigned';
+        complaint.assign = staffId;
+        const result = await complaint.save();
+        res.status(200).json({ message: 'Task self assigned successfully!', complaint: result })
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
