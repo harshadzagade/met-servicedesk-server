@@ -1,5 +1,6 @@
 const Request = require('../models/request');
 const Staff = require('../models/staff');
+const Op = require('sequelize').Op;
 
 exports.sendRequest = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -134,7 +135,10 @@ exports.ownRequests = async (req, res, next) => {
         }
         const requests = await Request.findAll({
             where: {
-                staffId: staffId
+                [Op.or]: [
+                    { staffId: staffId },
+                    { category: 'general' }
+                ]
             }
         });
         res.status(200).json({ message: 'Staff created!', requests: requests });
@@ -178,6 +182,17 @@ exports.putApproval2 = async (req, res, next) => {
     let staffId = null;
     const approval = req.body.approval;
     try {
+        const request = await Request.findByPk(requestId);
+        if (!request) {
+            const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (!request.approval1) {
+            const error = new Error('No approval from department admin');
+            error.statusCode = 401;
+            throw error;
+        }
         if (approval) {
             staffId = req.body.staffId;
             const staff = await Staff.findByPk(staffId);
@@ -191,17 +206,11 @@ exports.putApproval2 = async (req, res, next) => {
                 error.statusCode = 401;
                 throw error;
             }
-        }
-        const request = await Request.findByPk(requestId);
-        if (!request) {
-            const error = new Error('Request not found');
-            error.statusCode = 401;
-            throw error;
-        }
-        if (!request.approval1) {
-            const error = new Error('No approval from department admin');
-            error.statusCode = 401;
-            throw error;
+            if (staff.department !== request.department) {
+                const error = new Error('Not assigned department staff');
+                error.statusCode = 401;
+                throw error;
+            }
         }
         if (approval) {
             request.approval2 = true;

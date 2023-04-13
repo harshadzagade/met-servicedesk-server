@@ -1,5 +1,6 @@
 const Complaint = require('../models/complaint');
 const Staff = require('../models/staff');
+const Op = require('sequelize').Op;
 
 exports.sendComplaint = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -123,7 +124,7 @@ exports.getComplaintsToDepartment = async (department, next) => {
 exports.ownComplaints = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
-        const staff = await Complaint.findByPk(staffId);
+        const staff = await Staff.findByPk(staffId);
         if (!staff) {
             const error = new Error('Staff not found');
             error.statusCode = 401;
@@ -131,7 +132,10 @@ exports.ownComplaints = async (req, res, next) => {
         }
         const complaints = await Complaint.findAll({
             where: {
-                staffId: staffId
+                [Op.or]: [
+                    { staffId: staffId },
+                    { category: 'general' }
+                ]
             }
         });
         res.status(200).json({ message: 'Staff created!', complaints: complaints });
