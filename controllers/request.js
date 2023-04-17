@@ -1,6 +1,7 @@
 const Request = require('../models/request');
 const Staff = require('../models/staff');
 const Op = require('sequelize').Op;
+const upload = require('../middleware/uploadfiles');
 
 exports.sendRequest = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -11,7 +12,15 @@ exports.sendRequest = async (req, res, next) => {
     const priority = req.body.priority;
     const subject = req.body.subject;
     const description = req.body.description;
+    let files = [];
     try {
+        await upload(req, res);
+        if (req.files) {
+            for (let i = 0; i < req.files.length; i++) {
+                const file = req.files[i].path.replace("\\", "/");
+                files = files.concat(file);
+            }
+        }
         if (behalf) {
             behalfId = req.body.behalfId;
         }
@@ -26,6 +35,7 @@ exports.sendRequest = async (req, res, next) => {
             priority: priority,
             subject: subject,
             description: description,
+            attachment: files,
             approval1: false,
             approval2: false
         });

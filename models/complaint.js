@@ -49,6 +49,10 @@ const Complaint = sequelize.define('complaint', {
   description: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  attachment: {
+    type: Sequelize.STRING,
+    allowNull: true
   }
 });
 

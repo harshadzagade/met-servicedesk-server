@@ -50,6 +50,10 @@ const Request = sequelize.define('request', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  attachment: {
+    type: Sequelize.ARRAY(Sequelize.STRING),
+    allowNull: true
+  },
   approval1: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
