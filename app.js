@@ -3,7 +3,6 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
-const path = require('path');
 
 const sequelize = require('./utils/database');
 
@@ -19,7 +18,6 @@ const complaintRoutes = require('./routes/complaint');
 app.use(cors());
 
 app.use(bodyParser.json());
-app.use('/files', express.static(path.join(__dirname, 'files')));
 
 app.use('/request', requestRoutes);
 app.use('/complaint', complaintRoutes);

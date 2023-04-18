@@ -1,9 +1,12 @@
 const util = require("util");
 const multer = require('multer');
+const fs = require('fs');
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'files');
+        fs.mkdir('./files/',(err)=>{
+            cb(null,'files');
+        })
     },
     filename: (req, file, cb) => {
         cb(null, new Date().getTime() + '-' + file.originalname);

@@ -52,6 +52,7 @@ const Request = sequelize.define('request', {
   },
   attachment: {
     type: Sequelize.ARRAY(Sequelize.STRING),
+    defaultValue: [],
     allowNull: true
   },
   approval1: {
