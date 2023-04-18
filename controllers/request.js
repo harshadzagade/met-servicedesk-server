@@ -7,6 +7,7 @@ exports.sendRequest = async (req, res, next) => {
     const staffId = req.body.staffId;
     const behalf = req.body.behalf || false;
     let behalfId = null;
+    let requestStaffId = staffId
     const department = req.body.department;
     const category = req.body.category;
     const priority = req.body.priority;
@@ -23,12 +24,20 @@ exports.sendRequest = async (req, res, next) => {
         }
         if (behalf) {
             behalfId = req.body.behalfId;
+            requestStaffId = behalfId;
+        }
+        const staff = await Staff.findByPk(requestStaffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
         }
         const request = new Request({
             staffId: staffId,
-            status: 'pending',
             behalf: behalf,
             behalfId: behalfId,
+            name: staff.firstname + ' ' + staff.lastname,
+            status: 'pending',
             assign: null,
             department: department,
             category: category,

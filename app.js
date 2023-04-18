@@ -40,7 +40,8 @@ sequelize.sync().then((result) => { // 'force:true' means overriding table with 
         staff = Staff.findOrCreate({
             where: { id: 1 },
             defaults: {
-                name: 'Admin',
+                firstname: 'Admin',
+                lastname: '',
                 email: 'superadmin@gmail.com',
                 password: password,
                 role: 'superadmin',

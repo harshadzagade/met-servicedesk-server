@@ -27,7 +27,8 @@ exports.getSuperAdmin = async (req, res, next) => {
 };
 
 exports.createStaff = async (req, res, next) => {
-    const name = req.body.name;
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
     const email = req.body.email;
     const password = req.body.password;
     const department = req.body.department;
@@ -44,7 +45,8 @@ exports.createStaff = async (req, res, next) => {
         }
         const hashedPassword = await bcrypt.hash(password, 12);
         const staff = new Staff({
-            name: name,
+            firstname: firstname,
+            lastname: lastname,
             email: email,
             password: hashedPassword,
             role: 'user',

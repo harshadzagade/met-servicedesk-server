@@ -12,11 +12,6 @@ const Request = sequelize.define('request', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
-  status: {
-    type: Sequelize.STRING,
-    defaultValue: 'pending',
-    allowNull: false
-  },
   behalf: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
@@ -25,6 +20,15 @@ const Request = sequelize.define('request', {
   behalfId: {
     type: Sequelize.INTEGER,
     allowNull: true
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  status: {
+    type: Sequelize.STRING,
+    defaultValue: 'pending',
+    allowNull: false
   },
   assign: {
     type: Sequelize.INTEGER,

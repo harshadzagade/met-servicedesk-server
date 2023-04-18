@@ -8,7 +8,11 @@ const Staff = sequelize.define('staff', {
     allowNull: false,
     primaryKey: true
   },
-  name: {
+  firstname: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  lastname: {
     type: Sequelize.STRING,
     allowNull: false
   },
