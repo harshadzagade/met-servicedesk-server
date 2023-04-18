@@ -36,7 +36,7 @@ exports.sendRequest = async (req, res, next) => {
             staffId: staffId,
             behalf: behalf,
             behalfId: behalfId,
-            name: staff.firstname + ' ' + staff.lastname,
+            name: staff.lastname === ''? staff.firstname : staff.firstname + ' ' + staff.lastname,
             status: 'pending',
             assign: null,
             department: department,
