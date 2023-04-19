@@ -58,6 +58,22 @@ const Complaint = sequelize.define('complaint', {
     type: Sequelize.ARRAY(Sequelize.STRING),
     defaultValue: [],
     allowNull: true
+  },
+  isRepeated: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false
+  },
+  comment: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  problemDescription: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  actionTaken: {
+    type: Sequelize.STRING,
+    allowNull: true
   }
 });
 

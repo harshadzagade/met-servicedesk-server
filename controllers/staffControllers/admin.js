@@ -198,6 +198,7 @@ exports.putApproval2 = async (req, res, next) => {
     const requestId = req.params.requestId;
     let staffId = null;
     const approval = req.body.approval;
+    const comment = req.body.comment;
     try {
         const request = await Request.findByPk(requestId);
         if (!request) {
@@ -205,7 +206,7 @@ exports.putApproval2 = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (!request.approval1) {
+        if (!request.approval1 || request.approval1 === 2) {
             const error = new Error('No approval from department admin');
             error.statusCode = 401;
             throw error;
@@ -236,10 +237,12 @@ exports.putApproval2 = async (req, res, next) => {
             request.approval2 = 1;
             request.assign = staffId;
             request.status = 'assigned';
+            request.comment = comment;
         } else if (approval === 2) {
             request.approval2 = 2;
             request.assign = null;
             request.status = 'disapproved';
+            request.comment = comment;
         }
         const result = await request.save();
         res.status(200).json({ message: 'Staff details updated', request: result });

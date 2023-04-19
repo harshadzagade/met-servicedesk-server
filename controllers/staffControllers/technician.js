@@ -45,6 +45,8 @@ exports.getAssignedRequests = async (req, res, next) => {
 exports.changeRequestStatus = async (req, res, next) => {
     const requestId = req.params.requestId;
     const statusChange = req.body.status;
+    const problemDescription = req.body.problemDescription;
+    const actionTaken = req.body.actionTaken;
     try {
         const request = await Request.findByPk(requestId);
         if (!request) {
@@ -76,15 +78,14 @@ exports.changeRequestStatus = async (req, res, next) => {
 
             case 'closed':
                 request.status = 'closed';
-                break;
-
-            case 'completed':
-                request.status = 'completed';
+                request.problemDescription = problemDescription;
+                request.actionTaken = actionTaken;
                 break;
 
             case 'forwarded':
                 request.status = 'forwarded';
                 assign = req.body.assign;
+                const comment = req.body.comment;
                 if (request.assign === assign) {
                     const error = new Error('Same staff is already assigned');
                     error.statusCode = 401;
@@ -108,6 +109,9 @@ exports.changeRequestStatus = async (req, res, next) => {
                 }
                 if (assign) {
                     request.assign = assign;
+                    request.comment = comment;
+                    request.problemDescription = problemDescription;
+                    request.actionTaken = actionTaken;
                 } else {
                     const error = new Error('Forwarded staff not found');
                     error.statusCode = 401;
@@ -171,6 +175,8 @@ exports.selfAssignComplaint = async (req, res, next) => {
 exports.changeComplaintStatus = async (req, res, next) => {
     const complaintId = req.params.complaintId;
     const statusChange = req.body.status;
+    const problemDescription = req.body.problemDescription;
+    const actionTaken = req.body.actionTaken;
     try {
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
@@ -202,15 +208,14 @@ exports.changeComplaintStatus = async (req, res, next) => {
 
             case 'closed':
                 complaint.status = 'closed';
-                break;
-
-            case 'completed':
-                complaint.status = 'completed';
+                complaint.problemDescription = problemDescription;
+                complaint.actionTaken = actionTaken;
                 break;
 
             case 'forwarded':
                 complaint.status = 'forwarded';
                 assign = req.body.assign;
+                const comment = req.body.comment;
                 if (complaint.assign === assign) {
                     const error = new Error('Same staff is already assigned');
                     error.statusCode = 401;
@@ -234,6 +239,9 @@ exports.changeComplaintStatus = async (req, res, next) => {
                 }
                 if (assign) {
                     complaint.assign = assign;
+                    complaint.comment = comment;
+                    complaint.problemDescription = problemDescription;
+                    complaint.actionTaken = actionTaken;
                 } else {
                     const error = new Error('Forwarded staff not found');
                     error.statusCode = 401;

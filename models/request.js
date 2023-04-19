@@ -59,6 +59,23 @@ const Request = sequelize.define('request', {
     defaultValue: [],
     allowNull: true
   },
+  isRepeated: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+    allowNull: false
+  },
+  comment: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  problemDescription: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  actionTaken: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
   approval1: {
     type: Sequelize.INTEGER,
     allowNull: true
