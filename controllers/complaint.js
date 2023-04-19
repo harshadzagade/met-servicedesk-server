@@ -1,31 +1,50 @@
 const Complaint = require('../models/complaint');
 const Staff = require('../models/staff');
 const Op = require('sequelize').Op;
+const upload = require('../middleware/uploadfiles');
 
 exports.sendComplaint = async (req, res, next) => {
     const staffId = req.body.staffId;
     const behalf = req.body.behalf || false;
     let behalfId = null;
+    let requestStaffId = staffId;
     const department = req.body.department;
     const category = req.body.category;
     const priority = req.body.priority;
     const subject = req.body.subject;
     const description = req.body.description;
+    let files = [];
     try {
+        await upload(req, res);
+        if (req.files) {
+            for (let i = 0; i < req.files.length; i++) {
+                const file = req.files[i].path.replace("\\", "/");
+                files = files.concat(file);
+            }
+        }
         if (behalf) {
             behalfId = req.body.behalfId;
+            requestStaffId = behalfId;
+        }
+        const staff = await Staff.findByPk(requestStaffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
         }
         const complaint = new Complaint({
             staffId: staffId,
-            status: 'pending',
             behalf: behalf,
             behalfId: behalfId,
+            name: staff.lastname === ''? staff.firstname : staff.firstname + ' ' + staff.lastname,
+            status: 'pending',
             assign: null,
             department: department,
             category: category,
             priority: priority,
             subject: subject,
-            description: description
+            description: description,
+            attachment: files
         });
         const result = await complaint.save();
         res.status(201).json({ message: 'Staff created!', complaint: result });

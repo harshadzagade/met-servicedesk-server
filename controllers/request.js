@@ -7,7 +7,7 @@ exports.sendRequest = async (req, res, next) => {
     const staffId = req.body.staffId;
     const behalf = req.body.behalf || false;
     let behalfId = null;
-    let requestStaffId = staffId
+    let requestStaffId = staffId;
     const department = req.body.department;
     const category = req.body.category;
     const priority = req.body.priority;

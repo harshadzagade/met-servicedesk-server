@@ -12,11 +12,6 @@ const Complaint = sequelize.define('complaint', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
-  status: {
-    type: Sequelize.STRING,
-    defaultValue: 'pending',
-    allowNull: false
-  },
   behalf: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
@@ -25,6 +20,15 @@ const Complaint = sequelize.define('complaint', {
   behalfId: {
     type: Sequelize.INTEGER,
     allowNull: true
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  status: {
+    type: Sequelize.STRING,
+    defaultValue: 'pending',
+    allowNull: false
   },
   assign: {
     type: Sequelize.INTEGER,
@@ -51,7 +55,8 @@ const Complaint = sequelize.define('complaint', {
     allowNull: false
   },
   attachment: {
-    type: Sequelize.STRING,
+    type: Sequelize.ARRAY(Sequelize.STRING),
+    defaultValue: [],
     allowNull: true
   }
 });
