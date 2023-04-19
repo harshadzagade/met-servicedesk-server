@@ -172,12 +172,17 @@ exports.putApproval1 = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (approval) {
-            request.approval1 = true;
+        if (!approval) {
+            const error = new Error('Either approve or disapprove the request');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (approval === 1) {
+            request.approval1 = 1;
             request.status = 'pending';
-        } else {
-            request.approval1 = false;
-            request.status = 'closed';
+        } else if (approval === 2) {
+            request.approval1 = 2;
+            request.status = 'disapproved';
         }
         const result = await request.save();
         res.status(200).json({ message: 'Staff details updated', request: result });
@@ -205,7 +210,12 @@ exports.putApproval2 = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (approval) {
+        if (!approval) {
+            const error = new Error('Either approve or disapprove the request');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (approval === 1) {
             staffId = req.body.staffId;
             const staff = await Staff.findByPk(staffId);
             if (!staff) {
@@ -223,15 +233,13 @@ exports.putApproval2 = async (req, res, next) => {
                 error.statusCode = 401;
                 throw error;
             }
-        }
-        if (approval) {
-            request.approval2 = true;
+            request.approval2 = 1;
             request.assign = staffId;
             request.status = 'assigned';
-        } else {
-            request.approval2 = false;
+        } else if (approval === 2) {
+            request.approval2 = 2;
             request.assign = null;
-            request.status = 'closed';
+            request.status = 'disapproved';
         }
         const result = await request.save();
         res.status(200).json({ message: 'Staff details updated', request: result });

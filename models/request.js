@@ -60,14 +60,12 @@ const Request = sequelize.define('request', {
     allowNull: true
   },
   approval1: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false,
-    allowNull: false
+    type: Sequelize.INTEGER,
+    allowNull: true
   },
   approval2: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false,
-    allowNull: false
+    type: Sequelize.INTEGER,
+    allowNull: true
   }
 });
 

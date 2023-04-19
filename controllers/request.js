@@ -44,9 +44,7 @@ exports.sendRequest = async (req, res, next) => {
             priority: priority,
             subject: subject,
             description: description,
-            attachment: files,
-            approval1: false,
-            approval2: false
+            attachment: files
         });
         const result = await request.save();
         res.status(201).json({ message: 'Staff created!', request: result });
