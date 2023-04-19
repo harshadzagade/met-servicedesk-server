@@ -14,6 +14,7 @@ exports.sendRequest = async (req, res, next) => {
     const subject = req.body.subject;
     const description = req.body.description;
     let files = [];
+    const isRepeated = req.body.isRepeated || false;
     try {
         await upload(req, res);
         if (req.files) {
@@ -44,7 +45,8 @@ exports.sendRequest = async (req, res, next) => {
             priority: priority,
             subject: subject,
             description: description,
-            attachment: files
+            attachment: files,
+            isRepeated: isRepeated
         });
         const result = await request.save();
         res.status(201).json({ message: 'Staff created!', request: result });

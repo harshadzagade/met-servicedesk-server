@@ -61,6 +61,7 @@ const Complaint = sequelize.define('complaint', {
   },
   isRepeated: {
     type: Sequelize.BOOLEAN,
+    defaultValue: false,
     allowNull: false
   },
   comment: {
