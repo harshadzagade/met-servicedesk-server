@@ -146,7 +146,6 @@ exports.getIncomingComplaints = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        console.log(staff.role);
         if ((staff.role === 'user')) {
             const error = new Error('Unauthorised staff');
             error.statusCode = 401;

@@ -45,7 +45,7 @@ sequelize.sync().then((result) => { // 'force:true' means overriding table with 
                 email: 'superadmin@gmail.com',
                 password: password,
                 role: 'superadmin',
-                department: 'all',
+                department: ['all'],
                 isNew: false
             }
         });

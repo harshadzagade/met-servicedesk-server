@@ -41,16 +41,12 @@ const resetPasswordCommon = async (res, next, email, newPassword) => {
 
 const getDepartments = async () => {
     const totalStaff = await Staff.findAll();
-    let allDept = '';
+    let allDept = [];
     totalStaff.map((staff, i, row) => {
-        const dept = staff.department;
-        if (i + 1 === row.length) {
-            allDept = allDept.concat(dept);
-        } else {
-            allDept = allDept.concat(dept + ',');
-        }
+        const department = staff.department;
+        allDept = allDept.concat(department);
     });
-    const departments = allDept.split(',');
+    const departments = allDept;
     const uniqueDepartments = departments.filter(function(item, position) {
         return departments.indexOf(item) == position;
     })

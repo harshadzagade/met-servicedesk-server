@@ -29,7 +29,7 @@ const Staff = sequelize.define('staff', {
     allowNull: false
   },
   department: {
-    type: Sequelize.STRING,
+    type: Sequelize.ARRAY(Sequelize.STRING),
     allowNull: false
   },
   isNew: {

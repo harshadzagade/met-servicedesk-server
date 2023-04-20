@@ -29,7 +29,7 @@ const Trash = sequelize.define('trash', {
     allowNull: false
   },
   department: {
-    type: Sequelize.STRING,
+    type: Sequelize.ARRAY(Sequelize.STRING),
     allowNull: false
   },
   isNew: {
