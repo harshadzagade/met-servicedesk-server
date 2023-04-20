@@ -74,8 +74,8 @@ exports.restoreAllStaff = async (req, res, next) => {
         const trashStaff = await Trash.findAll();
         const records = [];
         for (let index = 0; index < trashStaff.length; index++) {
-            const staff = await Trash.findOne({ where: { id: trashStaff[index].id } })
-            records.push({ id: staff.id, firstname: staff.firstname, lastname: staff.lastname, email: staff.email, password: staff.password, role: staff.role, department: staff.department, createdAt: staff.createdAt, updatedAt: staff.updatedAt });
+            const staff = await Trash.findOne({ where: { id: trashStaff[index].id } });
+            records.push({ id: staff.id, firstname: staff.firstname, lastname: staff.lastname, email: staff.email, password: staff.password, role: staff.role, department: staff.department, isNew: false, createdAt: staff.createdAt, updatedAt: staff.updatedAt });
         }
         const allStaff = await Staff.bulkCreate(records);
         await Trash.destroy({ truncate : true, cascade: true });
