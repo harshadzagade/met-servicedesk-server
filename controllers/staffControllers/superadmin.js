@@ -2,6 +2,7 @@ const Staff = require("../../models/staff");
 const bcrypt = require('bcryptjs');
 const Trash = require("../../models/trash");
 const { getStaffDetailsCommon } = require("../../utils/functions");
+const Op = require('sequelize').Op;
 
 exports.getSuperAdmin = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -65,10 +66,8 @@ exports.createStaff = async (req, res, next) => {
 
 exports.getAllStaff = async (req, res, next) => {
     try {
-        const totalStaff = await Staff.findAll();
-        let excludeSuper = totalStaff;
-        excludeSuper.shift();
-        res.status(200).json({ message: 'Fetched all staff successfully.', totalStaff: excludeSuper });
+        const totalStaff = await Staff.findAll({ where: { id: { [Op.ne]: 1 } } });
+        res.status(200).json({ message: 'Fetched all staff successfully.', totalStaff: totalStaff });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

@@ -37,7 +37,7 @@ exports.sendRequest = async (req, res, next) => {
             staffId: staffId,
             behalf: behalf,
             behalfId: behalfId,
-            name: staff.lastname === ''? staff.firstname : staff.firstname + ' ' + staff.lastname,
+            name: staff.lastname === '' ? staff.firstname : staff.firstname + ' ' + staff.lastname,
             status: 'pending',
             assign: null,
             department: department,
@@ -72,26 +72,11 @@ exports.getAllRequests = async (req, res, next) => {
 
 exports.getRequestsFromDepartment = async (department, next) => {
     try {
-        let staffs = [];
-        if (department.includes(',')) {
-            const departments = department.split(',');
-            for (let j = 0; j < departments.length; j++) {
-                const department = departments[j];
-                const staff = await Staff.findAll({
-                    where: {
-                        department: department
-                    }
-                });
-                staffs = staffs.concat(staff);
+        const staffs = await Staff.findAll({
+            where: {
+                department: department
             }
-        } else {
-            const staff = await Staff.findAll({
-                where: {
-                    department: department
-                }
-            });
-            staffs = staff;
-        }
+        });
         let allRequests = [];
         for (let i = 0; i < staffs.length; i++) {
             const singleStaff = staffs[i];
@@ -113,22 +98,6 @@ exports.getRequestsFromDepartment = async (department, next) => {
 
 exports.getRequestsToDepartment = async (department, next) => {
     try {
-        if (department.includes(',')) {
-            let departments;
-            let multipleDepartmentsRequests = [];
-            departments = department.split(',');
-            for (let i = 0; i < departments.length; i++) {
-                const singleDepartment = departments[i];
-                const requests = await Request.findAll({
-                    where: {
-                        department: singleDepartment,
-                        approval1: true
-                    }
-                });
-                multipleDepartmentsRequests = multipleDepartmentsRequests.concat(requests);
-            }
-            return multipleDepartmentsRequests;
-        }
         const requests = await Request.findAll({
             where: {
                 department: department

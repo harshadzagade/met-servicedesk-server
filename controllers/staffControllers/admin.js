@@ -2,6 +2,7 @@ const Staff = require("../../models/staff");
 const { getStaffDetailsCommon } = require("../../utils/functions");
 const { getRequestsToDepartment, getRequestsFromDepartment } = require("../request");
 const { getComplaintsFromDepartment, getComplaintsToDepartment } = require("../complaint");
+const Op = require('sequelize').Op;
 const Request = require("../../models/request");
 
 exports.getAdmin = async (req, res, next) => {
@@ -37,11 +38,9 @@ exports.getAllStaff = async (req, res, next) => {
             throw error;
         }
         if (staff.role === 'admin') {
-            const dept = staff.department.split(',');
-            const totalStaff = await Staff.findAll({ where: { department: dept } });
-            let excludeAdmin = totalStaff;
-            excludeAdmin.shift();
-            res.status(200).json({ message: 'Fetched all staff as per specific department successfully.', totalStaff: excludeAdmin });
+            const department = staff.department[0];
+            const totalStaff = await Staff.findAll({ where: { department: [department], id: { [Op.ne]: staff.id } } });
+            res.status(200).json({ message: 'Fetched all staff as per specific department successfully.', totalStaff: totalStaff });
         } else {
             const error = new Error('Invalid admin id');
             error.statusCode = 401;

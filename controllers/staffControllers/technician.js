@@ -61,7 +61,7 @@ exports.changeRequestStatus = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (staff.department !== request.department) {
+        if (staff.department[0] !== request.department) {
             const error = new Error('Staff does not belong to expected department');
             error.statusCode = 401;
             throw error;
@@ -102,7 +102,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                     error.statusCode = 401;
                     throw error;
                 }
-                if (staff.department !== request.department) {
+                if (staff.department[0] !== request.department) {
                     const error = new Error('Staff does not belong to expected department');
                     error.statusCode = 401;
                     throw error;
@@ -155,7 +155,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (staff.department !== complaint.department) {
+        if (staff.department[0] !== complaint.department) {
             const error = new Error('Staff does not belong to expected department');
             error.statusCode = 401;
             throw error;
@@ -191,7 +191,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (staff.department !== complaint.department) {
+        if (staff.department[0] !== complaint.department) {
             const error = new Error('Staff does not belong to expected department');
             error.statusCode = 401;
             throw error;
@@ -232,7 +232,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     error.statusCode = 401;
                     throw error;
                 }
-                if (staff.department !== complaint.department) {
+                if (staff.department[0] !== complaint.department) {
                     const error = new Error('Staff does not belong to expected department');
                     error.statusCode = 401;
                     throw error;
