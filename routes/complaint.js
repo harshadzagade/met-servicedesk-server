@@ -10,6 +10,6 @@ router.get('/allcomplaints', complaintController.getAllComplaints);
 
 router.get('/owncomplaints/:staffId', complaintController.ownComplaints);
 
-router.get('/complaints/incoming/:staffId', complaintController.getIncomingComplaints);
+router.get('/complaints/incoming/:department', complaintController.getIncomingComplaints);
 
 module.exports = router;

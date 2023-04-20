@@ -111,7 +111,7 @@ exports.removeStaff = async (req, res, next) => {
 exports.removeAllStaff = async (req, res, next) => {
     try {
         const allStaff = await Trash.destroy({ truncate: true, cascade: true });
-        res.status(200).json({ message: 'All staff deleted successfully!', allStaff: allStaff })
+        res.status(200).json({ message: 'All staff deleted successfully!', allStaff: allStaff });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
