@@ -84,7 +84,8 @@ exports.getStaffDetails = async (req, res, next) => {
 
 exports.updateStaff = async (req, res, next) => {
     const staffId = req.params.staffId;
-    const name = req.body.name;
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
     const email = req.body.email;
     const role = req.body.role;
     const department = req.body.department;
@@ -105,7 +106,8 @@ exports.updateStaff = async (req, res, next) => {
             error.statusCode = 409;
             throw error;
         }
-        staff.name = name;
+        staff.firstname = firstname;
+        staff.lastname = lastname;
         staff.email = email;
         staff.role = role;
         staff.department = department;
@@ -133,7 +135,8 @@ exports.deleteStaff = async (req, res, next) => {
             throw error;
         }
         const id = staffId;
-        const name = staff.name;
+        const firstname = staff.firstname;
+        const lastname = staff.lastname;
         const email = staff.email;
         const password = staff.password;
         const role = staff.role;
@@ -141,7 +144,8 @@ exports.deleteStaff = async (req, res, next) => {
         const isNew = staff.isNew;
         const trash = new Trash({
             id: id,
-            name: name,
+            firstname: firstname,
+            lastname: lastname,
             email: email,
             password: password,
             role: role,

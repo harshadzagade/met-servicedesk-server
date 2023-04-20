@@ -8,7 +8,11 @@ const Trash = sequelize.define('trash', {
     allowNull: false,
     primaryKey: true
   },
-  name: {
+  firstname: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  lastname: {
     type: Sequelize.STRING,
     allowNull: false
   },

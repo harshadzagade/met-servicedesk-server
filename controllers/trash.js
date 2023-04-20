@@ -40,7 +40,8 @@ exports.restoreStaff = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        const name = trashStaff.name;
+        const firstname = trashStaff.firstname;
+        const lastname = trashStaff.lastname;
         const email = trashStaff.email;
         const password = trashStaff.password;
         const role = trashStaff.role;
@@ -48,7 +49,8 @@ exports.restoreStaff = async (req, res, next) => {
         const isNew = trashStaff.isNew;
         const staff = new Staff({
             id: trashStaffId,
-            name: name,
+            firstname: firstname,
+            lastname: lastname,
             email: email,
             password: password,
             role: role,
@@ -73,7 +75,7 @@ exports.restoreAllStaff = async (req, res, next) => {
         const records = [];
         for (let index = 0; index < trashStaff.length; index++) {
             const staff = await Trash.findOne({ where: { id: trashStaff[index].id } })
-            records.push({ id: staff.id, name: staff.name, email: staff.email, password: staff.password, role: staff.role, department: staff.department, createdAt: staff.createdAt, updatedAt: staff.updatedAt });
+            records.push({ id: staff.id, firstname: staff.firstname, lastname: staff.lastname, email: staff.email, password: staff.password, role: staff.role, department: staff.department, createdAt: staff.createdAt, updatedAt: staff.updatedAt });
         }
         const allStaff = await Staff.bulkCreate(records);
         await Trash.destroy({ truncate : true, cascade: true });
