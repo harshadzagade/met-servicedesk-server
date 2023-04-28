@@ -215,3 +215,22 @@ const setOTP = async (OTP) => {
         next(err);
     }
 };
+
+exports.getAllContacts = async (req, res, next) => {
+    try {
+        const contacts = await Staff.findAll({
+            attributes: ['firstname', 'lastname', 'phoneNumber', 'contactExtension']
+        });
+        if (!contacts) {
+            const error = new Error('Contacts not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Contacts fetched successfully', contacts: contacts });
+    } catch (error) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
