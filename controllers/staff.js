@@ -1,6 +1,7 @@
 const Staff = require('../models/staff');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
+const Op = require('sequelize').Op;
 
 const otpGenerator = require('otp-generator');
 const OneTimePassword = require('../models/onetimepassword');
@@ -219,6 +220,7 @@ const setOTP = async (OTP) => {
 exports.getAllContacts = async (req, res, next) => {
     try {
         const contacts = await Staff.findAll({
+            where: { id: { [Op.ne]: 1 } },
             attributes: ['firstname', 'lastname', 'phoneNumber', 'contactExtension']
         });
         if (!contacts) {
