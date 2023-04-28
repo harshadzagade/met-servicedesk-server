@@ -32,6 +32,14 @@ const Staff = sequelize.define('staff', {
     type: Sequelize.ARRAY(Sequelize.STRING),
     allowNull: false
   },
+  phoneNumber: {
+    type: Sequelize.BIGINT,
+    allowNull: true
+  },
+  contactExtension: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
   isNew: {
     type: Sequelize.BOOLEAN,
     allowNull: false

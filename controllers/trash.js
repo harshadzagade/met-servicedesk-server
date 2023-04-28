@@ -46,6 +46,8 @@ exports.restoreStaff = async (req, res, next) => {
         const password = trashStaff.password;
         const role = trashStaff.role;
         const department = trashStaff.department;
+        const phoneNumber = trashStaff.phoneNumber;
+        const contactExtension = trashStaff.contactExtension;
         const isNew = trashStaff.isNew;
         const staff = new Staff({
             id: trashStaffId,
@@ -55,6 +57,8 @@ exports.restoreStaff = async (req, res, next) => {
             password: password,
             role: role,
             department: department,
+            phoneNumber: phoneNumber,
+            contactExtension: contactExtension,
             isNew: isNew
         });
         await staff.save();
@@ -75,10 +79,25 @@ exports.restoreAllStaff = async (req, res, next) => {
         const records = [];
         for (let index = 0; index < trashStaff.length; index++) {
             const staff = await Trash.findOne({ where: { id: trashStaff[index].id } });
-            records.push({ id: staff.id, firstname: staff.firstname, lastname: staff.lastname, email: staff.email, password: staff.password, role: staff.role, department: staff.department, isNew: false, createdAt: staff.createdAt, updatedAt: staff.updatedAt });
+            records.push(
+                {
+                    id: staff.id,
+                    firstname: staff.firstname,
+                    lastname: staff.lastname,
+                    email: staff.email,
+                    password: staff.password,
+                    role: staff.role,
+                    department: staff.department,
+                    phoneNumber: staff.phoneNumber,
+                    contactExtension: staff.contactExtension,
+                    isNew: false,
+                    createdAt: staff.createdAt,
+                    updatedAt: staff.updatedAt
+                }
+            );
         }
         const allStaff = await Staff.bulkCreate(records);
-        await Trash.destroy({ truncate : true, cascade: true });
+        await Trash.destroy({ truncate: true, cascade: true });
         res.status(200).json({ message: 'All staff restored successfully!', allStaff: allStaff })
     } catch (err) {
         if (!err.statusCode) {

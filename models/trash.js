@@ -32,6 +32,15 @@ const Trash = sequelize.define('trash', {
     type: Sequelize.ARRAY(Sequelize.STRING),
     allowNull: false
   },
+  phoneNumber: {
+    type: Sequelize.BIGINT,
+    length: 10,
+    allowNull: true
+  },
+  contactExtension: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
   isNew: {
     type: Sequelize.BOOLEAN,
     allowNull: false

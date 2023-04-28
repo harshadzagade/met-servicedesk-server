@@ -33,7 +33,24 @@ exports.createStaff = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const department = req.body.department;
+    const phoneNumber = req.body.phoneNumber;
+    console.log(phoneNumber);
+    const contactExtension = req.body.contactExtension;
     try {
+        if (phoneNumber) {
+            if (phoneNumber.toString().length !== 10 || typeof phoneNumber !== "number") {
+                const error = new Error('Invalid phone number');
+                error.statusCode = 409;
+                throw error;
+            }
+        }
+        if (contactExtension) {
+            if (contactExtension.toString().length !== 3 || typeof contactExtension !== "number") {
+                const error = new Error('Invalid contact extension');
+                error.statusCode = 409;
+                throw error;
+            }
+        }
         const isEmailExist = await Staff.findOne({
             where: {
                 email: email
@@ -52,6 +69,8 @@ exports.createStaff = async (req, res, next) => {
             password: hashedPassword,
             role: 'user',
             department: department,
+            phoneNumber: phoneNumber,
+            contactExtension: contactExtension,
             isNew: true
         });
         const result = await staff.save();
@@ -88,7 +107,23 @@ exports.updateStaff = async (req, res, next) => {
     const email = req.body.email;
     const role = req.body.role;
     const department = req.body.department;
+    const phoneNumber = req.body.phoneNumber;
+    const contactExtension = req.body.contactExtension;
     try {
+        if (phoneNumber) {
+            if (phoneNumber.toString().length !== 10 || typeof phoneNumber !== "number") {
+                const error = new Error('Invalid phone number');
+                error.statusCode = 409;
+                throw error;
+            }
+        }
+        if (contactExtension) {
+            if (contactExtension.toString().length !== 3 || typeof contactExtension !== "number") {
+                const error = new Error('Invalid contact extension');
+                error.statusCode = 409;
+                throw error;
+            }
+        }
         const isEmailExist = await Staff.findOne({
             where: {
                 email: email
@@ -110,6 +145,8 @@ exports.updateStaff = async (req, res, next) => {
         staff.email = email;
         staff.role = role;
         staff.department = department;
+        staff.phoneNumber = phoneNumber;
+        staff.contactExtension = contactExtension;
         if (staff.role === '' || staff.role === null) {
             staff.role = 'user';
             await staff.save();
@@ -140,6 +177,8 @@ exports.deleteStaff = async (req, res, next) => {
         const password = staff.password;
         const role = staff.role;
         const department = staff.department;
+        const phoneNumber = staff.phoneNumber;
+        const contactExtension = staff.contactExtension;
         const isNew = staff.isNew;
         const trash = new Trash({
             id: id,
@@ -149,6 +188,8 @@ exports.deleteStaff = async (req, res, next) => {
             password: password,
             role: role,
             department: department,
+            phoneNumber: phoneNumber,
+            contactExtension: contactExtension,
             isNew: isNew
         });
         const result = await trash.save();
