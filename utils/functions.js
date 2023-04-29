@@ -1,5 +1,6 @@
 const Staff = require("../models/staff");
 const bcrypt = require('bcryptjs');
+const Op = require('sequelize').Op;
 
 const getStaffDetailsCommon = async (staffId, res, next) => {
     try {
@@ -40,9 +41,9 @@ const resetPasswordCommon = async (res, next, email, newPassword) => {
 };
 
 const getDepartments = async () => {
-    const totalStaff = await Staff.findAll();
+    const totalStaff = await Staff.findAll({ where: { id: { [Op.ne]: 1 } } });
     let allDept = [];
-    totalStaff.map((staff, i, row) => {
+    totalStaff.map((staff) => {
         const department = staff.department;
         allDept = allDept.concat(department);
     });
