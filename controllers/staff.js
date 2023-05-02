@@ -226,7 +226,6 @@ exports.getAllContacts = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        console.log(staff.role);
         let contacts;
         if (staff.role === 'superadmin') {
             contacts = await Staff.findAll({
