@@ -218,11 +218,32 @@ const setOTP = async (OTP) => {
 };
 
 exports.getAllContacts = async (req, res, next) => {
+    const staffId = req.params.staffId;
     try {
-        const contacts = await Staff.findAll({
-            where: { id: { [Op.ne]: 1 } },
-            attributes: ['firstname', 'lastname', 'phoneNumber', 'contactExtension']
-        });
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        console.log(staff.role);
+        let contacts;
+        if (staff.role === 'superadmin') {
+            contacts = await Staff.findAll({
+                where: { id: { [Op.ne]: 1 } },
+                attributes: ['firstname', 'lastname', 'phoneNumber', 'contactExtension']
+            });
+        } else if (staff.role === 'admin') {
+            contacts = await Staff.findAll({
+                where: { id: { [Op.ne]: 1 } },
+                attributes: ['firstname', 'lastname', 'phoneNumber', 'contactExtension']
+            });
+        } else {
+            contacts = await Staff.findAll({
+                where: { id: { [Op.ne]: 1 } },
+                attributes: ['firstname', 'lastname', 'contactExtension']
+            });
+        }
         if (!contacts) {
             const error = new Error('Contacts not found');
             error.statusCode = 401;

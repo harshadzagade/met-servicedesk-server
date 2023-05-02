@@ -24,7 +24,7 @@ router.put('/resetpassword', staffController.resetPassword);
 
 router.get('/departments', staffController.getStaffDepartments);
 
-router.get('/contacts', staffController.getAllContacts);
+router.get('/contacts/:staffId', staffController.getAllContacts);
 
 router.use('/superadmin', superAdminRoutes);
 
