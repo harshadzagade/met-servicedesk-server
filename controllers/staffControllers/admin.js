@@ -215,7 +215,7 @@ exports.putApproval2 = async (req, res, next) => {
             request.comment = comment;
             const result = await request.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
-            await sendMail(result.department, result.subject, result.description, next);
+            await sendMail(result.id, result.department, result.category, result.subject, result.description, next);
         } else if (approval === 2) {
             request.approval2 = 2;
             request.assign = null;
@@ -230,7 +230,7 @@ exports.putApproval2 = async (req, res, next) => {
     }
 };
 
-const sendMail = async (department, subject, description, next) => {
+const sendMail = async (requestId, department, category, subject, description, next) => {
     let email = '';
     let cc = [];
     try {
@@ -260,7 +260,7 @@ const sendMail = async (department, subject, description, next) => {
             to: email,
             cc: cc,
             from: 'siddharthbhat777@gmail.com',
-            subject: 'Request received',
+            subject: `Requested ${category} #${requestId}`,
             html:
                 `
             <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
