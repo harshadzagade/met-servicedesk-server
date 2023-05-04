@@ -4,6 +4,15 @@ const { getRequestsToDepartment, getRequestsFromDepartment } = require("../reque
 const { getComplaintsFromDepartment, getComplaintsToDepartment } = require("../complaint");
 const Op = require('sequelize').Op;
 const Request = require("../../models/request");
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'siddharthbhat777@gmail.com',
+        pass: 'itrflpdafyeavfzd'
+    }
+});
 
 exports.getAdmin = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -195,7 +204,7 @@ exports.putApproval2 = async (req, res, next) => {
                 error.statusCode = 401;
                 throw error;
             }
-            if (staff.department !== request.department) {
+            if (staff.department[0] !== request.department) {
                 const error = new Error('Not assigned department staff');
                 error.statusCode = 401;
                 throw error;
@@ -204,14 +213,64 @@ exports.putApproval2 = async (req, res, next) => {
             request.assign = staffId;
             request.status = 'assigned';
             request.comment = comment;
+            const result = await request.save();
+            res.status(200).json({ message: 'Staff details updated', request: result });
+            await sendMail(result.department, result.subject, result.description, next);
         } else if (approval === 2) {
             request.approval2 = 2;
             request.assign = null;
             request.status = 'disapproved';
             request.comment = comment;
         }
-        const result = await request.save();
-        res.status(200).json({ message: 'Staff details updated', request: result });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+const sendMail = async (department, subject, description, next) => {
+    let email = '';
+    let cc = [];
+    try {
+        const departmentAdmin = await Staff.findOne({
+            where: {
+                department: { [Op.contains]: [department] },
+                role: 'admin'
+            }
+        });
+        if (!departmentAdmin) {
+            const error = new Error(`Department don't have any admin`);
+            error.statusCode = 401;
+            throw error;
+        }
+        email = departmentAdmin.email;
+        const departmentTechnicians = await Staff.findAll({
+            where: {
+                department: { [Op.contains]: [department] },
+                role: 'technician'
+            }
+        });
+        for (let i = 0; i < departmentTechnicians.length; i++) {
+            const technicianEmail = departmentTechnicians[i].email;
+            cc = cc.concat(technicianEmail);
+        }
+        await transporter.sendMail({
+            to: 'dbgt4531@gmail.com',
+            cc: cc,
+            from: 'siddharthbhat777@gmail.com',
+            subject: 'Request received',
+            html:
+                `
+            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
+                <h2>MET Service Desk</h2>
+                <h4>Request received ✔</h4>
+                <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${subject}</h1>
+                <p style="margin-bottom: 30px;">${description}</p>
+            </div>
+            `
+        });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
