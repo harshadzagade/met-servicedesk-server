@@ -257,7 +257,7 @@ const sendMail = async (department, subject, description, next) => {
             cc = cc.concat(technicianEmail);
         }
         await transporter.sendMail({
-            to: 'dbgt4531@gmail.com',
+            to: email,
             cc: cc,
             from: 'siddharthbhat777@gmail.com',
             subject: 'Request received',
