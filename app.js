@@ -5,15 +5,14 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 
 const sequelize = require('./utils/database');
+const Staff = require('./models/staff');
 
 const loginRoute = require('./routes/login');
 const staffRoutes = require('./routes/staff');
-const Staff = require('./models/staff');
-
 const trashRoutes = require('./routes/trash');
-
 const requestRoutes = require('./routes/request');
 const complaintRoutes = require('./routes/complaint');
+const reportRoutes = require('./routes/report');
 
 app.use(cors());
 
@@ -24,6 +23,7 @@ app.use('/complaint', complaintRoutes);
 app.use(loginRoute);
 app.use('/staff', staffRoutes);
 app.use('/trash', trashRoutes);
+app.use('/report', reportRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);

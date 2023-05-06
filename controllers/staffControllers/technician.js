@@ -1,6 +1,7 @@
 const Staff = require("../../models/staff");
 const Request = require("../../models/request");
 const Complaint = require("../../models/complaint");
+const Report = require("../../models/report");
 
 exports.getTechnician = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -71,15 +72,26 @@ exports.changeRequestStatus = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+        let report;
         switch (statusChange) {
             case 'attending':
                 request.status = 'attending';
+                report = await Report.findOne({ where: { requestComplaintId: request.id } });
+                report.attendedTime = new Date();
+                report.attendDuration = report.attendedTime - report.loggedTime;
+                await report.save();
                 break;
 
             case 'closed':
                 request.status = 'closed';
                 request.problemDescription = problemDescription;
                 request.actionTaken = actionTaken;
+                report = await Report.findOne({ where: { requestComplaintId: request.id } });
+                report.solvedTime = new Date();
+                report.solveDuration = report.solvedTime - report.attendedTime;
+                report.problemDescription = problemDescription;
+                report.actionTaken = actionTaken;
+                await report.save();
                 break;
 
             case 'forwarded':
