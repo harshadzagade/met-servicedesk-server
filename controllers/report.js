@@ -1,6 +1,6 @@
 const Report = require("../models/report");
 
-exports.getAllRequestReport = async (req, res, next) => {
+exports.getFullReport = async (req, res, next) => {
     try {
         const report = await Report.findAll();
         res.status(200).json({ message: 'Fetched report successfully.', report: report });

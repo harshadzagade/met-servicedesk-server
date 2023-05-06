@@ -2,6 +2,7 @@ const Complaint = require('../models/complaint');
 const Staff = require('../models/staff');
 const Op = require('sequelize').Op;
 const upload = require('../middleware/uploadfiles');
+const Report = require('../models/report');
 
 exports.sendComplaint = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -50,6 +51,20 @@ exports.sendComplaint = async (req, res, next) => {
         });
         const result = await complaint.save();
         res.status(201).json({ message: 'Staff created!', complaint: result });
+        const report = new Report({
+            isRequest: false,
+            isComplaint: true,
+            requestComplaintId: result.id,
+            staffId: requestStaffId,
+            staffName: result.name,
+            category: result.category,
+            priority: result.priority,
+            subject: result.subject,
+            description: result.description,
+            department: result.department,
+            loggedTime: result.createdAt
+        });
+        await report.save();
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

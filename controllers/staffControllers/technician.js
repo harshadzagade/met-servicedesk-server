@@ -213,15 +213,26 @@ exports.changeComplaintStatus = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+        let report;
         switch (statusChange) {
             case 'attending':
                 complaint.status = 'attending';
+                report = await Report.findOne({ where: { requestComplaintId: complaint.id } });
+                report.attendedTime = new Date();
+                report.attendDuration = report.attendedTime - report.loggedTime;
+                await report.save();
                 break;
 
             case 'closed':
                 complaint.status = 'closed';
                 complaint.problemDescription = problemDescription;
                 complaint.actionTaken = actionTaken;
+                report = await Report.findOne({ where: { requestComplaintId: complaint.id } });
+                report.solvedTime = new Date();
+                report.solveDuration = report.solvedTime - report.attendedTime;
+                report.problemDescription = problemDescription;
+                report.actionTaken = actionTaken;
+                await report.save();
                 break;
 
             case 'forwarded':
