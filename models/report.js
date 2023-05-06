@@ -21,7 +21,11 @@ const Report = sequelize.define('report', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    staff: {
+    staffId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    staffName: {
         type: Sequelize.STRING,
         allowNull: false
     },
