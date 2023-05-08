@@ -158,3 +158,21 @@ exports.getIncomingComplaints = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.getComplaintDetails = async (req, res, next) => {
+    const complaintId = req.params.complaintId;
+    try {
+        const complaint = await Complaint.findByPk(complaintId);
+        if (!complaint) {
+            const error = new Error('Complaint not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Complaint fetched successfully!', complaint: complaint });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
