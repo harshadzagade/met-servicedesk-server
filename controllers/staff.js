@@ -230,17 +230,17 @@ exports.getAllContacts = async (req, res, next) => {
         if (staff.role === 'superadmin') {
             contacts = await Staff.findAll({
                 where: { id: { [Op.ne]: 1 } },
-                attributes: ['firstname', 'lastname', 'phoneNumber', 'contactExtension']
+                attributes: ['firstname', 'lastname', 'department', 'phoneNumber', 'contactExtension']
             });
         } else if (staff.role === 'admin') {
             contacts = await Staff.findAll({
                 where: { id: { [Op.ne]: 1 } },
-                attributes: ['firstname', 'lastname', 'phoneNumber', 'contactExtension']
+                attributes: ['firstname', 'lastname', 'department', 'phoneNumber', 'contactExtension']
             });
         } else {
             contacts = await Staff.findAll({
                 where: { id: { [Op.ne]: 1 } },
-                attributes: ['firstname', 'lastname', 'contactExtension']
+                attributes: ['firstname', 'lastname', 'department', 'contactExtension']
             });
         }
         if (!contacts) {
