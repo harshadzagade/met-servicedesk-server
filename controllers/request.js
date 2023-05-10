@@ -25,7 +25,14 @@ exports.sendRequest = async (req, res, next) => {
             }
         }
         if (behalf) {
-            behalfId = req.body.behalfId;
+            const behalfEmailId = req.body.behalfEmailId;
+            const staff = await Staff.findOne({ where: { email: behalfEmailId } });
+            if (!staff) {
+                const error = new Error('Staff not found');
+                error.statusCode = 401;
+                throw error;
+            }
+            behalfId = staff.id;
             requestStaffId = behalfId;
         }
         const staff = await Staff.findByPk(requestStaffId);
