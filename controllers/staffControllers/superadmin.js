@@ -203,3 +203,19 @@ exports.deleteStaff = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.deleteMultipleStaff = async (req, res, next) => {
+    const data = req.body;
+    try {
+        await Trash.bulkCreate(data);
+        const ids= [];
+        data.map((singleData) => ids.push(singleData.id));
+        const staff = await Staff.destroy({ where: { id: ids} });
+        res.status(200).json({ message: 'Data deleted successfully', staff: staff });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
