@@ -18,12 +18,12 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
-app.use('/request', requestRoutes);
-app.use('/complaint', complaintRoutes);
-app.use(loginRoute);
-app.use('/staff', staffRoutes);
-app.use('/trash', trashRoutes);
-app.use('/report', reportRoutes);
+app.use('/api/request', requestRoutes);
+app.use('/api/complaint', complaintRoutes);
+app.use('/api', loginRoute);
+app.use('/api/staff', staffRoutes);
+app.use('/api/trash', trashRoutes);
+app.use('/api/report', reportRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);
