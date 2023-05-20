@@ -12,17 +12,25 @@ const Complaint = sequelize.define('complaint', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
-  status: {
-    type: Sequelize.STRING,
-    defaultValue: 'pending',
-    allowNull: false
-  },
   behalf: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
     allowNull: false
   },
   behalfId: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  status: {
+    type: Sequelize.STRING,
+    defaultValue: 'pending',
+    allowNull: false
+  },
+  assign: {
     type: Sequelize.INTEGER,
     allowNull: true
   },
@@ -45,6 +53,28 @@ const Complaint = sequelize.define('complaint', {
   description: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  attachment: {
+    type: Sequelize.ARRAY(Sequelize.STRING),
+    defaultValue: [],
+    allowNull: true
+  },
+  isRepeated: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+    allowNull: false
+  },
+  comment: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  problemDescription: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  actionTaken: {
+    type: Sequelize.STRING,
+    allowNull: true
   }
 });
 

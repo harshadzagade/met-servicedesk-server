@@ -12,6 +12,16 @@ router.get('/staffdetails/:staffId', adminController.getStaffDetails);
 
 router.put('/staffdetails/updateStaff/:staffId', adminController.updateStaff);
 
-router.get('/requests/:staffId', adminController.getIncomingRequests);
+router.get('/admindepartments/:staffId', adminController.getAdminDepartments);
+
+router.get('/requests/incoming/:department', adminController.getIncomingRequests);
+
+router.get('/requests/outgoing/:department', adminController.getOutgoingRequests);
+
+router.get('/complaints/outgoing/:department', adminController.getOutgoingComplaints);
+
+router.put('/approval1/:requestId', adminController.putApproval1);
+
+router.put('/approval2/:requestId', adminController.putApproval2);
 
 module.exports = router;

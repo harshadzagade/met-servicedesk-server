@@ -8,7 +8,11 @@ const Trash = sequelize.define('trash', {
     allowNull: false,
     primaryKey: true
   },
-  name: {
+  firstname: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  lastname: {
     type: Sequelize.STRING,
     allowNull: false
   },
@@ -25,8 +29,17 @@ const Trash = sequelize.define('trash', {
     allowNull: false
   },
   department: {
-    type: Sequelize.STRING,
+    type: Sequelize.ARRAY(Sequelize.STRING),
     allowNull: false
+  },
+  phoneNumber: {
+    type: Sequelize.BIGINT,
+    length: 10,
+    allowNull: true
+  },
+  contactExtension: {
+    type: Sequelize.INTEGER,
+    allowNull: true
   },
   isNew: {
     type: Sequelize.BOOLEAN,

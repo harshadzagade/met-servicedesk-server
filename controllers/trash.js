@@ -40,19 +40,25 @@ exports.restoreStaff = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        const name = trashStaff.name;
+        const firstname = trashStaff.firstname;
+        const lastname = trashStaff.lastname;
         const email = trashStaff.email;
         const password = trashStaff.password;
         const role = trashStaff.role;
         const department = trashStaff.department;
+        const phoneNumber = trashStaff.phoneNumber;
+        const contactExtension = trashStaff.contactExtension;
         const isNew = trashStaff.isNew;
         const staff = new Staff({
             id: trashStaffId,
-            name: name,
+            firstname: firstname,
+            lastname: lastname,
             email: email,
             password: password,
             role: role,
             department: department,
+            phoneNumber: phoneNumber,
+            contactExtension: contactExtension,
             isNew: isNew
         });
         await staff.save();
@@ -72,11 +78,26 @@ exports.restoreAllStaff = async (req, res, next) => {
         const trashStaff = await Trash.findAll();
         const records = [];
         for (let index = 0; index < trashStaff.length; index++) {
-            const staff = await Trash.findOne({ where: { id: trashStaff[index].id } })
-            records.push({ id: staff.id, name: staff.name, email: staff.email, password: staff.password, role: staff.role, department: staff.department, createdAt: staff.createdAt, updatedAt: staff.updatedAt });
+            const staff = await Trash.findOne({ where: { id: trashStaff[index].id } });
+            records.push(
+                {
+                    id: staff.id,
+                    firstname: staff.firstname,
+                    lastname: staff.lastname,
+                    email: staff.email,
+                    password: staff.password,
+                    role: staff.role,
+                    department: staff.department,
+                    phoneNumber: staff.phoneNumber,
+                    contactExtension: staff.contactExtension,
+                    isNew: false,
+                    createdAt: staff.createdAt,
+                    updatedAt: staff.updatedAt
+                }
+            );
         }
         const allStaff = await Staff.bulkCreate(records);
-        await Trash.destroy({ truncate : true, cascade: true });
+        await Trash.destroy({ truncate: true, cascade: true });
         res.status(200).json({ message: 'All staff restored successfully!', allStaff: allStaff })
     } catch (err) {
         if (!err.statusCode) {
@@ -109,7 +130,7 @@ exports.removeStaff = async (req, res, next) => {
 exports.removeAllStaff = async (req, res, next) => {
     try {
         const allStaff = await Trash.destroy({ truncate: true, cascade: true });
-        res.status(200).json({ message: 'All staff deleted successfully!', allStaff: allStaff })
+        res.status(200).json({ message: 'All staff deleted successfully!', allStaff: allStaff });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

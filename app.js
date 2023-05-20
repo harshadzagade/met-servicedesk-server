@@ -5,25 +5,25 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 
 const sequelize = require('./utils/database');
+const Staff = require('./models/staff');
 
 const loginRoute = require('./routes/login');
 const staffRoutes = require('./routes/staff');
-const Staff = require('./models/staff');
-
 const trashRoutes = require('./routes/trash');
-
 const requestRoutes = require('./routes/request');
 const complaintRoutes = require('./routes/complaint');
+const reportRoutes = require('./routes/report');
 
 app.use(cors());
 
 app.use(bodyParser.json());
 
-app.use('/request', requestRoutes);
-app.use('/complaint', complaintRoutes);
-app.use(loginRoute);
-app.use('/staff', staffRoutes);
-app.use('/trash', trashRoutes);
+app.use('/api/request', requestRoutes);
+app.use('/api/complaint', complaintRoutes);
+app.use('/api', loginRoute);
+app.use('/api/staff', staffRoutes);
+app.use('/api/trash', trashRoutes);
+app.use('/api/report', reportRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);
@@ -40,11 +40,12 @@ sequelize.sync().then((result) => { // 'force:true' means overriding table with 
         staff = Staff.findOrCreate({
             where: { id: 1 },
             defaults: {
-                name: 'Admin',
+                firstname: 'Admin',
+                lastname: '',
                 email: 'superadmin@gmail.com',
                 password: password,
                 role: 'superadmin',
-                department: 'all',
+                department: ['all'],
                 isNew: false
             }
         });

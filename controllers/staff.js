@@ -1,6 +1,7 @@
 const Staff = require('../models/staff');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
+const Op = require('sequelize').Op;
 
 const otpGenerator = require('otp-generator');
 const OneTimePassword = require('../models/onetimepassword');
@@ -209,6 +210,46 @@ const setOTP = async (OTP) => {
         otpModel.expiration_time = expiration_time;
         return await otpModel.save();
     } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getAllContacts = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        let contacts;
+        if (staff.role === 'superadmin') {
+            contacts = await Staff.findAll({
+                where: { id: { [Op.ne]: 1 } },
+                attributes: ['firstname', 'lastname', 'department', 'phoneNumber', 'contactExtension']
+            });
+        } else if (staff.role === 'admin') {
+            contacts = await Staff.findAll({
+                where: { id: { [Op.ne]: 1 } },
+                attributes: ['firstname', 'lastname', 'department', 'phoneNumber', 'contactExtension']
+            });
+        } else {
+            contacts = await Staff.findAll({
+                where: { id: { [Op.ne]: 1 } },
+                attributes: ['firstname', 'lastname', 'department', 'contactExtension']
+            });
+        }
+        if (!contacts) {
+            const error = new Error('Contacts not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Contacts fetched successfully', contacts: contacts });
+    } catch (error) {
         if (!err.statusCode) {
             err.statusCode = 500;
         }

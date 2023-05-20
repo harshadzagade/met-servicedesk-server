@@ -16,4 +16,6 @@ router.put('/staffdetails/updateStaff/:staffId', superAdminController.updateStaf
 
 router.delete('/staffdetails/:staffId', superAdminController.deleteStaff);
 
+router.delete('/deletemultiple', superAdminController.deleteMultipleStaff);
+
 module.exports = router;

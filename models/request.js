@@ -12,17 +12,25 @@ const Request = sequelize.define('request', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
-  status: {
-    type: Sequelize.STRING,
-    defaultValue: 'pending',
-    allowNull: false
-  },
   behalf: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
     allowNull: false
   },
   behalfId: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  status: {
+    type: Sequelize.STRING,
+    defaultValue: 'pending',
+    allowNull: false
+  },
+  assign: {
     type: Sequelize.INTEGER,
     allowNull: true
   },
@@ -46,15 +54,35 @@ const Request = sequelize.define('request', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  approval1: {
+  attachment: {
+    type: Sequelize.ARRAY(Sequelize.STRING),
+    defaultValue: [],
+    allowNull: true
+  },
+  isRepeated: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
     allowNull: false
   },
+  comment: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  problemDescription: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  actionTaken: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  approval1: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
   approval2: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false,
-    allowNull: false
+    type: Sequelize.INTEGER,
+    allowNull: true
   }
 });
 
