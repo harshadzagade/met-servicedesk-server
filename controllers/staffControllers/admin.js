@@ -39,6 +39,7 @@ exports.getAdmin = async (req, res, next) => {
 
 exports.getAllStaff = async (req, res, next) => {
     const staffId = req.params.staffId;
+    const currentDepartment = req.params.currentDepartment;
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
@@ -47,7 +48,7 @@ exports.getAllStaff = async (req, res, next) => {
             throw error;
         }
         if (staff.role === 'admin') {
-            const department = staff.department[0];
+            const department = currentDepartment;
             const totalStaff = await Staff.findAll({ where: { department: [department], id: { [Op.ne]: staff.id } } });
             res.status(200).json({ message: 'Fetched all staff as per specific department successfully.', totalStaff: totalStaff });
         } else {

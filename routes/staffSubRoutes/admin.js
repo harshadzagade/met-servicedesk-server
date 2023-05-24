@@ -6,7 +6,7 @@ const adminController = require('../../controllers/staffControllers/admin');
 
 router.get('/:staffId', adminController.getAdmin);
 
-router.get('/allstaff/:staffId', adminController.getAllStaff);
+router.get('/allstaff/:staffId/:currentDepartment', adminController.getAllStaff);
 
 router.get('/staffdetails/:staffId', adminController.getStaffDetails);
 
