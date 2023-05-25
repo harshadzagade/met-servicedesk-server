@@ -64,7 +64,15 @@ const Request = sequelize.define('request', {
     defaultValue: false,
     allowNull: false
   },
-  comment: {
+  approval1Comment: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  approval2Comment: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  forwardComment: {
     type: Sequelize.STRING,
     allowNull: true
   },

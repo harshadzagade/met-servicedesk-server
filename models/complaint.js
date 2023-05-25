@@ -64,7 +64,7 @@ const Complaint = sequelize.define('complaint', {
     defaultValue: false,
     allowNull: false
   },
-  comment: {
+  forwardComment: {
     type: Sequelize.STRING,
     allowNull: true
   },
