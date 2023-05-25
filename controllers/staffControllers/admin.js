@@ -159,6 +159,7 @@ exports.getOutgoingComplaints = async (req, res, next) => {
 exports.putApproval1 = async (req, res, next) => {
     const requestId = req.params.requestId;
     const approval = req.body.approval;
+    const approvalComment = req.body.approvalComment;
     try {
         const request = await Request.findByPk(requestId);
         if (!request) {
@@ -174,9 +175,11 @@ exports.putApproval1 = async (req, res, next) => {
         if (approval === 1) {
             request.approval1 = 1;
             request.status = 'pending';
+            request.approval1Comment = approvalComment;
         } else if (approval === 2) {
             request.approval1 = 2;
             request.status = 'disapproved';
+            request.approval1Comment = approvalComment;
         }
         const result = await request.save();
         res.status(200).json({ message: 'Staff details updated', request: result });
@@ -192,7 +195,7 @@ exports.putApproval2 = async (req, res, next) => {
     const requestId = req.params.requestId;
     let staffId = null;
     const approval = req.body.approval;
-    const comment = req.body.comment;
+    const approvalComment = req.body.approvalComment;
     try {
         const request = await Request.findByPk(requestId);
         if (!request) {
@@ -231,7 +234,7 @@ exports.putApproval2 = async (req, res, next) => {
             request.approval2 = 1;
             request.assign = staffId;
             request.status = 'assigned';
-            request.comment = comment;
+            request.approval2Comment = approvalComment;
             const result = await request.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
             await sendMail(result.id, result.department, result.category, result.subject, result.description, next);
@@ -239,7 +242,7 @@ exports.putApproval2 = async (req, res, next) => {
             request.approval2 = 2;
             request.assign = null;
             request.status = 'disapproved';
-            request.comment = comment;
+            request.approval2Comment = approvalComment;
         }
     } catch (err) {
         if (!err.statusCode) {

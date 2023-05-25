@@ -97,7 +97,7 @@ exports.changeRequestStatus = async (req, res, next) => {
             case 'forwarded':
                 request.status = 'forwarded';
                 assign = req.body.assign;
-                const comment = req.body.comment;
+                const forwardComment = req.body.forwardComment;
                 if (request.assign === assign) {
                     const error = new Error('Same staff is already assigned');
                     error.statusCode = 401;
@@ -121,7 +121,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                 }
                 if (assign) {
                     request.assign = assign;
-                    request.comment = comment;
+                    request.forwardComment = forwardComment;
                     request.problemDescription = problemDescription;
                     request.actionTaken = actionTaken;
                 } else {
@@ -238,7 +238,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
             case 'forwarded':
                 complaint.status = 'forwarded';
                 assign = req.body.assign;
-                const comment = req.body.comment;
+                const forwardComment = req.body.forwardComment;
                 if (complaint.assign === assign) {
                     const error = new Error('Same staff is already assigned');
                     error.statusCode = 401;
@@ -262,7 +262,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                 }
                 if (assign) {
                     complaint.assign = assign;
-                    complaint.comment = comment;
+                    complaint.forwardComment = forwardComment;
                     complaint.problemDescription = problemDescription;
                     complaint.actionTaken = actionTaken;
                 } else {
