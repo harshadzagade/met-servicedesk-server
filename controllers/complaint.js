@@ -89,7 +89,9 @@ exports.getComplaintsFromDepartment = async (department, next) => {
     try {
         const staffs = await Staff.findAll({
             where: {
-                department: department
+                department: {
+                    [Op.contains] : [department]
+                }
             }
         });
         let allComplaints = [];
