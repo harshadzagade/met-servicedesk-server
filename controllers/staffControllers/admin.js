@@ -117,6 +117,33 @@ exports.getAdminDepartments = async (req, res, next) => {
     }
 };
 
+exports.getDepartmentTechnicians = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    const currentDepartment = req.params.currentDepartment;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (staff.role === 'admin') {
+            const department = currentDepartment;
+            const technicians = await Staff.findAll({ where: { department: [department], role: 'technician'  } });
+            res.status(200).json({ message: 'Fetched all technicians as per specific department successfully.', technicians: technicians });
+        } else {
+            const error = new Error('Invalid admin id');
+            error.statusCode = 401;
+            throw error;
+        }
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
 exports.getOutgoingRequests = async (req, res, next) => {
     const department = req.params.department;
     try {

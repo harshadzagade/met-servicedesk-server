@@ -14,6 +14,8 @@ router.put('/staffdetails/updateStaff/:staffId', adminController.updateStaff);
 
 router.get('/admindepartments/:staffId', adminController.getAdminDepartments);
 
+router.get('/admindepartmenttechnicians/:staffId/:currentDepartment', adminController.getDepartmentTechnicians);
+
 router.get('/requests/incoming/:department', adminController.getIncomingRequests);
 
 router.get('/requests/outgoing/:department', adminController.getOutgoingRequests);
