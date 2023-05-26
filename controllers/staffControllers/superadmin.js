@@ -105,6 +105,7 @@ exports.updateStaff = async (req, res, next) => {
     const firstname = req.body.firstname;
     const lastname = req.body.lastname;
     const email = req.body.email;
+    console.log(email);
     const role = req.body.role;
     const department = req.body.department;
     const phoneNumber = req.body.phoneNumber;
@@ -135,10 +136,12 @@ exports.updateStaff = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (isEmailExist.email !== staff.email) {
-            const error = new Error('E-Mail already exists');
-            error.statusCode = 409;
-            throw error;
+        if (isEmailExist) {
+            if (isEmailExist.email !== staff.email) {
+                const error = new Error('E-Mail already exists');
+                error.statusCode = 409;
+                throw error;
+            }
         }
         staff.firstname = firstname;
         staff.lastname = lastname;
@@ -208,9 +211,9 @@ exports.deleteMultipleStaff = async (req, res, next) => {
     const data = req.body;
     try {
         await Trash.bulkCreate(data);
-        const ids= [];
+        const ids = [];
         data.map((singleData) => ids.push(singleData.id));
-        const staff = await Staff.destroy({ where: { id: ids} });
+        const staff = await Staff.destroy({ where: { id: ids } });
         res.status(200).json({ message: 'Data deleted successfully', staff: staff });
     } catch (err) {
         if (!err.statusCode) {
