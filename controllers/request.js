@@ -92,12 +92,15 @@ exports.getAllRequests = async (req, res, next) => {
     }
 };
 
-exports.getRequestsFromDepartment = async (department, next) => {
+exports.getRequestsFromDepartment = async (id, department, next) => {
     try {
         const staffs = await Staff.findAll({
             where: {
                 department: {
                     [Op.contains] : [department]
+                },
+                id : {
+                    [Op.ne] : id
                 }
             }
         });

@@ -145,9 +145,10 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
 };
 
 exports.getOutgoingRequests = async (req, res, next) => {
+    const staffId = req.params.staffId;
     const department = req.params.department;
     try {
-        const requests = await getRequestsFromDepartment(department, next);
+        const requests = await getRequestsFromDepartment(staffId, department, next);
         res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
     } catch (err) {
         if (!err.statusCode) {
