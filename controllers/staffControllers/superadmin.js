@@ -34,7 +34,6 @@ exports.createStaff = async (req, res, next) => {
     const password = req.body.password;
     const department = req.body.department;
     const phoneNumber = req.body.phoneNumber;
-    console.log(phoneNumber);
     const contactExtension = req.body.contactExtension;
     try {
         if (phoneNumber) {
@@ -105,7 +104,6 @@ exports.updateStaff = async (req, res, next) => {
     const firstname = req.body.firstname;
     const lastname = req.body.lastname;
     const email = req.body.email;
-    console.log(email);
     const role = req.body.role;
     const department = req.body.department;
     const phoneNumber = req.body.phoneNumber;

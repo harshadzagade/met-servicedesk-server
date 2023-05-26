@@ -270,6 +270,8 @@ exports.putApproval2 = async (req, res, next) => {
             request.assign = null;
             request.status = 'disapproved';
             request.approval2Comment = approvalComment;
+            const result = await request.save();
+            res.status(200).json({ message: 'Staff details updated', request: result });
         }
     } catch (err) {
         if (!err.statusCode) {
