@@ -172,9 +172,10 @@ exports.getIncomingRequests = async (req, res, next) => {
 };
 
 exports.getOutgoingComplaints = async (req, res, next) => {
+    const staffId = req.params.staffId;
     const department = req.params.department;
     try {
-        const complaints = await getComplaintsFromDepartment(department, next);
+        const complaints = await getComplaintsFromDepartment(staffId, department, next);
         res.status(200).json({ message: 'Fetched all complaints successfully.', complaints: complaints });
     } catch (err) {
         if (!err.statusCode) {

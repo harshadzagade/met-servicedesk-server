@@ -20,7 +20,7 @@ router.get('/requests/incoming/:department', adminController.getIncomingRequests
 
 router.get('/requests/outgoing/:staffId/:department', adminController.getOutgoingRequests);
 
-router.get('/complaints/outgoing/:department', adminController.getOutgoingComplaints);
+router.get('/complaints/outgoing/:staffId/:department', adminController.getOutgoingComplaints);
 
 router.put('/approval1/:requestId', adminController.putApproval1);
 
