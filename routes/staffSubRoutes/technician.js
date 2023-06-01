@@ -14,4 +14,6 @@ router.put('/selfassigncomplaint/:complaintId', technicianController.selfAssignC
 
 router.put('/changecomplaintstatus/:complaintId', technicianController.changeComplaintStatus);
 
+router.get('/techniciandepartmenttechnicians/:staffId/:currentDepartment', technicianController.getDepartmentTechnicians);
+
 module.exports = router;

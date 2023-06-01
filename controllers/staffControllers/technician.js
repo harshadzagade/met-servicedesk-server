@@ -2,6 +2,7 @@ const Staff = require("../../models/staff");
 const Request = require("../../models/request");
 const Complaint = require("../../models/complaint");
 const Report = require("../../models/report");
+const Op = require('sequelize').Op;
 
 exports.getTechnician = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -279,6 +280,33 @@ exports.changeComplaintStatus = async (req, res, next) => {
         }
         const result = await complaint.save();
         res.status(200).json({ message: 'status updated successfully!', complaint: result });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getDepartmentTechnicians = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    const currentDepartment = req.params.currentDepartment;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (staff.role === 'technician') {
+            const department = currentDepartment;
+            const technicians = await Staff.findAll({ where: { department: [department], role: 'technician', id: { [Op.ne]: [staffId] } } });
+            res.status(200).json({ message: 'Fetched all technicians as per specific department successfully.', technicians: technicians });
+        } else {
+            const error = new Error('Invalid admin id');
+            error.statusCode = 401;
+            throw error;
+        }
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
