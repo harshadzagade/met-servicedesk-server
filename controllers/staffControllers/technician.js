@@ -149,7 +149,7 @@ exports.changeRequestStatus = async (req, res, next) => {
 
 exports.selfAssignComplaint = async (req, res, next) => {
     const complaintId = req.params.complaintId;
-    const staffId = req.body.staffId;
+    const staffId = req.params.staffId;
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
