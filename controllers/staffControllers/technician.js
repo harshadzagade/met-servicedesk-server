@@ -175,6 +175,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
         }
         complaint.status = 'assigned';
         complaint.assign = staffId;
+        complaint.assignedName = staff.firstname + ' ' + staff.lastname;
         const result = await complaint.save();
         res.status(200).json({ message: 'Task self assigned successfully!', complaint: result })
     } catch (err) {

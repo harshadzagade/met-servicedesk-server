@@ -262,6 +262,7 @@ exports.putApproval2 = async (req, res, next) => {
             }
             request.approval2 = 1;
             request.assign = staffId;
+            request.assignedName = staff.firstname + ' ' + staff.lastname;
             request.status = 'assigned';
             request.approval2Comment = approvalComment;
             const result = await request.save();
