@@ -8,7 +8,6 @@ const superAdminRoutes = require('./staffSubRoutes/superadmin');
 const adminRoutes = require('./staffSubRoutes/admin');
 const technicianRoutes = require('./staffSubRoutes/technician');
 const userRoutes = require('./staffSubRoutes/user');
-const { getDepartments } = require('../utils/functions');
 
 router.get('/check/:staffId', staffController.checkAuth);
 
@@ -25,6 +24,8 @@ router.put('/resetpassword', staffController.resetPassword);
 router.get('/departments', staffController.getStaffDepartments);
 
 router.get('/contacts/:staffId', staffController.getAllContacts);
+
+router.get('/staffbydepartment/:department', staffController.getStaffByDepartment);
 
 router.use('/superadmin', superAdminRoutes);
 
