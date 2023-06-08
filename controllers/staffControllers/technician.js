@@ -122,6 +122,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                 }
                 if (assign) {
                     request.assign = assign;
+                    request.assignedName = staff.firstname + ' ' + staff.lastname;
                     request.forwardComment = forwardComment;
                     request.problemDescription = problemDescription;
                     request.actionTaken = actionTaken;
@@ -264,6 +265,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                 }
                 if (assign) {
                     complaint.assign = assign;
+                    complaint.assignedName = staff.firstname + ' ' + staff.lastname;
                     complaint.forwardComment = forwardComment;
                     complaint.problemDescription = problemDescription;
                     complaint.actionTaken = actionTaken;
