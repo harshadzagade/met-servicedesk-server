@@ -141,6 +141,27 @@ exports.updateStaff = async (req, res, next) => {
                 throw error;
             }
         }
+        let allStaff = [];
+        let singledepartment = '';
+        for (let index = 0; index < department.length; index++) {
+            const element = department[index];
+            allStaff = await Staff.findAll({
+                where: {
+                    id: { [Op.ne]: staff.id },
+                    department: { [Op.contains]: [element] },
+                    role: 'admin'
+                }
+            });
+            if (allStaff.length !== 0) {
+                singledepartment = element;
+                break;
+            }
+        }
+        if (allStaff.length !== 0) {
+            const error = new Error(`Department ${singledepartment} already have an admin`);
+            error.statusCode = 409;
+            throw error;
+        }
         staff.firstname = firstname;
         staff.lastname = lastname;
         staff.email = email;
