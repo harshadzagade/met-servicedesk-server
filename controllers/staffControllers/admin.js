@@ -5,6 +5,7 @@ const { getComplaintsFromDepartment, getComplaintsToDepartment } = require("../c
 const Op = require('sequelize').Op;
 const Request = require("../../models/request");
 const nodemailer = require('nodemailer');
+const Report = require("../../models/report");
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -265,6 +266,13 @@ exports.putApproval2 = async (req, res, next) => {
             request.assignedName = staff.firstname + ' ' + staff.lastname;
             request.status = 'assigned';
             request.approval2Comment = approvalComment;
+            const report = await Report.findOne({
+                where: {
+                    requestComplaintId: request.id
+                }
+            });
+            report.assignedName = staff.firstname + ' ' + staff.lastname;
+            await report.save();
             const result = await request.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
             await sendMail(result.id, result.department, result.category, result.subject, result.description, next);

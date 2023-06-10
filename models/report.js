@@ -29,6 +29,10 @@ const Report = sequelize.define('report', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    assignedName: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
     category: {
         type: Sequelize.STRING,
         allowNull: false
