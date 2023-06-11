@@ -8,7 +8,7 @@ router.get('/:staffId', superAdminController.getSuperAdmin);
 
 router.post('/createStaff', superAdminController.createStaff);
 
-router.get('/allstaff/:staffId', superAdminController.getAllStaff);
+router.get('/allstafflist/fullstaff', superAdminController.getAllStaff);
 
 router.get('/staffdetails/:staffId', superAdminController.getStaffDetails);
 
