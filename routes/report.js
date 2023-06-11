@@ -10,4 +10,6 @@ router.get('/request/:staffId', reportController.getRequestReport);
 
 router.get('/complaint/:staffId', reportController.getComplaintReport);
 
+router.get('/reportdetails/:reportId', reportController.getReportDetails);
+
 module.exports = router;

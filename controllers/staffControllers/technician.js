@@ -19,11 +19,11 @@ exports.getTechnician = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Staff verification successful!', staffId: staff.id })
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -36,11 +36,11 @@ exports.getAssignedRequests = async (req, res, next) => {
             }
         });
         res.status(200).json({ message: 'Requests fetched successfully!', requests: requests })
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -140,11 +140,11 @@ exports.changeRequestStatus = async (req, res, next) => {
         }
         const result = await request.save();
         res.status(200).json({ message: 'status updated successfully!', request: result });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -186,11 +186,11 @@ exports.selfAssignComplaint = async (req, res, next) => {
         await report.save();
         const result = await complaint.save();
         res.status(200).json({ message: 'Task self assigned successfully!', complaint: result })
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -290,11 +290,11 @@ exports.changeComplaintStatus = async (req, res, next) => {
         }
         const result = await complaint.save();
         res.status(200).json({ message: 'status updated successfully!', complaint: result });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -317,10 +317,10 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };

@@ -19,11 +19,11 @@ exports.getSuperAdmin = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Staff verification successful!', staffId: staff.id })
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -74,11 +74,11 @@ exports.createStaff = async (req, res, next) => {
         });
         const result = await staff.save();
         res.status(201).json({ message: 'Staff created!', staffId: result.id });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -86,11 +86,11 @@ exports.getAllStaff = async (req, res, next) => {
     try {
         const totalStaff = await Staff.findAll({ where: { id: { [Op.ne]: 1 } } });
         res.status(200).json({ message: 'Fetched all staff successfully.', totalStaff: totalStaff });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -177,11 +177,11 @@ exports.updateStaff = async (req, res, next) => {
         }
         const result = await staff.save();
         res.status(200).json({ message: 'Staff details updated', staff: result });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -220,11 +220,11 @@ exports.deleteStaff = async (req, res, next) => {
         res.status(201).json({ message: 'Staff added to trash.', staffId: result.id });
         await staff.destroy();
         await staff.save();
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -236,10 +236,10 @@ exports.deleteMultipleStaff = async (req, res, next) => {
         data.map((singleData) => ids.push(singleData.id));
         const staff = await Staff.destroy({ where: { id: ids } });
         res.status(200).json({ message: 'Data deleted successfully', staff: staff });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };

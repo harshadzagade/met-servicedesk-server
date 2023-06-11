@@ -30,11 +30,11 @@ exports.getAdmin = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Staff verification successful!', staffId: staff.id })
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -57,11 +57,11 @@ exports.getAllStaff = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -92,11 +92,11 @@ exports.updateStaff = async (req, res, next) => {
         }
         const result = await staff.save();
         res.status(200).json({ message: 'Staff details updated', staff: result });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -110,11 +110,11 @@ exports.getAdminDepartments = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Departments fetched successfully', departments: staff.department });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -137,11 +137,11 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -151,11 +151,11 @@ exports.getOutgoingRequests = async (req, res, next) => {
     try {
         const requests = await getRequestsFromDepartment(staffId, department, next);
         res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -164,11 +164,11 @@ exports.getIncomingRequests = async (req, res, next) => {
     try {
         const requests = await getRequestsToDepartment(department, next);
         res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -178,11 +178,11 @@ exports.getOutgoingComplaints = async (req, res, next) => {
     try {
         const complaints = await getComplaintsFromDepartment(staffId, department, next);
         res.status(200).json({ message: 'Fetched all complaints successfully.', complaints: complaints });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -213,11 +213,11 @@ exports.putApproval1 = async (req, res, next) => {
         }
         const result = await request.save();
         res.status(200).json({ message: 'Staff details updated', request: result });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -284,11 +284,11 @@ exports.putApproval2 = async (req, res, next) => {
             const result = await request.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
         }
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -333,10 +333,10 @@ const sendMail = async (requestId, department, category, subject, description, n
             </div>
             `
         });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };

@@ -65,11 +65,11 @@ exports.sendComplaint = async (req, res, next) => {
             loggedTime: result.createdAt
         });
         await report.save();
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -77,11 +77,11 @@ exports.getAllComplaints = async (req, res, next) => {
     try {
         const complaints = await Complaint.findAll();
         res.status(200).json({ message: 'Fetched all requests successfully.', complaints: complaints });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -108,11 +108,11 @@ exports.getComplaintsFromDepartment = async (id, department, next) => {
             allComplaints = allComplaints.concat(complaints);
         }
         return allComplaints;
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -134,11 +134,11 @@ exports.ownComplaints = async (req, res, next) => {
             }
         });
         res.status(200).json({ message: 'Staff created!', complaints: complaints });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -156,11 +156,11 @@ exports.getIncomingComplaints = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Fetched all requests successfully.', complaints: complaints });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -174,10 +174,10 @@ exports.getComplaintDetails = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Complaint fetched successfully!', complaint: complaint });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };

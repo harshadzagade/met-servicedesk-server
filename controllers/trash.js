@@ -5,11 +5,11 @@ exports.getAllStaff = async (req, res, next) => {
     try {
         const allStaff = await Trash.findAll();
         res.status(200).json({ message: 'All staff fetched successfully!', allStaff: allStaff })
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -23,11 +23,11 @@ exports.getStaffDetails = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Staff fetched.', staff: staff });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -65,11 +65,11 @@ exports.restoreStaff = async (req, res, next) => {
         await trashStaff.destroy();
         await trashStaff.save();
         res.status(200).json({ message: 'Staff restrored successfully.', staff: staff });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -99,11 +99,11 @@ exports.restoreAllStaff = async (req, res, next) => {
         const allStaff = await Staff.bulkCreate(records);
         await Trash.destroy({ truncate: true, cascade: true });
         res.status(200).json({ message: 'All staff restored successfully!', allStaff: allStaff })
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -119,11 +119,11 @@ exports.removeStaff = async (req, res, next) => {
         await trashStaff.destroy();
         await trashStaff.save();
         res.status(200).json({ message: 'Staff restrored successfully.', staff: trashStaff });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -131,10 +131,10 @@ exports.removeAllStaff = async (req, res, next) => {
     try {
         const allStaff = await Trash.destroy({ truncate: true, cascade: true });
         res.status(200).json({ message: 'All staff deleted successfully!', allStaff: allStaff });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };

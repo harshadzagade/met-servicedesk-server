@@ -51,11 +51,11 @@ exports.checkAuth = async (req, res, next) => {
                 error.statusCode = 404;
                 throw error;
         }
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -93,11 +93,11 @@ exports.sendMail = async (req, res, next) => {
             </div>
             `
         });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -119,11 +119,11 @@ exports.verifyOTP = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -149,11 +149,11 @@ exports.resetPassword = async (req, res, next) => {
         staff.isNew = false;
         const result = await staff.save();
         res.status(200).json({ message: 'New password set successfully!', staff: result });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -179,11 +179,11 @@ exports.newUserLogin = async (req, res, next) => {
         staff.isNew = false;
         const result = await staff.save();
         res.status(200).json({ message: 'Staff is not a new user now.', staff: result });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -209,11 +209,11 @@ const setOTP = async (OTP) => {
         otpModel.otp = OTP;
         otpModel.expiration_time = expiration_time;
         return await otpModel.save();
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -249,11 +249,11 @@ exports.getAllContacts = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Contacts fetched successfully', contacts: contacts });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -273,10 +273,10 @@ exports.getStaffByDepartment = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Departments fetched successfully', staff: staff });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };

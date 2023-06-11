@@ -11,11 +11,11 @@ const getStaffDetailsCommon = async (staffId, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Staff fetched.', staff: staff });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -32,11 +32,11 @@ const resetPasswordCommon = async (res, next, email, newPassword) => {
         staff.password = await bcrypt.hash(newPassword, 12);
         const result = await staff.save();
         res.status(200).json({ message: 'New password set syccessfully!', staff: result });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 

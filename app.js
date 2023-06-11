@@ -51,6 +51,6 @@ sequelize.sync().then((result) => { // 'force:true' means overriding table with 
         });
     });
     return staff;
-}).catch((err) => {
-    console.log(err);
+}).catch((error) => {
+    console.log(error);
 });

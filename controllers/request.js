@@ -72,11 +72,11 @@ exports.sendRequest = async (req, res, next) => {
             loggedTime: result.createdAt
         });
         await report.save();
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -84,11 +84,11 @@ exports.getAllRequests = async (req, res, next) => {
     try {
         const requests = await Request.findAll();
         res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -115,11 +115,11 @@ exports.getRequestsFromDepartment = async (id, department, next) => {
             allRequests = allRequests.concat(requests);
         }
         return allRequests;
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -131,11 +131,11 @@ exports.getRequestsToDepartment = async (department, next) => {
             }
         });
         return requests;
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -157,11 +157,11 @@ exports.ownRequests = async (req, res, next) => {
             }
         });
         res.status(200).json({ message: 'Staff created!', requests: requests });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
 
@@ -175,10 +175,10 @@ exports.getRequestDetails = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Request fetched successfully!', request: request });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 };
