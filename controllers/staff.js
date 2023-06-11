@@ -6,6 +6,7 @@ const Op = require('sequelize').Op;
 const otpGenerator = require('otp-generator');
 const OneTimePassword = require('../models/onetimepassword');
 const { getStaffDetailsCommon, getDepartments } = require('../utils/functions');
+const Trash = require('../models/trash');
 
 const generateOTP = () => {
     const OTP = otpGenerator.generate(6, { upperCaseAlphabets: true, specialChars: false });
@@ -192,6 +193,21 @@ exports.getStaffDepartments = async (req, res, next) => {
     res.status(200).json({ message: 'Fetched departments!', departments: departments });
 };
 
+exports.getTrashStaffDepartments = async (req, res, next) => {
+    const totalStaff = await Trash.findAll({ where: { id: { [Op.ne]: 1 } } });
+    let allDept = [];
+    totalStaff.map((staff) => {
+        const department = staff.department;
+        allDept = allDept.concat(department);
+    });
+    const allDepartments = allDept;
+    const uniqueDepartments = allDepartments.filter(function(item, position) {
+        return allDepartments.indexOf(item) == position;
+    })
+    const departments = uniqueDepartments;
+    res.status(200).json({ message: 'Fetched departments!', departments: departments });
+};
+
 const setOTP = async (OTP) => {
     const currentDate = new Date();
     const expiration_time = new Date(currentDate.getTime() + 60000);
@@ -261,6 +277,30 @@ exports.getStaffByDepartment = async (req, res, next) => {
     const department = req.params.department;
     try {
         const staff = await Staff.findAll({
+            where: {
+                department: {
+                    [Op.contains]: [department]
+                }
+            }
+        });
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Departments fetched successfully', staff: staff });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getTrashStaffByDepartment = async (req, res, next) => {
+    const department = req.params.department;
+    try {
+        const staff = await Trash.findAll({
             where: {
                 department: {
                     [Op.contains]: [department]

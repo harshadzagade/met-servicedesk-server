@@ -23,9 +23,13 @@ router.put('/resetpassword', staffController.resetPassword);
 
 router.get('/departments', staffController.getStaffDepartments);
 
+router.get('/trashdepartments', staffController.getTrashStaffDepartments);
+
 router.get('/contacts/:staffId', staffController.getAllContacts);
 
 router.get('/staffbydepartment/:department', staffController.getStaffByDepartment);
+
+router.get('/trashstaffbydepartment/:department', staffController.getTrashStaffByDepartment);
 
 router.use('/superadmin', superAdminRoutes);
 
