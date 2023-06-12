@@ -182,3 +182,40 @@ exports.getRequestDetails = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getRequestDepartments = async (req, res, next) => {
+    const allRequests = await Request.findAll();
+    let allDept = [];
+    allRequests.map((request) => {
+        const department = request.department;
+        allDept.push(department);
+    });
+    const allDepartments = allDept;
+    const uniqueDepartments = allDepartments.filter(function(item, position) {
+        return allDepartments.indexOf(item) == position;
+    })
+    const departments = uniqueDepartments;
+    res.status(200).json({ message: 'Fetched departments!', departments: departments });
+};
+
+exports.getRequestByDepartment = async (req, res, next) => {
+    const department = req.params.department;
+    try {
+        const requests = await Request.findAll({
+            where: {
+                department: department
+            }
+        });
+        if (!requests) {
+            const error = new Error('Requests not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Departments fetched successfully', requests: requests });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};

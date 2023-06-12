@@ -12,4 +12,8 @@ router.get('/ownrequests/:staffId', requestController.ownRequests);
 
 router.get('/getrequestdetails/:requestId', requestController.getRequestDetails);
 
+router.get('/requestdepartments', requestController.getRequestDepartments);
+
+router.get('/requestsbydepartment/:department', requestController.getRequestByDepartment);
+
 module.exports = router;
