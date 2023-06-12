@@ -302,7 +302,10 @@ exports.getRequestByStatus = async (req, res, next) => {
 };
 
 exports.getRequestByHodApproval = async (req, res, next) => {
-    const approval = req.params.approval;
+    let approval = req.params.approval;
+    if (approval === '0') {
+        approval = null;
+    }
     try {
         const requests = await Request.findAll({
             where: {
@@ -324,7 +327,10 @@ exports.getRequestByHodApproval = async (req, res, next) => {
 };
 
 exports.getRequestByAdminApproval = async (req, res, next) => {
-    const approval = req.params.approval;
+    let approval = req.params.approval;
+    if (approval === '0') {
+        approval = null;
+    }
     try {
         const requests = await Request.findAll({
             where: {
