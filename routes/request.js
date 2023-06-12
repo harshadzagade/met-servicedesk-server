@@ -20,4 +20,8 @@ router.get('/requestcategories', requestController.getRequestCategories);
 
 router.get('/requestsbycategory/:category', requestController.getRequestByCategory);
 
+router.get('/requestsbypriority/:priority', requestController.getRequestByPriority);
+
+router.get('/requestsbystatus/:status', requestController.getRequestByStatus);
+
 module.exports = router;

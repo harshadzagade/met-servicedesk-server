@@ -211,7 +211,7 @@ exports.getRequestByDepartment = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        res.status(200).json({ message: 'Departments fetched successfully', requests: requests });
+        res.status(200).json({ message: 'Requests fetched successfully', requests: requests });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -248,7 +248,51 @@ exports.getRequestByCategory = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        res.status(200).json({ message: 'Departments fetched successfully', requests: requests });
+        res.status(200).json({ message: 'Requests fetched successfully', requests: requests });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getRequestByPriority = async (req, res, next) => {
+    const priority = req.params.priority;
+    try {
+        const requests = await Request.findAll({
+            where: {
+                priority: priority
+            }
+        });
+        if (!requests) {
+            const error = new Error('Requests not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Requests fetched successfully', requests: requests });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getRequestByStatus = async (req, res, next) => {
+    const status = req.params.status;
+    try {
+        const requests = await Request.findAll({
+            where: {
+                status: status
+            }
+        });
+        if (!requests) {
+            const error = new Error('Requests not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Requests fetched successfully', requests: requests });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
