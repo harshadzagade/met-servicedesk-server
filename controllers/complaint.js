@@ -181,3 +181,121 @@ exports.getComplaintDetails = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getComplaintDepartments = async (req, res, next) => {
+    const allComplaints = await Complaint.findAll();
+    let allDept = [];
+    allComplaints.map((complaint) => {
+        const department = complaint.department;
+        allDept.push(department);
+    });
+    const allDepartments = allDept;
+    const uniqueDepartments = allDepartments.filter(function(item, position) {
+        return allDepartments.indexOf(item) == position;
+    })
+    const departments = uniqueDepartments;
+    res.status(200).json({ message: 'Fetched departments!', departments: departments });
+};
+
+exports.getComplaintByDepartment = async (req, res, next) => {
+    const department = req.params.department;
+    try {
+        const complaints = await Complaint.findAll({
+            where: {
+                department: department
+            }
+        });
+        if (!complaints) {
+            const error = new Error('Complaints not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Complaints fetched successfully', complaints: complaints });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getComplaintCategories = async (req, res, next) => {
+    const allComplaints = await Complaint.findAll();
+    let allCategory = [];
+    allComplaints.map((complaint) => {
+        const category = complaint.category;
+        allCategory.push(category);
+    });
+    const allCategories = allCategory;
+    const uniqueCategories = allCategories.filter(function(item, position) {
+        return allCategories.indexOf(item) == position;
+    })
+    const categories = uniqueCategories;
+    res.status(200).json({ message: 'Fetched categories', categories: categories });
+};
+
+exports.getComplaintByCategory = async (req, res, next) => {
+    const category = req.params.category;
+    try {
+        const complaints = await Complaint.findAll({
+            where: {
+                category: category
+            }
+        });
+        if (!complaints) {
+            const error = new Error('Complaints not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Complaints fetched successfully', complaints: complaints });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getComplaintByPriority = async (req, res, next) => {
+    const priority = req.params.priority;
+    try {
+        const complaints = await Complaint.findAll({
+            where: {
+                priority: priority
+            }
+        });
+        if (!complaints) {
+            const error = new Error('Complaints not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Complaints fetched successfully', complaints: complaints });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getComplaintByStatus = async (req, res, next) => {
+    const status = req.params.status;
+    try {
+        const complaints = await Complaint.findAll({
+            where: {
+                status: status
+            }
+        });
+        if (!complaints) {
+            const error = new Error('Complaints not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Complaints fetched successfully', complaints: complaints });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
