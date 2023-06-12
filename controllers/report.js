@@ -56,3 +56,99 @@ exports.getReportDetails = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getReportDepartments = async (req, res, next) => {
+    const allReports = await Report.findAll();
+    let allDept = [];
+    allReports.map((report) => {
+        const department = report.department;
+        allDept.push(department);
+    });
+    const allDepartments = allDept;
+    const uniqueDepartments = allDepartments.filter(function(item, position) {
+        return allDepartments.indexOf(item) == position;
+    })
+    const departments = uniqueDepartments;
+    res.status(200).json({ message: 'Fetched departments!', departments: departments });
+};
+
+exports.getReportByDepartment = async (req, res, next) => {
+    const department = req.params.department;
+    try {
+        const report = await Report.findAll({
+            where: {
+                department: department
+            }
+        });
+        if (!report) {
+            const error = new Error('Report not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Report fetched successfully', reports: report });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getReportCategories = async (req, res, next) => {
+    const allReports = await Report.findAll();
+    let allCategory = [];
+    allReports.map((report) => {
+        const category = report.category;
+        allCategory.push(category);
+    });
+    const allCategories = allCategory;
+    const uniqueCategories = allCategories.filter(function(item, position) {
+        return allCategories.indexOf(item) == position;
+    })
+    const categories = uniqueCategories;
+    res.status(200).json({ message: 'Fetched categories', categories: categories });
+};
+
+exports.getReportByCategory = async (req, res, next) => {
+    const category = req.params.category;
+    try {
+        const report = await Report.findAll({
+            where: {
+                category: category
+            }
+        });
+        if (!report) {
+            const error = new Error('Report not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Report fetched successfully', report: report });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getReportByPriority = async (req, res, next) => {
+    const priority = req.params.priority;
+    try {
+        const report = await Report.findAll({
+            where: {
+                priority: priority
+            }
+        });
+        if (!report) {
+            const error = new Error('Report not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Report fetched successfully', report: report });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
