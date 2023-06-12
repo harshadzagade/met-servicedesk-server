@@ -16,4 +16,8 @@ router.delete('/staffdetails/remove/:staffId', trashController.removeStaff);
 
 router.delete('/removeall', trashController.removeAllStaff);
 
+router.get('/trashdepartments', trashController.getTrashStaffDepartments);
+
+router.get('/trashstaffbydepartment/:department', trashController.getTrashStaffByDepartment);
+
 module.exports = router;
