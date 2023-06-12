@@ -300,3 +300,47 @@ exports.getRequestByStatus = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getRequestByHodApproval = async (req, res, next) => {
+    const approval = req.params.approval;
+    try {
+        const requests = await Request.findAll({
+            where: {
+                approval1: approval
+            }
+        });
+        if (!requests) {
+            const error = new Error('Requests not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Requests fetched successfully', requests: requests });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getRequestByAdminApproval = async (req, res, next) => {
+    const approval = req.params.approval;
+    try {
+        const requests = await Request.findAll({
+            where: {
+                approval2: approval
+            }
+        });
+        if (!requests) {
+            const error = new Error('Requests not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Requests fetched successfully', requests: requests });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};

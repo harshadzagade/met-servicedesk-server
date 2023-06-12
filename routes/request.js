@@ -24,4 +24,8 @@ router.get('/requestsbypriority/:priority', requestController.getRequestByPriori
 
 router.get('/requestsbystatus/:status', requestController.getRequestByStatus);
 
+router.get('/requestsbyapproval1/:approval', requestController.getRequestByHodApproval);
+
+router.get('/requestsbyapproval2/:approval', requestController.getRequestByAdminApproval);
+
 module.exports = router;
