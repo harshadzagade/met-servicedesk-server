@@ -288,6 +288,8 @@ exports.putApproval2 = async (req, res, next) => {
                 report.department = request.department;
                 report.status = request.status;
                 report.loggedTime = request.createdAt;
+                report.assignedTime = new Date();
+                report.assignDuration = new Date() - request.createdAt;
             } else {
                 report = new Report({
                     isRequest: true,
@@ -302,7 +304,9 @@ exports.putApproval2 = async (req, res, next) => {
                     description: request.description,
                     department: request.department,
                     status: request.status,
-                    loggedTime: request.createdAt
+                    loggedTime: request.createdAt,
+                    assignedTime: new Date(),
+                    assignDuration: new Date() - request.createdAt
                 });
             }
             await report.save();

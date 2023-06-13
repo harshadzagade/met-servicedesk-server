@@ -79,7 +79,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                 request.status = 'attending';
                 report = await Report.findOne({ where: { requestComplaintId: request.id } });
                 report.attendedTime = new Date();
-                report.attendDuration = report.attendedTime - report.loggedTime;
+                report.attendDuration = report.attendedTime - report.assignedTime;
                 await report.save();
                 break;
 
@@ -88,8 +88,9 @@ exports.changeRequestStatus = async (req, res, next) => {
                 request.problemDescription = problemDescription;
                 request.actionTaken = actionTaken;
                 report = await Report.findOne({ where: { requestComplaintId: request.id } });
-                report.solvedTime = new Date();
-                report.solveDuration = report.solvedTime - report.attendedTime;
+                report.status = 'closed';
+                report.lastUpdatedTime = new Date();
+                report.lastUpdateDuration = report.lastUpdatedTime - report.attendedTime;
                 report.problemDescription = problemDescription;
                 report.actionTaken = actionTaken;
                 await report.save();
@@ -126,6 +127,13 @@ exports.changeRequestStatus = async (req, res, next) => {
                     request.forwardComment = forwardComment;
                     request.problemDescription = problemDescription;
                     request.actionTaken = actionTaken;
+                    report = await Report.findOne({ where: { requestComplaintId: request.id } });
+                    report.status = 'forwarded';
+                    report.lastUpdatedTime = new Date();
+                    report.lastUpdateDuration = report.lastUpdatedTime - report.attendedTime;
+                    report.problemDescription = problemDescription;
+                    report.actionTaken = actionTaken;
+                    await report.save();
                 } else {
                     const error = new Error('Forwarded staff not found');
                     error.statusCode = 401;
@@ -177,12 +185,49 @@ exports.selfAssignComplaint = async (req, res, next) => {
         complaint.status = 'assigned';
         complaint.assign = staffId;
         complaint.assignedName = staff.firstname + ' ' + staff.lastname;
-        const report = await Report.findOne({
+        const reportCheck = await Report.findOne({
             where: {
-                requestComplaintId: complaint.id
+                requestComplaintId: complaint.id,
+                staffId: staffId
             }
         });
-        report.assignedName = staff.firstname + ' ' + staff.lastname;
+        let report;
+        if (reportCheck) {
+            report = await Report.findByPk(reportCheck.id);
+            report.isRequest = true;
+            report.isComplaint = false;
+            report.requestComplaintId = complaint.id;
+            report.staffId = staffId;
+            report.staffName = complaint.name;
+            report.assignedName = staff.firstname + ' ' + staff.lastname;
+            report.category = complaint.category;
+            report.priority = complaint.priority;
+            report.subject = complaint.subject;
+            report.description = complaint.description;
+            report.department = complaint.department;
+            report.status = complaint.status;
+            report.loggedTime = complaint.createdAt;
+            report.assignedTime = new Date();
+            report.assignDuration = new Date() - complaint.createdAt;
+        } else {
+            report = new Report({
+                isRequest: true,
+                isComplaint: false,
+                requestComplaintId: complaint.id,
+                staffId: staffId,
+                staffName: complaint.name,
+                assignedName: staff.firstname + ' ' + staff.lastname,
+                category: complaint.category,
+                priority: complaint.priority,
+                subject: complaint.subject,
+                description: complaint.description,
+                department: complaint.department,
+                status: complaint.status,
+                loggedTime: complaint.createdAt,
+                assignedTime: new Date(),
+                assignDuration: new Date() - complaint.createdAt
+            });
+        }
         await report.save();
         const result = await complaint.save();
         res.status(200).json({ message: 'Task self assigned successfully!', complaint: result })
@@ -229,7 +274,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                 complaint.status = 'attending';
                 report = await Report.findOne({ where: { requestComplaintId: complaint.id } });
                 report.attendedTime = new Date();
-                report.attendDuration = report.attendedTime - report.loggedTime;
+                report.attendDuration = report.attendedTime - report.assignedTime;
                 await report.save();
                 break;
 
@@ -238,8 +283,9 @@ exports.changeComplaintStatus = async (req, res, next) => {
                 complaint.problemDescription = problemDescription;
                 complaint.actionTaken = actionTaken;
                 report = await Report.findOne({ where: { requestComplaintId: complaint.id } });
-                report.solvedTime = new Date();
-                report.solveDuration = report.solvedTime - report.attendedTime;
+                report.status = 'closed';
+                report.lastUpdatedTime = new Date();
+                report.lastUpdateDuration = report.lastUpdatedTime - report.attendedTime;
                 report.problemDescription = problemDescription;
                 report.actionTaken = actionTaken;
                 await report.save();
@@ -276,6 +322,13 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     complaint.forwardComment = forwardComment;
                     complaint.problemDescription = problemDescription;
                     complaint.actionTaken = actionTaken;
+                    report = await Report.findOne({ where: { requestComplaintId: complaint.id } });
+                    report.status = 'forwarded';
+                    report.lastUpdatedTime = new Date();
+                    report.lastUpdateDuration = report.lastUpdatedTime - report.attendedTime;
+                    report.problemDescription = problemDescription;
+                    report.actionTaken = actionTaken;
+                    await report.save();
                 } else {
                     const error = new Error('Forwarded staff not found');
                     error.statusCode = 401;
