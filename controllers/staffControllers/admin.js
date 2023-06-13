@@ -130,7 +130,7 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
         }
         if (staff.role === 'admin') {
             const department = currentDepartment;
-            const technicians = await Staff.findAll({ where: { department: [department], role: 'technician'  } });
+            const technicians = await Staff.findAll({ where: { department: [department], role: 'technician' } });
             res.status(200).json({ message: 'Fetched all technicians as per specific department successfully.', technicians: technicians });
         } else {
             const error = new Error('Invalid admin id');
@@ -266,12 +266,45 @@ exports.putApproval2 = async (req, res, next) => {
             request.assignedName = staff.firstname + ' ' + staff.lastname;
             request.status = 'assigned';
             request.approval2Comment = approvalComment;
-            const report = await Report.findOne({
+            const reportCheck = await Report.findOne({
                 where: {
-                    requestComplaintId: request.id
+                    requestComplaintId: request.id,
+                    staffId: staffId
                 }
             });
-            report.assignedName = staff.firstname + ' ' + staff.lastname;
+            let report;
+            if (reportCheck) {
+                report = await Report.findByPk(reportCheck.id);
+                report.isRequest = true;
+                report.isComplaint = false;
+                report.requestComplaintId = request.id;
+                report.staffId = staffId;
+                report.staffName = request.name;
+                report.assignedName = staff.firstname + ' ' + staff.lastname;
+                report.category = request.category;
+                report.priority = request.priority;
+                report.subject = request.subject;
+                report.description = request.description;
+                report.department = request.department;
+                report.status = request.status;
+                report.loggedTime = request.createdAt;
+            } else {
+                report = new Report({
+                    isRequest: true,
+                    isComplaint: false,
+                    requestComplaintId: request.id,
+                    staffId: staffId,
+                    staffName: request.name,
+                    assignedName: staff.firstname + ' ' + staff.lastname,
+                    category: request.category,
+                    priority: request.priority,
+                    subject: request.subject,
+                    description: request.description,
+                    department: request.department,
+                    status: request.status,
+                    loggedTime: request.createdAt
+                });
+            }
             await report.save();
             const result = await request.save();
             res.status(200).json({ message: 'Staff details updated', request: result });

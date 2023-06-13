@@ -30,8 +30,8 @@ const Report = sequelize.define('report', {
         allowNull: false
     },
     assignedName: {
-      type: Sequelize.STRING,
-      allowNull: true
+        type: Sequelize.STRING,
+        allowNull: true
     },
     category: {
         type: Sequelize.STRING,
@@ -53,9 +53,21 @@ const Report = sequelize.define('report', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    status: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     loggedTime: {
         type: Sequelize.DATE,
         allowNull: false
+    },
+    assignedTime: {
+        type: Sequelize.DATE,
+        allowNull: true
+    },
+    assignDuration: {
+        type: Sequelize.BIGINT,
+        allowNull: true
     },
     attendedTime: {
         type: Sequelize.DATE,
@@ -65,11 +77,11 @@ const Report = sequelize.define('report', {
         type: Sequelize.BIGINT,
         allowNull: true
     },
-    solvedTime: {
+    lastUpdatedTime: {
         type: Sequelize.DATE,
         allowNull: true
     },
-    solveDuration: {
+    lastUpdateDuration: {
         type: Sequelize.BIGINT,
         allowNull: true
     },
