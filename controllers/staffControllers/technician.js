@@ -194,8 +194,8 @@ exports.selfAssignComplaint = async (req, res, next) => {
         let report;
         if (reportCheck) {
             report = await Report.findByPk(reportCheck.id);
-            report.isRequest = true;
-            report.isComplaint = false;
+            report.isRequest = false;
+            report.isComplaint = true;
             report.requestComplaintId = complaint.id;
             report.staffId = staffId;
             report.staffName = complaint.name;
@@ -211,8 +211,8 @@ exports.selfAssignComplaint = async (req, res, next) => {
             report.assignDuration = new Date() - complaint.createdAt;
         } else {
             report = new Report({
-                isRequest: true,
-                isComplaint: false,
+                isRequest: false,
+                isComplaint: true,
                 requestComplaintId: complaint.id,
                 staffId: staffId,
                 staffName: complaint.name,
