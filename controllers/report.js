@@ -57,43 +57,6 @@ exports.getReportDetails = async (req, res, next) => {
     }
 };
 
-exports.getReportDepartments = async (req, res, next) => {
-    const allReports = await Report.findAll();
-    let allDept = [];
-    allReports.map((report) => {
-        const department = report.department;
-        allDept.push(department);
-    });
-    const allDepartments = allDept;
-    const uniqueDepartments = allDepartments.filter(function(item, position) {
-        return allDepartments.indexOf(item) == position;
-    })
-    const departments = uniqueDepartments;
-    res.status(200).json({ message: 'Fetched departments!', departments: departments });
-};
-
-exports.getReportByDepartment = async (req, res, next) => {
-    const department = req.params.department;
-    try {
-        const report = await Report.findAll({
-            where: {
-                department: department
-            }
-        });
-        if (!report) {
-            const error = new Error('Report not found');
-            error.statusCode = 401;
-            throw error;
-        }
-        res.status(200).json({ message: 'Report fetched successfully', reports: report });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-};
-
 exports.getReportCategories = async (req, res, next) => {
     const allReports = await Report.findAll();
     let allCategory = [];

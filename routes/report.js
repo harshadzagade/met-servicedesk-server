@@ -12,10 +12,6 @@ router.get('/complaint/:staffId', reportController.getComplaintReport);
 
 router.get('/reportdetails/:reportId', reportController.getReportDetails);
 
-router.get('/reportdepartments/departments', reportController.getReportDepartments);
-
-router.get('/reportbydepartment/:department', reportController.getReportByDepartment);
-
 router.get('/reportcategories/categories', reportController.getReportCategories);
 
 router.get('/reportbycategory/:category', reportController.getReportByCategory);
