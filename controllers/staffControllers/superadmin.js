@@ -228,6 +228,28 @@ exports.deleteStaff = async (req, res, next) => {
     }
 };
 
+exports.getStaffByRole = async (req, res, next) => {
+    const role = req.params.role;
+    try {
+        const staff = await Staff.findAll({
+            where: {
+                role: role
+            }
+        });
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Staff fetched successfully', staff: staff });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 exports.deleteMultipleStaff = async (req, res, next) => {
     const data = req.body;
     try {

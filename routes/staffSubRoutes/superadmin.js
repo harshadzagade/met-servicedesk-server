@@ -18,4 +18,6 @@ router.delete('/staffdetails/:staffId', superAdminController.deleteStaff);
 
 router.delete('/deletemultiple', superAdminController.deleteMultipleStaff);
 
+router.get('/staffbyrole/:role', superAdminController.getStaffByRole);
+
 module.exports = router;
