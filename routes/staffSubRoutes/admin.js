@@ -16,6 +16,8 @@ router.get('/admindepartments/:staffId', adminController.getAdminDepartments);
 
 router.get('/admindepartmenttechnicians/:staffId/:currentDepartment', adminController.getDepartmentTechnicians);
 
+router.get('/staffbyrole/:department/:role', adminController.getDepartmentStaffByRole);
+
 router.get('/requests/incoming/:department', adminController.getIncomingRequests);
 
 router.get('/requests/outgoing/:staffId/:department', adminController.getOutgoingRequests);
