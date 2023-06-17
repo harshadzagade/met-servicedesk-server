@@ -2,6 +2,15 @@ const Request = require('../models/request');
 const Staff = require('../models/staff');
 const Op = require('sequelize').Op;
 const upload = require('../middleware/uploadfiles');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'siddharthbhat777@gmail.com',
+        pass: 'itrflpdafyeavfzd'
+    }
+});
 
 exports.sendRequest = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -13,6 +22,8 @@ exports.sendRequest = async (req, res, next) => {
     const priority = req.body.priority;
     const subject = req.body.subject;
     const description = req.body.description;
+    let hodEmail;
+    let adminEmail;
     let files = [];
     const isRepeated = req.body.isRepeated || false;
     try {
@@ -56,6 +67,45 @@ exports.sendRequest = async (req, res, next) => {
             isRepeated: isRepeated
         });
         const result = await request.save();
+        const requester = await Staff.findByPk(requestStaffId);
+        if (!requester) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (requester.role !== 'admin' && requester.department.length > 1) {
+            const error = new Error('Non-admin staff cannot have multiple department');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (requester.role === 'admin') {
+            hodEmail = requester.email;
+        } else {
+            const staff = await Staff.findOne({
+                where: {
+                    department: {
+                        [Op.contains]: requester.department
+                    },
+                    role: 'admin'
+                }
+            });
+            hodEmail = staff.email;
+        }
+        const admin = await Staff.findOne({
+            where: {
+                role: 'admin',
+                department: {
+                    [Op.contains]: [department]
+                }
+            }
+        });
+        if (!admin) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        adminEmail = admin.email;
+        await sendMail(hodEmail, adminEmail, category, result.id, subject, description, next);
         res.status(201).json({ message: 'Staff created!', request: result });
     } catch (error) {
         if (!error.statusCode) {
@@ -82,10 +132,10 @@ exports.getRequestsFromDepartment = async (id, department, next) => {
         const staffs = await Staff.findAll({
             where: {
                 department: {
-                    [Op.contains] : [department]
+                    [Op.contains]: [department]
                 },
-                id : {
-                    [Op.ne] : id
+                id: {
+                    [Op.ne]: id
                 }
             }
         });
@@ -176,7 +226,7 @@ exports.getRequestDepartments = async (req, res, next) => {
         allDept.push(department);
     });
     const allDepartments = allDept;
-    const uniqueDepartments = allDepartments.filter(function(item, position) {
+    const uniqueDepartments = allDepartments.filter(function (item, position) {
         return allDepartments.indexOf(item) == position;
     })
     const departments = uniqueDepartments;
@@ -213,7 +263,7 @@ exports.getRequestCategories = async (req, res, next) => {
         allCategory.push(category);
     });
     const allCategories = allCategory;
-    const uniqueCategories = allCategories.filter(function(item, position) {
+    const uniqueCategories = allCategories.filter(function (item, position) {
         return allCategories.indexOf(item) == position;
     })
     const categories = uniqueCategories;
@@ -328,6 +378,47 @@ exports.getRequestByAdminApproval = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Requests fetched successfully', requests: requests });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+const sendMail = async (hodEmail, adminEmail, category, requestId, subject, description, next) => {
+    try {
+        if (hodEmail === adminEmail) {
+            await transporter.sendMail({
+                to: hodEmail,
+                from: 'siddharthbhat777@gmail.com',
+                subject: `Requested ${category} #${requestId}`,
+                html:
+                    `
+            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
+                <h2>MET Service Desk</h2>
+                <h4>Request received ✔</h4>
+                <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${subject}</h1>
+                <p style="margin-bottom: 30px;">${description}</p>
+            </div>
+            `
+            });
+        } else {
+            transporter.sendMail({
+                to: [hodEmail, adminEmail],
+                from: 'siddharthbhat777@gmail.com',
+                subject: `Requested ${category} #${requestId}`,
+                html:
+                    `
+            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
+                <h2>MET Service Desk</h2>
+                <h4>Request received ✔</h4>
+                <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${subject}</h1>
+                <p style="margin-bottom: 30px;">${description}</p>
+            </div>
+            `
+            });
+        }
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
