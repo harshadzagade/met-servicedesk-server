@@ -3,6 +3,15 @@ const Request = require("../../models/request");
 const Complaint = require("../../models/complaint");
 const Report = require("../../models/report");
 const Op = require('sequelize').Op;
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'siddharthbhat777@gmail.com',
+        pass: 'itrflpdafyeavfzd'
+    }
+});
 
 exports.getTechnician = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -94,6 +103,36 @@ exports.changeRequestStatus = async (req, res, next) => {
                 report.problemDescription = problemDescription;
                 report.actionTaken = actionTaken;
                 await report.save();
+                let hodEmail;
+                let requesterId = request.staffId;
+                if (request.behalf) {
+                    requesterId = request.behalfId;
+                }
+                const requester = await Staff.findByPk(requesterId);
+                if (!requester) {
+                    const error = new Error('Staff not found');
+                    error.statusCode = 401;
+                    throw error;
+                }
+                if (requester.role === 'admin') {
+                    hodEmail = requester.email;
+                } else {
+                    const staff = await Staff.findOne({
+                        where: {
+                            department: {
+                                [Op.contains]: requester.department
+                            },
+                            role: 'admin'
+                        }
+                    });
+                    if (!staff) {
+                        const error = new Error('Staff not found');
+                        error.statusCode = 401;
+                        throw error;
+                    }
+                    hodEmail = staff.email;
+                }
+                await sendMail(requester.email, hodEmail, request.category, request.id, request.subject, request.description, next);
                 break;
 
             case 'forwarded':
@@ -370,6 +409,31 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+const sendMail = async (requesterEmail, hodEmail, category, requestId, subject, description, next) => {
+    try {
+        await transporter.sendMail({
+            to: requesterEmail,
+            cc: hodEmail,
+            from: 'siddharthbhat777@gmail.com',
+            subject: `Requested ${category} #${requestId}`,
+            html:
+                `
+            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
+                <h2>MET Service Desk</h2>
+                <h4>Request received ✔</h4>
+                <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${subject}</h1>
+                <p style="margin-bottom: 30px;">${description}</p>
+            </div>
+            `
+        });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
