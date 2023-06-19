@@ -328,6 +328,36 @@ exports.changeComplaintStatus = async (req, res, next) => {
                 report.problemDescription = problemDescription;
                 report.actionTaken = actionTaken;
                 await report.save();
+                let hodEmail;
+                let complainanId = complaint.staffId;
+                if (complaint.behalf) {
+                    complainanId = complaint.behalfId;
+                }
+                const complainan = await Staff.findByPk(complainanId);
+                if (!complainan) {
+                    const error = new Error('Staff not found');
+                    error.statusCode = 401;
+                    throw error;
+                }
+                if (complainan.role === 'admin') {
+                    hodEmail = complainan.email;
+                } else {
+                    const staff = await Staff.findOne({
+                        where: {
+                            department: {
+                                [Op.contains]: complainan.department
+                            },
+                            role: 'admin'
+                        }
+                    });
+                    if (!staff) {
+                        const error = new Error('Staff not found');
+                        error.statusCode = 401;
+                        throw error;
+                    }
+                    hodEmail = staff.email;
+                }
+                await sendMail(complainan.email, hodEmail, complaint.category, complaint.id, complaint.subject, complaint.description, next);
                 break;
 
             case 'forwarded':
@@ -417,18 +447,18 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
     }
 };
 
-const sendMail = async (requesterEmail, hodEmail, category, requestId, subject, description, next) => {
+const sendMail = async (complainanEmail, hodEmail, category, complaintId, subject, description, next) => {
     try {
         await transporter.sendMail({
-            to: requesterEmail,
+            to: complainanEmail,
             cc: hodEmail,
             from: 'siddharthbhat777@gmail.com',
-            subject: `Requested ${category} #${requestId}`,
+            subject: `Complaint regarding ${category} #${complaintId}`,
             html:
                 `
             <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
                 <h2>MET Service Desk</h2>
-                <h4>Request received ✔</h4>
+                <h4>Complaint received ✔</h4>
                 <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${subject}</h1>
                 <p style="margin-bottom: 30px;">${description}</p>
             </div>

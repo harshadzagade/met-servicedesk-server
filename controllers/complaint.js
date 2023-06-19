@@ -2,6 +2,15 @@ const Complaint = require('../models/complaint');
 const Staff = require('../models/staff');
 const Op = require('sequelize').Op;
 const upload = require('../middleware/uploadfiles');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'siddharthbhat777@gmail.com',
+        pass: 'itrflpdafyeavfzd'
+    }
+});
 
 exports.sendComplaint = async (req, res, next) => {
     const staffId = req.body.staffId;
@@ -49,6 +58,20 @@ exports.sendComplaint = async (req, res, next) => {
             isRepeated: isRepeated
         });
         const result = await complaint.save();
+        const admin = await Staff.findOne({
+            where: {
+                role: 'admin',
+                department: {
+                    [Op.contains]: [department]
+                }
+            }
+        });
+        if (!admin) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        await sendMail(admin.email, category, result.id, subject, description, next);
         res.status(201).json({ message: 'Staff created!', complaint: result });
     } catch (error) {
         if (!error.statusCode) {
@@ -75,10 +98,10 @@ exports.getComplaintsFromDepartment = async (id, department, next) => {
         const staffs = await Staff.findAll({
             where: {
                 department: {
-                    [Op.contains] : [department]
+                    [Op.contains]: [department]
                 },
-                id : {
-                    [Op.ne] : id
+                id: {
+                    [Op.ne]: id
                 }
             }
         });
@@ -175,7 +198,7 @@ exports.getComplaintDepartments = async (req, res, next) => {
         allDept.push(department);
     });
     const allDepartments = allDept;
-    const uniqueDepartments = allDepartments.filter(function(item, position) {
+    const uniqueDepartments = allDepartments.filter(function (item, position) {
         return allDepartments.indexOf(item) == position;
     })
     const departments = uniqueDepartments;
@@ -212,7 +235,7 @@ exports.getComplaintCategories = async (req, res, next) => {
         allCategory.push(category);
     });
     const allCategories = allCategory;
-    const uniqueCategories = allCategories.filter(function(item, position) {
+    const uniqueCategories = allCategories.filter(function (item, position) {
         return allCategories.indexOf(item) == position;
     })
     const categories = uniqueCategories;
@@ -277,6 +300,30 @@ exports.getComplaintByStatus = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Complaints fetched successfully', complaints: complaints });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+const sendMail = async (adminEmail, category, requestId, subject, description, next) => {
+    try {
+        await transporter.sendMail({
+            to: adminEmail,
+            from: 'siddharthbhat777@gmail.com',
+            subject: `Complaint regarding ${category} #${requestId}`,
+            html:
+                `
+            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
+                <h2>MET Service Desk</h2>
+                <h4>Complaint received ✔</h4>
+                <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${subject}</h1>
+                <p style="margin-bottom: 30px;">${description}</p>
+            </div>
+            `
+        });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
