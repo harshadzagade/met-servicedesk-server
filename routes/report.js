@@ -18,4 +18,6 @@ router.get('/reportbycategory/:category', reportController.getReportByCategory);
 
 router.get('/reportbypriority/:priority', reportController.getReportByPriority);
 
+router.get('/reportbystaff/:staffId', reportController.getReportByStaff);
+
 module.exports = router;

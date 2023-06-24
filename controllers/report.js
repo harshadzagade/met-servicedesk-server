@@ -1,4 +1,5 @@
 const Report = require("../models/report");
+const Staff = require("../models/staff");
 
 exports.getFullReport = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -100,6 +101,28 @@ exports.getReportByPriority = async (req, res, next) => {
         const report = await Report.findAll({
             where: {
                 priority: priority
+            }
+        });
+        if (!report) {
+            const error = new Error('Report not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Report fetched successfully', report: report });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getReportByStaff = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const report = await Report.findOne({
+            where: {
+                staffId: staffId
             }
         });
         if (!report) {
