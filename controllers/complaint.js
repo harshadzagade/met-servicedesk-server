@@ -1,7 +1,6 @@
 const Complaint = require('../models/complaint');
 const Staff = require('../models/staff');
 const Op = require('sequelize').Op;
-const upload = require('../middleware/uploadfiles');
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
@@ -14,7 +13,12 @@ const transporter = nodemailer.createTransport({
 
 exports.sendComplaint = async (req, res, next) => {
     const staffId = req.body.staffId;
-    const behalf = req.body.behalf || false;
+    let behalf = req.body.behalf || false;
+    if (behalf === 'true') {
+        behalf = true;
+    } else if (behalf === 'false') {
+        behalf = false;
+    }
     let behalfId = null;
     let requestStaffId = staffId;
     const department = req.body.department;
@@ -25,7 +29,6 @@ exports.sendComplaint = async (req, res, next) => {
     let files = [];
     const isRepeated = req.body.isRepeated || false;
     try {
-        await upload(req, res);
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {
                 const file = req.files[i].path.replace("\\", "/");

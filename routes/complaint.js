@@ -4,7 +4,9 @@ const router = express.Router();
 
 const complaintController = require('../controllers/complaint');
 
-router.post('/', complaintController.sendComplaint);
+const upload = require('../middleware/uploadfiles');
+
+router.post('/', upload, complaintController.sendComplaint);
 
 router.get('/allcomplaints', complaintController.getAllComplaints);
 

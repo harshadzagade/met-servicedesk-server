@@ -4,7 +4,9 @@ const router = express.Router();
 
 const requestController = require('../controllers/request');
 
-router.post('/', requestController.sendRequest);
+const upload = require('../middleware/uploadfiles');
+
+router.post('/', upload, requestController.sendRequest);
 
 router.get('/allrequests', requestController.getAllRequests);
 
