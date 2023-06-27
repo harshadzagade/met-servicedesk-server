@@ -27,7 +27,12 @@ exports.sendComplaint = async (req, res, next) => {
     const subject = req.body.subject;
     const description = req.body.description;
     let files = [];
-    const isRepeated = req.body.isRepeated || false;
+    let isRepeated = req.body.isRepeated || false;
+    if (isRepeated === 'true') {
+        isRepeated = true;
+    } else if (isRepeated === 'false') {
+        isRepeated = false;
+    }
     try {
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {

@@ -29,7 +29,12 @@ exports.sendRequest = async (req, res, next) => {
     let hodEmail;
     let adminEmail;
     let files = [];
-    const isRepeated = req.body.isRepeated || false;
+    let isRepeated = req.body.isRepeated || false;
+    if (isRepeated === 'true') {
+        isRepeated = true;
+    } else if (isRepeated === 'false') {
+        isRepeated = false;
+    }
     try {
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {
@@ -48,12 +53,6 @@ exports.sendRequest = async (req, res, next) => {
             behalfId = staff.id;
             requestStaffId = behalfId;
         }
-        const staff = await Staff.findByPk(requestStaffId);
-        if (!staff) {
-            const error = new Error('Staff not found');
-            error.statusCode = 401;
-            throw error;
-        }
         const requester = await Staff.findByPk(requestStaffId);
         if (!requester) {
             const error = new Error('Staff not found');
@@ -66,7 +65,7 @@ exports.sendRequest = async (req, res, next) => {
                 staffId: staffId,
                 behalf: behalf,
                 behalfId: behalfId,
-                name: staff.lastname === '' ? staff.firstname : staff.firstname + ' ' + staff.lastname,
+                name: requester.lastname === '' ? requester.firstname : requester.firstname + ' ' + requester.lastname,
                 status: 'pending',
                 assign: null,
                 department: department,
@@ -83,7 +82,7 @@ exports.sendRequest = async (req, res, next) => {
                 staffId: staffId,
                 behalf: behalf,
                 behalfId: behalfId,
-                name: staff.lastname === '' ? staff.firstname : staff.firstname + ' ' + staff.lastname,
+                name: requester.lastname === '' ? requester.firstname : requester.firstname + ' ' + requester.lastname,
                 status: 'pending',
                 assign: null,
                 department: department,
