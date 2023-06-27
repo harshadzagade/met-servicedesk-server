@@ -54,28 +54,48 @@ exports.sendRequest = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        const request = new Request({
-            staffId: staffId,
-            behalf: behalf,
-            behalfId: behalfId,
-            name: staff.lastname === '' ? staff.firstname : staff.firstname + ' ' + staff.lastname,
-            status: 'pending',
-            assign: null,
-            department: department,
-            category: category,
-            priority: priority,
-            subject: subject,
-            description: description,
-            attachment: files,
-            isRepeated: isRepeated
-        });
-        const result = await request.save();
         const requester = await Staff.findByPk(requestStaffId);
         if (!requester) {
             const error = new Error('Staff not found');
             error.statusCode = 401;
             throw error;
         }
+        let request;
+        if (requester.department.includes(department)) {
+            request = new Request({
+                staffId: staffId,
+                behalf: behalf,
+                behalfId: behalfId,
+                name: staff.lastname === '' ? staff.firstname : staff.firstname + ' ' + staff.lastname,
+                status: 'pending',
+                assign: null,
+                department: department,
+                category: category,
+                priority: priority,
+                subject: subject,
+                description: description,
+                attachment: files,
+                approval1: 1,
+                isRepeated: isRepeated
+            });
+        } else {
+            request = new Request({
+                staffId: staffId,
+                behalf: behalf,
+                behalfId: behalfId,
+                name: staff.lastname === '' ? staff.firstname : staff.firstname + ' ' + staff.lastname,
+                status: 'pending',
+                assign: null,
+                department: department,
+                category: category,
+                priority: priority,
+                subject: subject,
+                description: description,
+                attachment: files,
+                isRepeated: isRepeated
+            });
+        }
+        const result = await request.save();
         if (requester.role !== 'admin' && requester.department.length > 1) {
             const error = new Error('Non-admin staff cannot have multiple department');
             error.statusCode = 401;
