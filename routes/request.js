@@ -30,4 +30,6 @@ router.get('/requestsbyapproval1/:approval', requestController.getRequestByHodAp
 
 router.get('/requestsbyapproval2/:approval', requestController.getRequestByAdminApproval);
 
+router.get('/downloadfile/:requestId', requestController.downloadFiles);
+
 module.exports = router;

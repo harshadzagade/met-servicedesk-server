@@ -2,6 +2,8 @@ const Request = require('../models/request');
 const Staff = require('../models/staff');
 const Op = require('sequelize').Op;
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const archiver = require('archiver');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -75,6 +77,7 @@ exports.sendRequest = async (req, res, next) => {
                 description: description,
                 attachment: files,
                 approval1: 1,
+                approval1Comment: 'Auto approved request',
                 isRepeated: isRepeated
             });
         } else {
@@ -400,6 +403,32 @@ exports.getRequestByAdminApproval = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Requests fetched successfully', requests: requests });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.downloadFiles = async (req, res, next) => {
+    const requestId = req.params.requestId;
+    try {
+        const request = await Request.findByPk(requestId);
+        if (!request) {
+            const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const zipStream = archiver('zip', {
+            zlib: { level: 9 }
+        });
+        zipStream.pipe(res);
+        request.attachment.forEach((filePath) => {
+            const fileStream = fs.createReadStream(filePath);
+            zipStream.append(fileStream, { name: filePath });
+        });
+        zipStream.finalize();
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
