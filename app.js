@@ -8,6 +8,7 @@ const sequelize = require('./utils/database');
 const Staff = require('./models/staff');
 
 const loginRoute = require('./routes/login');
+const departmentRoutes = require('./routes/department');
 const staffRoutes = require('./routes/staff');
 const trashRoutes = require('./routes/trash');
 const requestRoutes = require('./routes/request');
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 app.use('/api/request', requestRoutes);
 app.use('/api/complaint', complaintRoutes);
 app.use('/api', loginRoute);
+app.use('/api/department', departmentRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/trash', trashRoutes);
 app.use('/api/report', reportRoutes);
