@@ -28,4 +28,6 @@ router.get('/complaintsbypriority/:priority', complaintController.getComplaintBy
 
 router.get('/complaintsbystatus/:status', complaintController.getComplaintByStatus);
 
+router.get('/downloadfile/:complaintId', complaintController.downloadFiles);
+
 module.exports = router;

@@ -316,6 +316,32 @@ exports.getComplaintByStatus = async (req, res, next) => {
     }
 };
 
+exports.downloadFiles = async (req, res, next) => {
+    const complaintId = req.params.complaintId;
+    try {
+        const complaint = await Complaint.findByPk(complaintId);
+        if (!complaint) {
+            const error = new Error('Complaint not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const zipStream = archiver('zip', {
+            zlib: { level: 9 }
+        });
+        zipStream.pipe(res);
+        complaint.attachment.forEach((filePath) => {
+            const fileStream = fs.createReadStream(filePath);
+            zipStream.append(fileStream, { name: filePath });
+        });
+        zipStream.finalize();
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 const sendMail = async (adminEmail, category, requestId, subject, description, next) => {
     try {
         await transporter.sendMail({
