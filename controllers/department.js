@@ -99,3 +99,23 @@ exports.getAllCategories = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.deleteDepartment = async (req, res, next) => {
+    const departmentId = req.params.departmentId;
+    try {
+        const department = await Department.findByPk(departmentId);
+        if (!department) {
+            const error = new Error('Department not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        await department.destroy();
+        await department.save();
+        res.status(200).json({ message: 'Department deleted successfully.', department: department });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};

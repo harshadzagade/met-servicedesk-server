@@ -119,7 +119,7 @@ exports.removeStaff = async (req, res, next) => {
         }
         await trashStaff.destroy();
         await trashStaff.save();
-        res.status(200).json({ message: 'Staff restrored successfully.', staff: trashStaff });
+        res.status(200).json({ message: 'Staff deleted successfully.', staff: trashStaff });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;

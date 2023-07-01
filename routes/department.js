@@ -14,4 +14,6 @@ router.get('/departments', departmentController.getAllDepartments);
 
 router.get('/categories/:departmentId', departmentController.getAllCategories);
 
+router.delete('/deletedepartment/:departmentId', departmentController.deleteDepartment);
+
 module.exports = router;
