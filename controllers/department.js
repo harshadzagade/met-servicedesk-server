@@ -100,6 +100,26 @@ exports.getAllCategories = async (req, res, next) => {
     }
 };
 
+exports.getAllCategoriesByDepartment = async (req, res, next) => {
+    const departmentName = req.params.departmentName;
+    try {
+        const department = await Department.findOne({
+            where: { department: departmentName }
+        });
+        if (!department) {
+            const error = new Error('Department not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Categories fetched successfully', categories: department.category })
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 exports.deleteDepartment = async (req, res, next) => {
     const departmentId = req.params.departmentId;
     try {
