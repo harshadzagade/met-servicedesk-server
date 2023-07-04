@@ -27,6 +27,8 @@ router.get('/contacts/:staffId', staffController.getAllContacts);
 
 router.get('/staffbydepartment/:department', staffController.getStaffByDepartment);
 
+router.get('/checkstaffexistence/:staffId', staffController.getStaffExistance);
+
 router.use('/superadmin', superAdminRoutes);
 
 router.use('/admin', adminRoutes);

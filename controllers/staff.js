@@ -6,7 +6,6 @@ const Op = require('sequelize').Op;
 const otpGenerator = require('otp-generator');
 const OneTimePassword = require('../models/onetimepassword');
 const { getStaffDetailsCommon, getDepartments } = require('../utils/functions');
-const Trash = require('../models/trash');
 
 const generateOTP = () => {
     const OTP = otpGenerator.generate(6, { upperCaseAlphabets: true, specialChars: false });
@@ -274,6 +273,25 @@ exports.getStaffByDepartment = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Departments fetched successfully', staff: staff });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getStaffExistance = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        } else {
+            res.status(200).json({ message: 'Staff exists' });
+        }
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
