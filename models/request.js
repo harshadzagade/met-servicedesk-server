@@ -8,6 +8,10 @@ const Request = sequelize.define('request', {
     allowNull: false,
     primaryKey: true
   },
+  ticketId: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
   staffId: {
     type: Sequelize.INTEGER,
     allowNull: false

@@ -97,7 +97,11 @@ exports.sendRequest = async (req, res, next) => {
                 isRepeated: isRepeated
             });
         }
-        const result = await request.save();
+        const requestRes = await request.save();
+        const setId = await Request.findByPk(requestRes.id);
+        const currentDate = new Date();
+        setId.ticketId = '#' + currentDate.getFullYear() + setId.id;
+        const result = await setId.save();
         if (requester.role !== 'admin' && requester.department.length > 1) {
             const error = new Error('Non-admin staff cannot have multiple department');
             error.statusCode = 401;

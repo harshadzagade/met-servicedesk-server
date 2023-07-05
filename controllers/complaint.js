@@ -72,7 +72,11 @@ exports.sendComplaint = async (req, res, next) => {
             attachment: files,
             isRepeated: isRepeated
         });
-        const result = await complaint.save();
+        const complaintRes = await complaint.save();
+        const setId = await Complaint.findByPk(complaintRes.id);
+        const currentDate = new Date();
+        setId.ticketId = '#' + currentDate.getFullYear() + setId.id;
+        const result = await setId.save();
         const admin = await Staff.findOne({
             where: {
                 role: 'admin',
