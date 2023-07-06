@@ -8,13 +8,21 @@ const Department = sequelize.define('department', {
     allowNull: false,
     primaryKey: true
   },
-  department: {
+  institute: {
     type: Sequelize.STRING,
     allowNull: false
   },
+  instituteType: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  department: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
   category: {
     type: Sequelize.ARRAY(Sequelize.STRING),
-    allowNull: false
+    allowNull: true
   }
 });
 

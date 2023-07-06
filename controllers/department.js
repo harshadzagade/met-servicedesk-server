@@ -18,6 +18,8 @@ exports.getAllDepartmentData = async (req, res, next) => {
 };
 
 exports.createDepartment = async (req, res, next) => {
+    const instituteName = req.body.institute;
+    const instituteType = req.body.type;
     const departmentName = req.body.department;
     const categories = req.body.category;
     try {
@@ -27,10 +29,36 @@ exports.createDepartment = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        const department = new Department({
-            department: departmentName,
-            category: categories
-        });
+        let department;
+        switch (instituteType) {
+            case 'service':
+                department = new Department({
+                    institute: instituteName,
+                    instituteType: instituteType,
+                    department: departmentName,
+                    category: categories
+                });
+                break;
+
+            case 'teaching':
+                department = new Department({
+                    institute: instituteName,
+                    instituteType: instituteType
+                });
+                break;
+
+            case 'non-teaching':
+                department = new Department({
+                    institute: instituteName,
+                    instituteType: instituteType
+                });
+                break;
+
+            default:
+                const error = new Error('Invalid institute type');
+                error.statusCode = 401;
+                throw error;
+        }
         const result = await department.save();
         res.status(201).json({ message: 'Department created successfully', department: result })
     } catch (error) {
@@ -51,9 +79,30 @@ exports.editCategories = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        department.category = categories;
-        const result = await department.save();
-        res.status(200).json({ message: 'Categories updated successfully', department: result })
+        switch (department.instituteType) {
+            case 'service':
+                department.category = categories;
+                const result = await department.save();
+                res.status(200).json({ message: 'Categories updated successfully', department: result });
+                break;
+
+            case 'teaching':
+                const error1 = new Error('Institute does not have any categories');
+                error1.statusCode = 401;
+                throw error1;
+                break;
+
+            case 'non-teaching':
+                const error2 = new Error('Institute does not have any categories');
+                error2.statusCode = 401;
+                throw error2;
+                break;
+
+            default:
+                const error3 = new Error('Invalid institute type');
+                error3.statusCode = 401;
+                throw error3;
+        }
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -72,7 +121,10 @@ exports.getAllDepartments = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        const departments = departmentData.map((singleDepartment) => singleDepartment.department);
+        let departments = [];
+        departmentData.map((singleDepartment) => (
+            singleDepartment.department !== null && departments.push(singleDepartment.department)
+        ));
         res.status(200).json({ message: 'Department data fetched successfully', departments: departments })
     } catch (error) {
         if (!error.statusCode) {
