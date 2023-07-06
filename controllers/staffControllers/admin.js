@@ -223,6 +223,16 @@ exports.putApproval1 = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+        const report = await Report.findOne({
+            where: {
+                requestComplaintId: requestId
+            }
+        });
+        if (!report) {
+            const error = new Error('Report not found');
+            error.statusCode = 401;
+            throw error;
+        }
         if (!approval) {
             const error = new Error('Either approve or disapprove the request');
             error.statusCode = 401;
@@ -232,12 +242,18 @@ exports.putApproval1 = async (req, res, next) => {
             request.approval1 = 1;
             request.status = 'pending';
             request.approval1Comment = approvalComment;
+            request.approval1Time = new Date();
+            report.approval1Time = new Date();
+            report.approval1Duration = new Date() - request.createdAt;
         } else if (approval === 2) {
             request.approval1 = 2;
             request.status = 'disapproved';
             request.approval1Comment = approvalComment;
+            request.approval1Time = new Date();
+            report.destroy();
         }
         const result = await request.save();
+        await report.save();
         res.status(200).json({ message: 'Staff details updated', request: result });
     } catch (error) {
         if (!error.statusCode) {
@@ -256,6 +272,16 @@ exports.putApproval2 = async (req, res, next) => {
         const request = await Request.findByPk(requestId);
         if (!request) {
             const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const report = await Report.findOne({
+            where: {
+                requestComplaintId: requestId
+            }
+        });
+        if (!report) {
+            const error = new Error('Report not found');
             error.statusCode = 401;
             throw error;
         }
@@ -292,51 +318,13 @@ exports.putApproval2 = async (req, res, next) => {
             request.assignedName = staff.firstname + ' ' + staff.lastname;
             request.status = 'assigned';
             request.approval2Comment = approvalComment;
-            const reportCheck = await Report.findOne({
-                where: {
-                    requestComplaintId: request.id,
-                    staffId: staffId
-                }
-            });
-            let report;
-            if (reportCheck) {
-                report = await Report.findByPk(reportCheck.id);
-                report.isRequest = true;
-                report.isComplaint = false;
-                report.requestComplaintId = request.id;
-                report.staffId = staffId;
-                report.staffName = request.name;
-                report.assignedName = staff.firstname + ' ' + staff.lastname;
-                report.category = request.category;
-                report.priority = request.priority;
-                report.subject = request.subject;
-                report.description = request.description;
-                report.department = request.department;
-                report.status = request.status;
-                report.loggedTime = request.createdAt;
-                report.assignedTime = new Date();
-                report.assignDuration = new Date() - request.createdAt;
-            } else {
-                report = new Report({
-                    isRequest: true,
-                    isComplaint: false,
-                    requestComplaintId: request.id,
-                    staffId: staffId,
-                    staffName: request.name,
-                    assignedName: staff.firstname + ' ' + staff.lastname,
-                    category: request.category,
-                    priority: request.priority,
-                    subject: request.subject,
-                    description: request.description,
-                    department: request.department,
-                    status: request.status,
-                    loggedTime: request.createdAt,
-                    assignedTime: new Date(),
-                    assignDuration: new Date() - request.createdAt
-                });
-            }
-            await report.save();
+            request.approval2Time = new Date();
             const result = await request.save();
+            report.assignedName = staff.firstname + ' ' + staff.lastname;
+            report.approval2Time = result.approval2Time;
+            report.assignedTime = result.approval2Time;
+            report.assignDuration = result.approval2Time - result.createdAt;
+            await report.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
             await sendMail(result.id, result.department, result.category, result.subject, result.description, next);
         } else if (approval === 2) {
@@ -344,7 +332,10 @@ exports.putApproval2 = async (req, res, next) => {
             request.assign = null;
             request.status = 'disapproved';
             request.approval2Comment = approvalComment;
+            request.approval2Time = new Date();
             const result = await request.save();
+            await report.destroy();
+            await report.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
         }
     } catch (error) {

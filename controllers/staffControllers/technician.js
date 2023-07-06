@@ -93,6 +93,11 @@ exports.changeRequestStatus = async (req, res, next) => {
                 break;
 
             case 'closed':
+                if (request.status !== 'attending') {
+                    const error = new Error('Cannot close request before attending');
+                    error.statusCode = 401;
+                    throw error;
+                }
                 request.status = 'closed';
                 request.problemDescription = problemDescription;
                 request.actionTaken = actionTaken;
@@ -136,6 +141,11 @@ exports.changeRequestStatus = async (req, res, next) => {
                 break;
 
             case 'forwarded':
+                if (request.status !== 'attending') {
+                    const error = new Error('Cannot forwared request before attending');
+                    error.statusCode = 401;
+                    throw error;
+                }
                 request.status = 'forwarded';
                 assign = req.body.assign;
                 const forwardComment = req.body.forwardComment;

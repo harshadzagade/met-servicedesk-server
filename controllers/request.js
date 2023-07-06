@@ -4,6 +4,7 @@ const Op = require('sequelize').Op;
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const archiver = require('archiver');
+const Report = require('../models/report');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -102,6 +103,21 @@ exports.sendRequest = async (req, res, next) => {
         const currentDate = new Date();
         setId.ticketId = '#' + currentDate.getFullYear() + setId.id;
         const result = await setId.save();
+        const report = new Report({
+            isRequest: true,
+            isComplaint: false,
+            requestComplaintId: result.id,
+            staffId: result.staffId,
+            staffName: result.name,
+            category: result.category,
+            priority: result.priority,
+            subject: result.subject,
+            description: result.description,
+            department: result.department,
+            status: result.status,
+            loggedTime: result.createdAt
+        });
+        await report.save();
         if (requester.role !== 'admin' && requester.department.length > 1) {
             const error = new Error('Non-admin staff cannot have multiple department');
             error.statusCode = 401;

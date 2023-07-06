@@ -96,10 +96,18 @@ const Request = sequelize.define('request', {
     type: Sequelize.INTEGER,
     allowNull: true
   },
+  approval1Time: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
   approval2: {
     type: Sequelize.INTEGER,
     allowNull: true
-  }
+  },
+  approval2Time: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
 });
 
 module.exports = Request;
