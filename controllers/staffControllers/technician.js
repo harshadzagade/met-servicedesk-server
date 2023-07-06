@@ -231,7 +231,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        complaint.status = 'assigned';
+        complaint.status = 'attending';
         complaint.assign = staffId;
         complaint.assignedName = staff.firstname + ' ' + staff.lastname;
         const reportCheck = await Report.findOne({
@@ -256,8 +256,8 @@ exports.selfAssignComplaint = async (req, res, next) => {
             report.department = complaint.department;
             report.status = complaint.status;
             report.loggedTime = complaint.createdAt;
-            report.assignedTime = new Date();
-            report.assignDuration = new Date() - complaint.createdAt;
+            report.attendedTime = new Date();
+            report.attendDuration = new Date() - complaint.createdAt;
         } else {
             report = new Report({
                 isRequest: false,
@@ -273,8 +273,8 @@ exports.selfAssignComplaint = async (req, res, next) => {
                 department: complaint.department,
                 status: complaint.status,
                 loggedTime: complaint.createdAt,
-                assignedTime: new Date(),
-                assignDuration: new Date() - complaint.createdAt
+                attendedTime: new Date(),
+                attendDuration: new Date() - complaint.createdAt
             });
         }
         await report.save();
@@ -319,14 +319,6 @@ exports.changeComplaintStatus = async (req, res, next) => {
         }
         let report;
         switch (statusChange) {
-            case 'attending':
-                complaint.status = 'attending';
-                report = await Report.findOne({ where: { requestComplaintId: complaint.id } });
-                report.attendedTime = new Date();
-                report.attendDuration = report.attendedTime - report.assignedTime;
-                await report.save();
-                break;
-
             case 'closed':
                 complaint.status = 'closed';
                 complaint.problemDescription = problemDescription;
