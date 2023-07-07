@@ -19,7 +19,7 @@ exports.getAllDepartmentData = async (req, res, next) => {
 
 exports.createDepartment = async (req, res, next) => {
     const instituteName = req.body.institute;
-    const instituteType = req.body.type;
+    const instituteType = req.body.instituteType;
     const departmentName = req.body.department;
     const categories = req.body.category;
     try {
@@ -114,7 +114,10 @@ exports.editCategories = async (req, res, next) => {
 exports.getAllDepartments = async (req, res, next) => {
     try {
         const departmentData = await Department.findAll({
-            attributes: ['department']
+            attributes: ['department'],
+            where: {
+                instituteType: 'service'
+            }
         });
         if (!departmentData) {
             const error = new Error('Departments not found');

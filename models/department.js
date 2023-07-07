@@ -18,11 +18,14 @@ const Department = sequelize.define('department', {
   },
   department: {
     type: Sequelize.STRING,
-    allowNull: true
+    allowNull: false,
+    defaultValue: 'N/A'
+
   },
   category: {
     type: Sequelize.ARRAY(Sequelize.STRING),
-    allowNull: true
+    allowNull: false,
+    defaultValue: ['N/A']
   }
 });
 
