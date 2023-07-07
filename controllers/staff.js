@@ -15,8 +15,8 @@ const generateOTP = () => {
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'siddharthbhat777@gmail.com',
-        pass: 'itrflpdafyeavfzd'
+        user: 'helpdeskinfo@met.edu',
+        pass: 'lzhqhnnscnxiwwqc'
     }
 });
 
@@ -81,7 +81,7 @@ exports.sendMail = async (req, res, next) => {
         res.status(200).json({ message: 'OTP Sent!', redirect: true });
         await transporter.sendMail({
             to: email,
-            from: 'siddharthbhat777@gmail.com',
+            from: 'helpdeskinfo@met.edu',
             subject: 'Reset Password OTP',
             html:
                 `

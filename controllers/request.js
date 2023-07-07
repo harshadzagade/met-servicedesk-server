@@ -9,8 +9,8 @@ const Report = require('../models/report');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'siddharthbhat777@gmail.com',
-        pass: 'itrflpdafyeavfzd'
+        user: 'helpdeskinfo@met.edu',
+        pass: 'lzhqhnnscnxiwwqc'
     }
 });
 
@@ -462,7 +462,7 @@ const sendMail = async (hodEmail, adminEmail, category, requestId, subject, desc
         if (hodEmail === adminEmail) {
             await transporter.sendMail({
                 to: hodEmail,
-                from: 'siddharthbhat777@gmail.com',
+                from: 'helpdeskinfo@met.edu',
                 subject: `Requested ${category} #${requestId}`,
                 html:
                     `
@@ -477,7 +477,7 @@ const sendMail = async (hodEmail, adminEmail, category, requestId, subject, desc
         } else {
             transporter.sendMail({
                 to: [hodEmail, adminEmail],
-                from: 'siddharthbhat777@gmail.com',
+                from: 'helpdeskinfo@met.edu',
                 subject: `Requested ${category} #${requestId}`,
                 html:
                     `

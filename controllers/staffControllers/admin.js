@@ -10,8 +10,8 @@ const Report = require("../../models/report");
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'siddharthbhat777@gmail.com',
-        pass: 'itrflpdafyeavfzd'
+        user: 'helpdeskinfo@met.edu',
+        pass: 'lzhqhnnscnxiwwqc'
     }
 });
 
@@ -375,7 +375,7 @@ const sendMail = async (requestId, department, category, subject, description, n
         await transporter.sendMail({
             to: email,
             cc: cc,
-            from: 'siddharthbhat777@gmail.com',
+            from: 'helpdeskinfo@met.edu',
             subject: `Requested ${category} #${requestId}`,
             html:
                 `

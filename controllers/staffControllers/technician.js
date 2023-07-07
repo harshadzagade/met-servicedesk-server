@@ -8,8 +8,8 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'siddharthbhat777@gmail.com',
-        pass: 'itrflpdafyeavfzd'
+        user: 'helpdeskinfo@met.edu',
+        pass: 'lzhqhnnscnxiwwqc'
     }
 });
 
@@ -454,7 +454,7 @@ const sendMail = async (complainanEmail, hodEmail, category, complaintId, subjec
         await transporter.sendMail({
             to: complainanEmail,
             cc: hodEmail,
-            from: 'siddharthbhat777@gmail.com',
+            from: 'helpdeskinfo@met.edu',
             subject: `Complaint regarding ${category} #${complaintId}`,
             html:
                 `
