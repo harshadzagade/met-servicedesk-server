@@ -29,23 +29,19 @@ exports.getSuperAdmin = async (req, res, next) => {
 
 exports.createStaff = async (req, res, next) => {
     const firstname = req.body.firstname;
+    const middlename = req.body.middlename;
     const lastname = req.body.lastname;
     const email = req.body.email;
     const password = req.body.password;
+    const institute = req.body.institute;
     const department = req.body.department;
+    const departmentType = req.body.departmentType;
     const phoneNumber = req.body.phoneNumber;
     const contactExtension = req.body.contactExtension;
     try {
         if (phoneNumber) {
             if (phoneNumber.toString().length !== 10 || typeof phoneNumber !== "number") {
                 const error = new Error('Invalid phone number');
-                error.statusCode = 409;
-                throw error;
-            }
-        }
-        if (contactExtension) {
-            if (contactExtension.toString().length !== 3 || typeof contactExtension !== "number") {
-                const error = new Error('Invalid contact extension');
                 error.statusCode = 409;
                 throw error;
             }
@@ -63,11 +59,14 @@ exports.createStaff = async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, 12);
         const staff = new Staff({
             firstname: firstname,
+            middlename: middlename,
             lastname: lastname,
             email: email,
             password: hashedPassword,
             role: 'user',
+            institute: institute,
             department: department,
+            departmentType: departmentType,
             phoneNumber: phoneNumber,
             contactExtension: contactExtension,
             isNew: true
@@ -102,23 +101,19 @@ exports.getStaffDetails = async (req, res, next) => {
 exports.updateStaff = async (req, res, next) => {
     const staffId = req.params.staffId;
     const firstname = req.body.firstname;
+    const middlename = req.body.middlename;
     const lastname = req.body.lastname;
     const email = req.body.email;
     const role = req.body.role;
+    const institute = req.body.institute;
     const department = req.body.department;
+    const departmentType = req.body.departmentType;
     const phoneNumber = req.body.phoneNumber;
     const contactExtension = req.body.contactExtension;
     try {
         if (phoneNumber) {
             if (phoneNumber.toString().length !== 10 || typeof phoneNumber !== "number") {
                 const error = new Error('Invalid phone number');
-                error.statusCode = 409;
-                throw error;
-            }
-        }
-        if (contactExtension) {
-            if (contactExtension.toString().length !== 3 || typeof contactExtension !== "number") {
-                const error = new Error('Invalid contact extension');
                 error.statusCode = 409;
                 throw error;
             }
@@ -165,10 +160,13 @@ exports.updateStaff = async (req, res, next) => {
             }
         }
         staff.firstname = firstname;
+        staff.middlename = middlename;
         staff.lastname = lastname;
         staff.email = email;
         staff.role = role;
+        staff.institute = institute;
         staff.department = department;
+        staff.departmentType = departmentType;
         staff.phoneNumber = phoneNumber;
         staff.contactExtension = contactExtension;
         if (staff.role === '' || staff.role === null) {
@@ -196,22 +194,28 @@ exports.deleteStaff = async (req, res, next) => {
         }
         const id = staffId;
         const firstname = staff.firstname;
+        const middlename = staff.middlename;
         const lastname = staff.lastname;
         const email = staff.email;
         const password = staff.password;
         const role = staff.role;
+        const institute = staff.institute;
         const department = staff.department;
+        const departmentType = staff.departmentType;
         const phoneNumber = staff.phoneNumber;
         const contactExtension = staff.contactExtension;
         const isNew = staff.isNew;
         const trash = new Trash({
             id: id,
             firstname: firstname,
+            middlename: middlename,
             lastname: lastname,
             email: email,
             password: password,
             role: role,
+            institute: institute,
             department: department,
+            departmentType: departmentType,
             phoneNumber: phoneNumber,
             contactExtension: contactExtension,
             isNew: isNew

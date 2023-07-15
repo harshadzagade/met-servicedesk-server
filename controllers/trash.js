@@ -42,22 +42,29 @@ exports.restoreStaff = async (req, res, next) => {
             throw error;
         }
         const firstname = trashStaff.firstname;
+        const middlename = trashStaff.middlename;
         const lastname = trashStaff.lastname;
         const email = trashStaff.email;
         const password = trashStaff.password;
         const role = trashStaff.role;
-        const department = trashStaff.department;
+        const institute = staff.institute;
+        const department = staff.department;
+        const departmentType = staff.departmentType;
         const phoneNumber = trashStaff.phoneNumber;
         const contactExtension = trashStaff.contactExtension;
         const isNew = trashStaff.isNew;
+
         const staff = new Staff({
             id: trashStaffId,
             firstname: firstname,
+            middlename: middlename,
             lastname: lastname,
             email: email,
             password: password,
             role: role,
+            institute: institute,
             department: department,
+            departmentType: departmentType,
             phoneNumber: phoneNumber,
             contactExtension: contactExtension,
             isNew: isNew
@@ -84,11 +91,14 @@ exports.restoreAllStaff = async (req, res, next) => {
                 {
                     id: staff.id,
                     firstname: staff.firstname,
+                    middlename: staff.middlename,
                     lastname: staff.lastname,
                     email: staff.email,
                     password: staff.password,
                     role: staff.role,
+                    institute: staff.institute,
                     department: staff.department,
+                    departmentType: staff.departmentType,
                     phoneNumber: staff.phoneNumber,
                     contactExtension: staff.contactExtension,
                     isNew: false,
@@ -148,7 +158,7 @@ exports.getTrashStaffDepartments = async (req, res, next) => {
         allDept = allDept.concat(department);
     });
     const allDepartments = allDept;
-    const uniqueDepartments = allDepartments.filter(function(item, position) {
+    const uniqueDepartments = allDepartments.filter(function (item, position) {
         return allDepartments.indexOf(item) == position;
     })
     const departments = uniqueDepartments;

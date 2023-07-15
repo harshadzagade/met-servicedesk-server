@@ -18,9 +18,8 @@ exports.getAllDepartmentData = async (req, res, next) => {
 };
 
 exports.createDepartment = async (req, res, next) => {
-    const instituteName = req.body.institute;
-    const instituteType = req.body.instituteType;
     const departmentName = req.body.department;
+    const departmentType = req.body.departmentType;
     const categories = req.body.category;
     try {
         const existingDepartment = await Department.findOne({ where: { department: departmentName } });
@@ -30,27 +29,19 @@ exports.createDepartment = async (req, res, next) => {
             throw error;
         }
         let department;
-        switch (instituteType) {
+        switch (departmentType) {
             case 'service':
                 department = new Department({
-                    institute: instituteName,
-                    instituteType: instituteType,
                     department: departmentName,
+                    departmentType: departmentType,
                     category: categories
                 });
                 break;
 
-            case 'teaching':
+            case 'regular':
                 department = new Department({
-                    institute: instituteName,
-                    instituteType: instituteType
-                });
-                break;
-
-            case 'non-teaching':
-                department = new Department({
-                    institute: instituteName,
-                    instituteType: instituteType
+                    department: departmentName,
+                    departmentType: departmentType
                 });
                 break;
 
@@ -79,29 +70,22 @@ exports.editCategories = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        switch (department.instituteType) {
+        switch (department.departmentType) {
             case 'service':
                 department.category = categories;
                 const result = await department.save();
                 res.status(200).json({ message: 'Categories updated successfully', department: result });
                 break;
 
-            case 'teaching':
-                const error1 = new Error('Institute does not have any categories');
+            case 'regular':
+                const error1 = new Error('Department does not have any categories');
                 error1.statusCode = 401;
                 throw error1;
-                break;
-
-            case 'non-teaching':
-                const error2 = new Error('Institute does not have any categories');
-                error2.statusCode = 401;
-                throw error2;
-                break;
 
             default:
-                const error3 = new Error('Invalid institute type');
-                error3.statusCode = 401;
-                throw error3;
+                const error2 = new Error('Invalid department type');
+                error2.statusCode = 401;
+                throw error2;
         }
     } catch (error) {
         if (!error.statusCode) {
@@ -116,7 +100,7 @@ exports.getAllDepartments = async (req, res, next) => {
         const departmentData = await Department.findAll({
             attributes: ['department'],
             where: {
-                instituteType: 'service'
+                departmentType: 'service'
             }
         });
         if (!departmentData) {

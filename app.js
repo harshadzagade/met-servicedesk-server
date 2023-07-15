@@ -8,6 +8,7 @@ const sequelize = require('./utils/database');
 const Staff = require('./models/staff');
 
 const loginRoute = require('./routes/login');
+const instituteRoutes = require('./routes/institute');
 const departmentRoutes = require('./routes/department');
 const staffRoutes = require('./routes/staff');
 const trashRoutes = require('./routes/trash');
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 app.use('/api/request', requestRoutes);
 app.use('/api/complaint', complaintRoutes);
 app.use('/api', loginRoute);
+app.use('/api/institute', instituteRoutes);
 app.use('/api/department', departmentRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/trash', trashRoutes);
@@ -42,12 +44,15 @@ sequelize.sync().then((result) => { // 'force:true' means overriding table with 
         staff = Staff.findOrCreate({
             where: { id: 1 },
             defaults: {
-                firstname: 'Admin',
-                lastname: '',
+                firstname: 'Super',
+                middlename: '',
+                lastname: 'Admin',
                 email: 'superadmin@gmail.com',
                 password: password,
                 role: 'superadmin',
+                institute: 'ERP',
                 department: ['all'],
+                departmentType: 'service',
                 isNew: false
             }
         });

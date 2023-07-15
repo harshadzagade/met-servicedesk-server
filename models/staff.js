@@ -12,6 +12,10 @@ const Staff = sequelize.define('staff', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  middlename: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   lastname: {
     type: Sequelize.STRING,
     allowNull: false
@@ -28,8 +32,16 @@ const Staff = sequelize.define('staff', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  institute: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   department: {
     type: Sequelize.ARRAY(Sequelize.STRING),
+    allowNull: false
+  },
+  departmentType: {
+    type: Sequelize.STRING,
     allowNull: false
   },
   phoneNumber: {
@@ -37,7 +49,7 @@ const Staff = sequelize.define('staff', {
     allowNull: true
   },
   contactExtension: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING,
     allowNull: true
   },
   isNew: {

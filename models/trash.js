@@ -12,6 +12,10 @@ const Trash = sequelize.define('trash', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  middlename: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   lastname: {
     type: Sequelize.STRING,
     allowNull: false
@@ -28,8 +32,16 @@ const Trash = sequelize.define('trash', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  institute: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   department: {
     type: Sequelize.ARRAY(Sequelize.STRING),
+    allowNull: false
+  },
+  departmentType: {
+    type: Sequelize.STRING,
     allowNull: false
   },
   phoneNumber: {
@@ -38,7 +50,7 @@ const Trash = sequelize.define('trash', {
     allowNull: true
   },
   contactExtension: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING,
     allowNull: true
   },
   isNew: {
