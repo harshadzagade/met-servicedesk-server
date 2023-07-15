@@ -19,7 +19,7 @@ exports.getAllDepartmentData = async (req, res, next) => {
 
 exports.createDepartment = async (req, res, next) => {
     const departmentName = req.body.department;
-    const departmentType = req.body.departmentType;
+    const type = req.body.type;
     const categories = req.body.category;
     try {
         const existingDepartment = await Department.findOne({ where: { department: departmentName } });
@@ -29,11 +29,11 @@ exports.createDepartment = async (req, res, next) => {
             throw error;
         }
         let department;
-        switch (departmentType) {
+        switch (type) {
             case 'service':
                 department = new Department({
                     department: departmentName,
-                    departmentType: departmentType,
+                    type: type,
                     category: categories
                 });
                 break;
@@ -41,7 +41,7 @@ exports.createDepartment = async (req, res, next) => {
             case 'regular':
                 department = new Department({
                     department: departmentName,
-                    departmentType: departmentType
+                    type: type
                 });
                 break;
 
@@ -70,7 +70,7 @@ exports.editCategories = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        switch (department.departmentType) {
+        switch (department.type) {
             case 'service':
                 department.category = categories;
                 const result = await department.save();
@@ -100,7 +100,7 @@ exports.getAllDepartments = async (req, res, next) => {
         const departmentData = await Department.findAll({
             attributes: ['department'],
             where: {
-                departmentType: 'service'
+                type: 'service'
             }
         });
         if (!departmentData) {

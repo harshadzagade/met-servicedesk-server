@@ -12,7 +12,7 @@ const Department = sequelize.define('department', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  departmentType: {
+  type: {
     type: Sequelize.STRING,
     allowNull: false
   },
