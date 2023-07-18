@@ -86,7 +86,7 @@ exports.sendComplaint = async (req, res, next) => {
             }
         });
         if (!admin) {
-            const error = new Error('Staff not found');
+            const error = new Error('Department or department admin not found');
             error.statusCode = 401;
             throw error;
         }
