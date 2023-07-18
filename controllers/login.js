@@ -1,12 +1,20 @@
 const Staff = require("../models/staff");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
 
 exports.postLogin = async (req, res, next) => {
+    const errors = validationResult(req);
+    console.log(errors);
     const email = req.body.email;
     const password = req.body.password;
     let loadedStaff;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors.map((err) => err.msg));
+            error.statusCode = 422;
+            throw error;
+        }
         const staff = await Staff.findOne({
             where: {
                 email: email
