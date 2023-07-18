@@ -1,4 +1,5 @@
 const Institute = require('../models/institute');
+const { validationResult } = require('express-validator');
 
 exports.getAllInstituteData = async (req, res, next) => {
     try {
@@ -18,8 +19,14 @@ exports.getAllInstituteData = async (req, res, next) => {
 };
 
 exports.createInstitute = async (req, res, next) => {
+    const errors = validationResult(req);
     const instituteName = req.body.institute;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors.map((err) => err.msg));
+            error.statusCode = 422;
+            throw error;
+        }
         const existingInstitute = await Institute.findOne({ where: { institute: instituteName } });
         if (existingInstitute) {
             const error = new Error('Institute already exists');
@@ -40,9 +47,15 @@ exports.createInstitute = async (req, res, next) => {
 };
 
 exports.editInstitute = async (req, res, next) => {
+    const errors = validationResult(req);
     const instituteId = req.params.instituteId;
     const instituteName = req.body.instituteName;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors.map((err) => err.msg));
+            error.statusCode = 422;
+            throw error;
+        }
         const institute = await Institute.findByPk(instituteId);
         if (!institute) {
             const error = new Error('Institute not found');

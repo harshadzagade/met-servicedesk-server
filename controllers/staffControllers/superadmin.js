@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const Trash = require("../../models/trash");
 const { getStaffDetailsCommon } = require("../../utils/functions");
 const Op = require('sequelize').Op;
+const { validationResult } = require('express-validator');
 
 exports.getSuperAdmin = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -28,6 +29,7 @@ exports.getSuperAdmin = async (req, res, next) => {
 };
 
 exports.createStaff = async (req, res, next) => {
+    const errors = validationResult(req);
     const firstname = req.body.firstname;
     const middlename = req.body.middlename;
     const lastname = req.body.lastname;
@@ -39,21 +41,9 @@ exports.createStaff = async (req, res, next) => {
     const phoneNumber = req.body.phoneNumber;
     const contactExtension = req.body.contactExtension;
     try {
-        if (phoneNumber) {
-            if (phoneNumber.toString().length !== 10 || typeof phoneNumber !== "number") {
-                const error = new Error('Invalid phone number');
-                error.statusCode = 409;
-                throw error;
-            }
-        }
-        const isEmailExist = await Staff.findOne({
-            where: {
-                email: email
-            }
-        });
-        if (isEmailExist) {
-            const error = new Error('E-Mail already exists');
-            error.statusCode = 409;
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors.map((err) => err.msg));
+            error.statusCode = 422;
             throw error;
         }
         const hashedPassword = await bcrypt.hash(password, 12);

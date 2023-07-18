@@ -5,7 +5,6 @@ const { validationResult } = require('express-validator');
 
 exports.postLogin = async (req, res, next) => {
     const errors = validationResult(req);
-    console.log(errors);
     const email = req.body.email;
     const password = req.body.password;
     let loadedStaff;
