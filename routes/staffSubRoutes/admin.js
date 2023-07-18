@@ -1,4 +1,5 @@
 const express = require('express');
+const { body } = require('express-validator');
 
 const router = express.Router();
 
@@ -10,7 +11,21 @@ router.get('/allstaff/:staffId/:currentDepartment', adminController.getAllStaff)
 
 router.get('/staffdetails/:staffId', adminController.getStaffDetails);
 
-router.put('/staffdetails/updateStaff/:staffId', adminController.updateStaff);
+router.put('/staffdetails/updateStaff/:staffId',
+    [
+        body('role')
+            .isLength({ min: 1 }).withMessage('Please select valid role')
+            .custom((value) => {
+                if (value === 'superadmin' || value === 'admin') {
+                    return Promise.reject('Not allowed to edit role of admin or super-admin');
+                } else if (value !== 'technician' && value !== 'user') {
+                    return Promise.reject('Please select valid role');
+                } else {
+                    return true;
+                }
+            })
+            .trim()
+    ], adminController.updateStaff);
 
 router.get('/admindepartments/:staffId', adminController.getAdminDepartments);
 

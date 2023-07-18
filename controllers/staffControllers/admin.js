@@ -6,6 +6,7 @@ const Op = require('sequelize').Op;
 const Request = require("../../models/request");
 const nodemailer = require('nodemailer');
 const Report = require("../../models/report");
+const { validationResult } = require("express-validator");
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -71,17 +72,18 @@ exports.getStaffDetails = async (req, res, next) => {
 };
 
 exports.updateStaff = async (req, res, next) => {
+    const errors = validationResult(req);
     const staffId = req.params.staffId;
     const role = req.body.role;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors.map((err) => err.msg));
+            error.statusCode = 422;
+            throw error;
+        }
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
             const error = new Error('Staff not found');
-            error.statusCode = 401;
-            throw error;
-        }
-        if (staff.role === 'superadmin' || staff.role === 'admin') {
-            const error = new Error('Not allowed to edit role of admin or super-admin');
             error.statusCode = 401;
             throw error;
         }
