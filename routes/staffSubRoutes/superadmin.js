@@ -33,7 +33,7 @@ router.post('/createStaff',
                 });
             })
             .normalizeEmail(),
-        body('password', 'Password has to be valid.')
+        body('password', 'Password has to be valid')
             .isLength({ min: 6 })
             .trim(),
         body('institute', 'Please enter valid institute')
@@ -66,7 +66,55 @@ router.get('/allstafflist/fullstaff', superAdminController.getAllStaff);
 
 router.get('/staffdetails/:staffId', superAdminController.getStaffDetails);
 
-router.put('/staffdetails/updateStaff/:staffId', superAdminController.updateStaff);
+router.put('/staffdetails/updateStaff/:staffId',
+    [
+        body('firstname', 'Please enter valid firstname')
+            .isLength({ min: 1 })
+            .trim(),
+        body('middlename', 'Please enter valid middlename')
+            .isLength({ min: 1 })
+            .trim(),
+        body('lastname', 'Please enter valid lastname')
+            .isLength({ min: 1 })
+            .trim(),
+        body('email')
+            .isEmail().withMessage('Please enter valid email address')
+            .normalizeEmail(),
+        body('role')
+            .isLength({ min: 1 }).withMessage('Please select valid role')
+            .custom((value) => {
+                if (value !== 'admin' && value !== 'technician' && value !== 'user') {
+                    return Promise.reject('Please select valid role');
+                } else {
+                    return true;
+                }
+            })
+            .trim(),
+        body('institute', 'Please enter valid institute')
+            .isLength({ min: 1 })
+            .trim(),
+        body('department')
+            .isArray().withMessage('Please enter valid department')
+            .isLength({ min: 1 }).withMessage('Please enter valid department')
+            .trim(),
+        body('departmentType')
+            .isLength({ min: 1 }).withMessage('Please select valid department type')
+            .custom((value) => {
+                if (value !== 'teaching' && value !== 'non-teaching') {
+                    return Promise.reject('Please select valid department type');
+                } else {
+                    return true;
+                }
+            })
+            .trim(),
+        body('phoneNumber', 'Please enter valid phone number')
+            .matches(/^(\+\d{1,3})?(\d{10})$/)
+            .trim(),
+        body('contactExtension')
+            .isLength({ min: 3 }).withMessage('Please enter valid extension number')
+            .matches(/^[^a-zA-Z]+$/).withMessage('Please enter valid extension number')
+            .trim()
+    ], superAdminController.updateStaff);
 
 router.delete('/staffdetails/:staffId', superAdminController.deleteStaff);
 

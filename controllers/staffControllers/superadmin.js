@@ -89,6 +89,7 @@ exports.getStaffDetails = async (req, res, next) => {
 };
 
 exports.updateStaff = async (req, res, next) => {
+    const errors = validationResult(req);
     const staffId = req.params.staffId;
     const firstname = req.body.firstname;
     const middlename = req.body.middlename;
@@ -101,12 +102,10 @@ exports.updateStaff = async (req, res, next) => {
     const phoneNumber = req.body.phoneNumber;
     const contactExtension = req.body.contactExtension;
     try {
-        if (phoneNumber) {
-            if (phoneNumber.toString().length !== 10 || typeof phoneNumber !== "number") {
-                const error = new Error('Invalid phone number');
-                error.statusCode = 409;
-                throw error;
-            }
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors.map((err) => err.msg));
+            error.statusCode = 422;
+            throw error;
         }
         const isEmailExist = await Staff.findOne({
             where: {
