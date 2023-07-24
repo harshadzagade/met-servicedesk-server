@@ -6,6 +6,7 @@ const Op = require('sequelize').Op;
 const otpGenerator = require('otp-generator');
 const OneTimePassword = require('../models/onetimepassword');
 const { getStaffDetailsCommon, getDepartments } = require('../utils/functions');
+const { validationResult } = require('express-validator');
 
 const generateOTP = () => {
     const OTP = otpGenerator.generate(6, { upperCaseAlphabets: true, specialChars: false });
@@ -65,9 +66,15 @@ exports.getStaffDetails = (req, res, next) => {
 };
 
 exports.sendMail = async (req, res, next) => {
+    const errors = validationResult(req);
     const loginEmail = req.body.email;
     const OTP = generateOTP();
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         setOTP(OTP);
         const staff = await Staff.findOne({
             where: { email: loginEmail }
@@ -102,9 +109,15 @@ exports.sendMail = async (req, res, next) => {
 };
 
 exports.verifyOTP = async (req, res, next) => {
+    const errors = validationResult(req);
     const enteredOTP = req.body.otp;
     const currentTime = new Date();
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         const otpModel = await OneTimePassword.findByPk(1);
         if ((otpModel.expiration_time - currentTime) > 0) {
             if (enteredOTP === otpModel.otp) {
@@ -128,9 +141,15 @@ exports.verifyOTP = async (req, res, next) => {
 };
 
 exports.resetPassword = async (req, res, next) => {
+    const errors = validationResult(req);
     const email = req.body.email;
     const newPassword = req.body.password;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         const staff = await Staff.findOne({
             where: { email: email }
         });

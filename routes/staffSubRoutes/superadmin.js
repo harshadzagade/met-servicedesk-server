@@ -20,6 +20,7 @@ router.post('/createStaff',
             .trim()
             .isLength({ min: 1 }),
         body('email')
+            .trim()
             .isEmail().withMessage('Please enter valid email address')
             .custom((value) => {
                 return Staff.findOne({
