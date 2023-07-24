@@ -43,7 +43,16 @@ router.put('/resetpassword',
             .isLength({ min: 6 })
     ], staffController.resetPassword);
 
-router.get('/departments', staffController.getStaffDepartments);
+router.get('/departments',
+    [
+        body('email')
+            .trim()
+            .isEmail().withMessage('Please enter valid email address')
+            .normalizeEmail(),
+        body('password', 'Password has to be valid')
+            .trim()
+            .isLength({ min: 6 })
+    ], staffController.getStaffDepartments);
 
 router.get('/contacts/:staffId', staffController.getAllContacts);
 

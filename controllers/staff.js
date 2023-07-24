@@ -177,9 +177,15 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 exports.newUserLogin = async (req, res, next) => {
+    const errors = validationResult(req);
     const email = req.body.email;
     const newPassword = req.body.password;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         const staff = await Staff.findOne({
             where: { email: email }
         });
