@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const archiver = require('archiver');
 const Report = require('../models/report');
+const { validationResult } = require('express-validator');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -15,6 +16,7 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendRequest = async (req, res, next) => {
+    const errors = validationResult(req);
     const staffId = req.body.staffId;
     let behalf = req.body.behalf || false;
     if (behalf === 'true') {
@@ -39,6 +41,11 @@ exports.sendRequest = async (req, res, next) => {
         isRepeated = false;
     }
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {
                 const file = req.files[i].path.replace("\\", "/");
@@ -49,7 +56,7 @@ exports.sendRequest = async (req, res, next) => {
             const behalfEmailId = req.body.behalfEmailId;
             const staff = await Staff.findOne({ where: { email: behalfEmailId } });
             if (!staff) {
-                const error = new Error('Staff not found');
+                const error = new Error('Behalf staff not found');
                 error.statusCode = 401;
                 throw error;
             }
@@ -134,6 +141,11 @@ exports.sendRequest = async (req, res, next) => {
                     role: 'admin'
                 }
             });
+            if (!staff) {
+                const error = new Error('Requested department does not have any admin');
+                error.statusCode = 401;
+                throw error;
+            }
             hodEmail = staff.email;
         }
         const admin = await Staff.findOne({

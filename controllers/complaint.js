@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const Complaint = require('../models/complaint');
 const Staff = require('../models/staff');
 const Op = require('sequelize').Op;
@@ -12,6 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendComplaint = async (req, res, next) => {
+    const errors = validationResult(req);
     const staffId = req.body.staffId;
     let behalf = req.body.behalf || false;
     if (behalf === 'true') {
@@ -34,6 +36,11 @@ exports.sendComplaint = async (req, res, next) => {
         isRepeated = false;
     }
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {
                 const file = req.files[i].path.replace("\\", "/");
