@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator");
 const Department = require("../models/department");
 
 exports.getAllDepartmentData = async (req, res, next) => {
@@ -18,14 +19,14 @@ exports.getAllDepartmentData = async (req, res, next) => {
 };
 
 exports.createDepartment = async (req, res, next) => {
+    const errors = validationResult(req);
     const departmentName = req.body.department;
     const type = req.body.type;
     const categories = req.body.category;
     try {
-        const existingDepartment = await Department.findOne({ where: { department: departmentName } });
-        if (existingDepartment) {
-            const error = new Error('Department already exists');
-            error.statusCode = 401;
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
             throw error;
         }
         let department;
@@ -61,9 +62,15 @@ exports.createDepartment = async (req, res, next) => {
 };
 
 exports.editCategories = async (req, res, next) => {
+    const errors = validationResult(req);
     const departmentId = req.params.departmentId;
     const categories = req.body.category;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         const department = await Department.findByPk(departmentId);
         if (!department) {
             const error = new Error('Department not found');

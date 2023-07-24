@@ -11,14 +11,14 @@ router.get('/:staffId', superAdminController.getSuperAdmin);
 router.post('/createStaff',
     [
         body('firstname', 'Please enter valid firstname')
-            .isLength({ min: 1 })
-            .trim(),
+            .trim()
+            .isLength({ min: 1 }),
         body('middlename', 'Please enter valid middlename')
-            .isLength({ min: 1 })
-            .trim(),
+            .trim()
+            .isLength({ min: 1 }),
         body('lastname', 'Please enter valid lastname')
-            .isLength({ min: 1 })
-            .trim(),
+            .trim()
+            .isLength({ min: 1 }),
         body('email')
             .isEmail().withMessage('Please enter valid email address')
             .custom((value) => {
@@ -34,16 +34,22 @@ router.post('/createStaff',
             })
             .normalizeEmail(),
         body('password', 'Password has to be valid')
-            .isLength({ min: 6 })
-            .trim(),
+            .trim()
+            .isLength({ min: 6 }),
         body('institute', 'Please enter valid institute')
-            .isLength({ min: 1 })
-            .trim(),
+            .trim()
+            .isLength({ min: 1 }),
         body('department')
             .isArray().withMessage('Please enter valid department')
-            .isLength({ min: 1 }).withMessage('Please enter valid department')
-            .trim(),
+            .custom((value) => {
+                if (value.length === 0) {
+                    return Promise.reject('Please enter valid department');
+                } else {
+                    return true;
+                }
+            }),
         body('departmentType')
+            .trim()
             .isLength({ min: 1 }).withMessage('Please select valid department type')
             .custom((value) => {
                 if (value !== 'teaching' && value !== 'non-teaching') {
@@ -51,15 +57,14 @@ router.post('/createStaff',
                 } else {
                     return true;
                 }
-            })
-            .trim(),
+            }),
         body('phoneNumber', 'Please enter valid phone number')
-            .matches(/^(\+\d{1,3})?(\d{10})$/)
-            .trim(),
+            .trim()
+            .matches(/^(\+\d{1,3})?(\d{10})$/),
         body('contactExtension')
+            .trim()
             .isLength({ min: 3 }).withMessage('Please enter valid extension number')
             .matches(/^[^a-zA-Z]+$/).withMessage('Please enter valid extension number')
-            .trim()
     ], superAdminController.createStaff);
 
 router.get('/allstafflist/fullstaff', superAdminController.getAllStaff);
@@ -69,18 +74,19 @@ router.get('/staffdetails/:staffId', superAdminController.getStaffDetails);
 router.put('/staffdetails/updateStaff/:staffId',
     [
         body('firstname', 'Please enter valid firstname')
-            .isLength({ min: 1 })
-            .trim(),
+            .trim()
+            .isLength({ min: 1 }),
         body('middlename', 'Please enter valid middlename')
-            .isLength({ min: 1 })
-            .trim(),
+            .trim()
+            .isLength({ min: 1 }),
         body('lastname', 'Please enter valid lastname')
-            .isLength({ min: 1 })
-            .trim(),
+            .trim()
+            .isLength({ min: 1 }),
         body('email')
             .isEmail().withMessage('Please enter valid email address')
             .normalizeEmail(),
         body('role')
+            .trim()
             .isLength({ min: 1 }).withMessage('Please select valid role')
             .custom((value) => {
                 if (value !== 'admin' && value !== 'technician' && value !== 'user') {
@@ -88,16 +94,23 @@ router.put('/staffdetails/updateStaff/:staffId',
                 } else {
                     return true;
                 }
-            })
-            .trim(),
+            }),
         body('institute', 'Please enter valid institute')
-            .isLength({ min: 1 })
-            .trim(),
+            .trim()
+            .isLength({ min: 1 }),
         body('department')
+            .trim()
             .isArray().withMessage('Please enter valid department')
-            .isLength({ min: 1 }).withMessage('Please enter valid department')
-            .trim(),
+            .isArray().withMessage('Please enter valid department')
+            .custom((value) => {
+                if (value.length === 0) {
+                    return Promise.reject('Please enter valid department');
+                } else {
+                    return true;
+                }
+            }),
         body('departmentType')
+            .trim()
             .isLength({ min: 1 }).withMessage('Please select valid department type')
             .custom((value) => {
                 if (value !== 'teaching' && value !== 'non-teaching') {
@@ -105,15 +118,14 @@ router.put('/staffdetails/updateStaff/:staffId',
                 } else {
                     return true;
                 }
-            })
-            .trim(),
+            }),
         body('phoneNumber', 'Please enter valid phone number')
-            .matches(/^(\+\d{1,3})?(\d{10})$/)
-            .trim(),
+            .trim()
+            .matches(/^(\+\d{1,3})?(\d{10})$/),
         body('contactExtension')
+            .trim()
             .isLength({ min: 3 }).withMessage('Please enter valid extension number')
             .matches(/^[^a-zA-Z]+$/).withMessage('Please enter valid extension number')
-            .trim()
     ], superAdminController.updateStaff);
 
 router.delete('/staffdetails/:staffId', superAdminController.deleteStaff);

@@ -77,7 +77,7 @@ exports.updateStaff = async (req, res, next) => {
     const role = req.body.role;
     try {
         if (!errors.isEmpty()) {
-            const error = new Error(errors.errors.map((err) => err.msg));
+            const error = new Error(errors.errors[0].msg);
             error.statusCode = 422;
             throw error;
         }

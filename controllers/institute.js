@@ -23,14 +23,8 @@ exports.createInstitute = async (req, res, next) => {
     const instituteName = req.body.institute;
     try {
         if (!errors.isEmpty()) {
-            const error = new Error(errors.errors.map((err) => err.msg));
+            const error = new Error(errors.errors[0].msg);
             error.statusCode = 422;
-            throw error;
-        }
-        const existingInstitute = await Institute.findOne({ where: { institute: instituteName } });
-        if (existingInstitute) {
-            const error = new Error('Institute already exists');
-            error.statusCode = 401;
             throw error;
         }
         const institute = new Institute({
@@ -52,7 +46,7 @@ exports.editInstitute = async (req, res, next) => {
     const instituteName = req.body.instituteName;
     try {
         if (!errors.isEmpty()) {
-            const error = new Error(errors.errors.map((err) => err.msg));
+            const error = new Error(errors.errors[0].msg);
             error.statusCode = 422;
             throw error;
         }
