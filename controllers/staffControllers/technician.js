@@ -4,6 +4,7 @@ const Complaint = require("../../models/complaint");
 const Report = require("../../models/report");
 const Op = require('sequelize').Op;
 const nodemailer = require('nodemailer');
+const { validationResult } = require("express-validator");
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -54,11 +55,17 @@ exports.getAssignedRequests = async (req, res, next) => {
 };
 
 exports.changeRequestStatus = async (req, res, next) => {
+    const errors = validationResult(req);
     const requestId = req.params.requestId;
     const statusChange = req.body.status;
     const problemDescription = req.body.problemDescription;
     const actionTaken = req.body.actionTaken;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         const request = await Request.findByPk(requestId);
         if (!request) {
             const error = new Error('Request not found');
@@ -289,11 +296,17 @@ exports.selfAssignComplaint = async (req, res, next) => {
 };
 
 exports.changeComplaintStatus = async (req, res, next) => {
+    const errors = validationResult(req);
     const complaintId = req.params.complaintId;
     const statusChange = req.body.status;
     const problemDescription = req.body.problemDescription;
     const actionTaken = req.body.actionTaken;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
             const error = new Error('Complaint not found');
