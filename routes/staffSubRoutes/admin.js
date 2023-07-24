@@ -39,8 +39,41 @@ router.get('/requests/outgoing/:staffId/:department', adminController.getOutgoin
 
 router.get('/complaints/outgoing/:staffId/:department', adminController.getOutgoingComplaints);
 
-router.put('/approval1/:requestId', adminController.putApproval1);
+router.put('/approval1/:requestId',
+    [
+        body('approval')
+            .trim()
+            .custom((value) => {
+                if (value !== '1' && value !== '2') {
+                    return Promise.reject('Please select valid approval status');
+                } else {
+                    return true;
+                }
+            }),
+        body('approvalComment')
+            .trim()
+            .isLength({ min: 1 }).withMessage('Please enter valid approval comment')
+    ], adminController.putApproval1);
 
-router.put('/approval2/:requestId', adminController.putApproval2);
+router.put('/approval2/:requestId',
+    [
+        body('approval')
+            .trim()
+            .custom((value) => {
+                if (value !== '1' && value !== '2') {
+                    return Promise.reject('Please select valid approval status');
+                } else {
+                    return true;
+                }
+            }),
+        body('approvalComment')
+            .trim()
+            .isLength({ min: 1 }).withMessage('Please enter valid approval comment'),
+        body('staffId')
+            .if(body('approval').equals('1'))
+            .trim()
+            .isNumeric().withMessage('Please provide valid staff ID to assign task to technician')
+            .isLength({ min: 1 }).withMessage('Please provide valid staff ID to assign task to technician')
+    ], adminController.putApproval2);
 
 module.exports = router;

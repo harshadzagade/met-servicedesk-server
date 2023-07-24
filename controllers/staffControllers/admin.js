@@ -215,10 +215,16 @@ exports.getOutgoingComplaints = async (req, res, next) => {
 };
 
 exports.putApproval1 = async (req, res, next) => {
+    const errors = validationResult(req);
     const requestId = req.params.requestId;
     const approval = req.body.approval;
     const approvalComment = req.body.approvalComment;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         const request = await Request.findByPk(requestId);
         if (!request) {
             const error = new Error('Request not found');
@@ -266,11 +272,17 @@ exports.putApproval1 = async (req, res, next) => {
 };
 
 exports.putApproval2 = async (req, res, next) => {
+    const errors = validationResult(req);
     const requestId = req.params.requestId;
     let staffId = null;
     const approval = req.body.approval;
     const approvalComment = req.body.approvalComment;
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error(errors.errors[0].msg);
+            error.statusCode = 422;
+            throw error;
+        }
         const request = await Request.findByPk(requestId);
         if (!request) {
             const error = new Error('Request not found');
