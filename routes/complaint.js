@@ -72,6 +72,8 @@ router.post('/',
 
 router.get('/allcomplaints', complaintController.getAllComplaints);
 
+router.get('/searchallcomplaints/:query', complaintController.searchAllComplaints);
+
 router.get('/owncomplaints/:staffId', complaintController.ownComplaints);
 
 router.get('/complaints/incoming/:department', complaintController.getIncomingComplaints);
