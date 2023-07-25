@@ -4,6 +4,7 @@ const Trash = require("../../models/trash");
 const { getStaffDetailsCommon } = require("../../utils/functions");
 const Op = require('sequelize').Op;
 const { validationResult } = require('express-validator');
+const { literal, Sequelize } = require("sequelize");
 
 exports.getSuperAdmin = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -252,6 +253,40 @@ exports.deleteMultipleStaff = async (req, res, next) => {
         const staff = await Staff.destroy({ where: { id: ids } });
         res.status(200).json({ message: 'Data deleted successfully', staff: staff });
     } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.searchAllStaff = async (req, res, next) => {
+    const query = req.params.query;
+    const upperQuery = query.toUpperCase();
+    try {
+        const staff = await Staff.findAll({
+            where: {
+                [Op.or]: [
+                    { firstname: { [Op.iLike]: `%${query}%` } },
+                    { middlename: { [Op.iLike]: `%${query}%` } },
+                    { lastname: { [Op.iLike]: `%${query}%` } },
+                    { email: { [Op.iLike]: `%${query}%` } },
+                    { role: { [Op.iLike]: `%${query}%` } },
+                    { institute: { [Op.iLike]: `%${query}%` } },
+                    Sequelize.literal(
+                        `EXISTS (SELECT 1 FROM unnest("staff"."department") AS "dept" WHERE UPPER("dept") LIKE '%${upperQuery}%')`
+                    ),
+                    { contactExtension: { [Op.iLike]: `%${query}%` } },
+                    Sequelize.where(
+                        Sequelize.cast(Sequelize.col('phoneNumber'), 'TEXT'),
+                        { [Op.iLike]: `%${query}%` }
+                    )
+                ],
+            },
+        });
+        res.json(staff);
+    } catch (error) {
+        console.log(error);
         if (!error.statusCode) {
             error.statusCode = 500;
         }
