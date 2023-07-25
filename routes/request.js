@@ -72,6 +72,8 @@ router.post('/',
 
 router.get('/allrequests', requestController.getAllRequests);
 
+router.get('/searchallrequests/:query', requestController.searchAllRequests);
+
 router.get('/ownrequests/:staffId', requestController.ownRequests);
 
 router.get('/getrequestdetails/:requestId', requestController.getRequestDetails);

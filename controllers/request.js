@@ -184,6 +184,32 @@ exports.getAllRequests = async (req, res, next) => {
     }
 };
 
+exports.searchAllRequests = async (req, res, next) => {
+    const query = req.params.query;
+    try {
+        const request = await Request.findAll({
+            where: {
+                [Op.or]: [
+                    { ticketId: { [Op.iLike]: `%${query}%` } },
+                    { subject: { [Op.iLike]: `%${query}%` } },
+                    { description: { [Op.iLike]: `%${query}%` } },
+                    { name: { [Op.iLike]: `%${query}%` } },
+                    { department: { [Op.iLike]: `%${query}%` } },
+                    { category: { [Op.iLike]: `%${query}%` } },
+                    { priority: { [Op.iLike]: `%${query}%` } },
+                    { status: { [Op.iLike]: `%${query}%` } }
+                ],
+            },
+        });
+        res.json(request);
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 exports.getRequestsFromDepartment = async (id, department, next) => {
     try {
         const staffs = await Staff.findAll({
