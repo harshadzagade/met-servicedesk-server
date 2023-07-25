@@ -266,6 +266,7 @@ exports.searchAllStaff = async (req, res, next) => {
     try {
         const staff = await Staff.findAll({
             where: {
+                id: { [Op.ne]: 1 },
                 [Op.or]: [
                     { firstname: { [Op.iLike]: `%${query}%` } },
                     { middlename: { [Op.iLike]: `%${query}%` } },

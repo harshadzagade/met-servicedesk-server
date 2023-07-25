@@ -51,7 +51,7 @@ sequelize.sync().then((result) => { // 'force:true' means overriding table with 
                 password: password,
                 role: 'superadmin',
                 institute: 'ERP',
-                department: ['all'],
+                department: ['ALL'],
                 departmentType: 'service',
                 isNew: false
             }
