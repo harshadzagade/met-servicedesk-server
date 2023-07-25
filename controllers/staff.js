@@ -7,6 +7,7 @@ const otpGenerator = require('otp-generator');
 const OneTimePassword = require('../models/onetimepassword');
 const { getStaffDetailsCommon, getDepartments } = require('../utils/functions');
 const { validationResult } = require('express-validator');
+const { Sequelize } = require('sequelize');
 
 const generateOTP = () => {
     const OTP = otpGenerator.generate(6, { upperCaseAlphabets: true, specialChars: false });
@@ -255,17 +256,17 @@ exports.getAllContacts = async (req, res, next) => {
         if (staff.role === 'superadmin') {
             contacts = await Staff.findAll({
                 where: { id: { [Op.ne]: 1 } },
-                attributes: ['firstname', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
+                attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
             });
         } else if (staff.role === 'admin') {
             contacts = await Staff.findAll({
                 where: { id: { [Op.ne]: 1 } },
-                attributes: ['firstname', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
+                attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
             });
         } else {
             contacts = await Staff.findAll({
                 where: { id: { [Op.ne]: 1 } },
-                attributes: ['firstname', 'lastname', 'email', 'department', 'contactExtension']
+                attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'contactExtension']
             });
         }
         if (!contacts) {
@@ -274,6 +275,94 @@ exports.getAllContacts = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Contacts fetched successfully', contacts: contacts });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getSearchedContacts = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    const query = req.params.query;
+    const upperQuery = query.toUpperCase();
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        switch (staff.role) {
+            case 'superadmin':
+                const superstaff = await Staff.findAll({
+                    attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension'],
+                    where: {
+                        id: { [Op.ne]: 1 },
+                        [Op.or]: [
+                            { firstname: { [Op.iLike]: `%${query}%` } },
+                            { middlename: { [Op.iLike]: `%${query}%` } },
+                            { lastname: { [Op.iLike]: `%${query}%` } },
+                            { email: { [Op.iLike]: `%${query}%` } },
+                            Sequelize.literal(
+                                `EXISTS (SELECT 1 FROM unnest("staff"."department") AS "dept" WHERE UPPER("dept") LIKE '%${upperQuery}%')`
+                            ),
+                            Sequelize.where(
+                                Sequelize.cast(Sequelize.col('phoneNumber'), 'TEXT'),
+                                { [Op.iLike]: `%${query}%` }
+                            ),
+                            { contactExtension: { [Op.iLike]: `%${query}%` } }
+                        ]
+                    },
+                });
+                res.json(superstaff);
+                break;
+
+            case 'admin':
+                const adminstaff = await Staff.findAll({
+                    attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension'],
+                    where: {
+                        id: { [Op.ne]: 1 },
+                        [Op.or]: [
+                            { firstname: { [Op.iLike]: `%${query}%` } },
+                            { middlename: { [Op.iLike]: `%${query}%` } },
+                            { lastname: { [Op.iLike]: `%${query}%` } },
+                            { email: { [Op.iLike]: `%${query}%` } },
+                            Sequelize.literal(
+                                `EXISTS (SELECT 1 FROM unnest("staff"."department") AS "dept" WHERE UPPER("dept") LIKE '%${upperQuery}%')`
+                            ),
+                            Sequelize.where(
+                                Sequelize.cast(Sequelize.col('phoneNumber'), 'TEXT'),
+                                { [Op.iLike]: `%${query}%` }
+                            ),
+                            { contactExtension: { [Op.iLike]: `%${query}%` } }
+                        ]
+                    },
+                });
+                res.json(adminstaff);
+                break;
+
+            default:
+                const otherstaff = await Staff.findAll({
+                    attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'contactExtension'],
+                    where: {
+                        id: { [Op.ne]: 1 },
+                        [Op.or]: [
+                            { firstname: { [Op.iLike]: `%${query}%` } },
+                            { middlename: { [Op.iLike]: `%${query}%` } },
+                            { lastname: { [Op.iLike]: `%${query}%` } },
+                            { email: { [Op.iLike]: `%${query}%` } },
+                            Sequelize.literal(
+                                `EXISTS (SELECT 1 FROM unnest("staff"."department") AS "dept" WHERE UPPER("dept") LIKE '%${upperQuery}%')`
+                            ),
+                            { contactExtension: { [Op.iLike]: `%${query}%` } }
+                        ]
+                    },
+                });
+                res.json(otherstaff);
+                break;
+        }
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;

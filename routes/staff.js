@@ -56,6 +56,8 @@ router.get('/departments',
 
 router.get('/contacts/:staffId', staffController.getAllContacts);
 
+router.get('/contactsearch/:staffId/:query', staffController.getSearchedContacts);
+
 router.get('/staffbydepartment/:department', staffController.getStaffByDepartment);
 
 router.get('/checkstaffexistence/:staffId', staffController.getStaffExistance);
