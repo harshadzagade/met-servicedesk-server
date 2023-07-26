@@ -9,6 +9,8 @@ router.get('/:staffId', adminController.getAdmin);
 
 router.get('/allstaff/:staffId/:currentDepartment', adminController.getAllStaff);
 
+router.get('/searchalldepartmentstaff/:staffId/:currentDepartment', adminController.searchDepartmentStaff);
+
 router.get('/staffdetails/:staffId', adminController.getStaffDetails);
 
 router.put('/staffdetails/updateStaff/:staffId',

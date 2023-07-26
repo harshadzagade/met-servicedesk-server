@@ -66,6 +66,8 @@ exports.getAllStaff = async (req, res, next) => {
     }
 };
 
+exports.searchDepartmentStaff = async (req, res, next) => {};
+
 exports.getStaffDetails = async (req, res, next) => {
     const staffId = req.params.staffId;
     getStaffDetailsCommon(staffId, res, next);
