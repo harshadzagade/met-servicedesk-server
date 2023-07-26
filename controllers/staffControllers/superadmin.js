@@ -4,7 +4,7 @@ const Trash = require("../../models/trash");
 const { getStaffDetailsCommon } = require("../../utils/functions");
 const Op = require('sequelize').Op;
 const { validationResult } = require('express-validator');
-const { literal, Sequelize } = require("sequelize");
+const { Sequelize } = require("sequelize");
 
 exports.getSuperAdmin = async (req, res, next) => {
     const staffId = req.params.staffId;
