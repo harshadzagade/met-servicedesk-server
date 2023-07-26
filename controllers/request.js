@@ -280,6 +280,40 @@ exports.ownRequests = async (req, res, next) => {
     }
 };
 
+exports.searchOwnRequests = async (req, res, next) => {
+    const staffId = req.params.staffId;
+    const query = req.params.query;
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const request = await Request.findAll({
+            where: {
+                staffId: staffId,
+                [Op.or]: [
+                    { ticketId: { [Op.iLike]: `%${query}%` } },
+                    { subject: { [Op.iLike]: `%${query}%` } },
+                    { description: { [Op.iLike]: `%${query}%` } },
+                    { name: { [Op.iLike]: `%${query}%` } },
+                    { department: { [Op.iLike]: `%${query}%` } },
+                    { category: { [Op.iLike]: `%${query}%` } },
+                    { priority: { [Op.iLike]: `%${query}%` } },
+                    { status: { [Op.iLike]: `%${query}%` } }
+                ]
+            }
+        });
+        res.json(request);
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 exports.getRequestDetails = async (req, res, next) => {
     const requestId = req.params.requestId;
     try {

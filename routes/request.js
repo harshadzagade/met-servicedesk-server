@@ -14,6 +14,8 @@ router.get('/searchallrequests/:query', requestController.searchAllRequests);
 
 router.get('/ownrequests/:staffId', requestController.ownRequests);
 
+router.get('/ownrequestsearch/:staffId/:query', requestController.searchOwnRequests);
+
 router.get('/getrequestdetails/:requestId', requestController.getRequestDetails);
 
 router.get('/requestdepartments', requestController.getRequestDepartments);
