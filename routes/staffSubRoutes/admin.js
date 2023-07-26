@@ -37,13 +37,15 @@ router.get('/staffbyrole/:department/:role', adminController.getDepartmentStaffB
 
 router.get('/requests/incoming/:department', adminController.getIncomingRequests);
 
-router.get('/requests/incomingsearch/:department/:query', adminController.searchIncomingRequests);
+router.get('/requests/incomingrequestsearch/:department/:query', adminController.searchIncomingRequests);
 
 router.get('/requests/outgoing/:staffId/:department', adminController.getOutgoingRequests);
 
-router.get('/requests/outgoingsearch/:staffDepartment/:query', adminController.searchOutgoingRequests);
+router.get('/requests/outgoingrequestsearch/:staffDepartment/:query', adminController.searchOutgoingRequests);
 
 router.get('/complaints/outgoing/:staffId/:department', adminController.getOutgoingComplaints);
+
+router.get('/complaints/outgoingcomplaintsearch/:staffDepartment/:query', adminController.searchOutgoingComplaints);
 
 router.put('/approval1/:requestId',
     [

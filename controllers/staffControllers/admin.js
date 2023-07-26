@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer');
 const Report = require("../../models/report");
 const { validationResult } = require("express-validator");
 const { Sequelize } = require("sequelize");
+const Complaint = require("../../models/complaint");
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -307,6 +308,46 @@ exports.getOutgoingComplaints = async (req, res, next) => {
     try {
         const complaints = await getComplaintsFromDepartment(staffId, department, next);
         res.status(200).json({ message: 'Fetched all complaints successfully.', complaints: complaints });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.searchOutgoingComplaints = async (req, res, next) => {
+    const staffDepartment = req.params.staffDepartment;
+    const query = req.params.query;
+    try {
+        const admin = await Staff.findOne({
+            where: {
+                department: { [Op.contains]: [staffDepartment] },
+                role: 'admin'
+            }
+        });
+        if (!admin) {
+            const error = new Error('Department admin not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const complaint = await Complaint.findAll({
+            where: {
+                staffDepartment: staffDepartment,
+                staffId: { [Op.ne]: admin.id },
+                [Op.or]: [
+                    { ticketId: { [Op.iLike]: `%${query}%` } },
+                    { subject: { [Op.iLike]: `%${query}%` } },
+                    { description: { [Op.iLike]: `%${query}%` } },
+                    { name: { [Op.iLike]: `%${query}%` } },
+                    { department: { [Op.iLike]: `%${query}%` } },
+                    { category: { [Op.iLike]: `%${query}%` } },
+                    { priority: { [Op.iLike]: `%${query}%` } },
+                    { status: { [Op.iLike]: `%${query}%` } }
+                ],
+            },
+        });
+        res.json(complaint);
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
