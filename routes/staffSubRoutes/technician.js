@@ -9,6 +9,8 @@ router.get('/:staffId', technicianController.getTechnician);
 
 router.get('/getassignedrequests/:staffId', technicianController.getAssignedRequests);
 
+router.get('/assignedrequestsearch/:staffId/:query', technicianController.searchAssignedRequests);
+
 router.put('/changerequeststatus/:requestId',
     [
         body('status')
