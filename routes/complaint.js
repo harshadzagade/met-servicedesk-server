@@ -14,6 +14,8 @@ router.get('/searchallcomplaints/:query', complaintController.searchAllComplaint
 
 router.get('/owncomplaints/:staffId', complaintController.ownComplaints);
 
+router.get('/owncomplaintsearch/:staffId/:query', complaintController.searchOwnComplaints);
+
 router.get('/complaints/incoming/:department', complaintController.getIncomingComplaints);
 
 router.get('/getcomplaintdetails/:complaintId', complaintController.getComplaintDetails);
