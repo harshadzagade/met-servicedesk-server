@@ -53,6 +53,10 @@ const Report = sequelize.define('report', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    staffDepartment: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     status: {
         type: Sequelize.STRING,
         allowNull: false
@@ -62,16 +66,16 @@ const Report = sequelize.define('report', {
         allowNull: false
     },
     approval1Time: {
-      type: Sequelize.DATE,
-      allowNull: true
+        type: Sequelize.DATE,
+        allowNull: true
     },
     approval1Duration: {
         type: Sequelize.BIGINT,
         allowNull: true
     },
     approval2Time: {
-      type: Sequelize.DATE,
-      allowNull: true
+        type: Sequelize.DATE,
+        allowNull: true
     },
     assignedTime: {
         type: Sequelize.DATE,

@@ -22,6 +22,7 @@ exports.sendComplaint = async (req, res, next) => {
     let behalfId = null;
     let requestStaffId = staffId;
     const department = req.body.department;
+    const staffDepartment = req.body.staffDepartment;
     const category = req.body.category;
     const priority = req.body.priority;
     const subject = req.body.subject;
@@ -65,6 +66,7 @@ exports.sendComplaint = async (req, res, next) => {
             status: 'pending',
             assign: null,
             department: department,
+            staffDepartment: staffDepartment,
             category: category,
             priority: priority,
             subject: subject,

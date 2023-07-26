@@ -46,6 +46,10 @@ const Complaint = sequelize.define('complaint', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  staffDepartment: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   category: {
     type: Sequelize.STRING,
     allowNull: false

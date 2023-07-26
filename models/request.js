@@ -46,6 +46,10 @@ const Request = sequelize.define('request', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  staffDepartment: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   category: {
     type: Sequelize.STRING,
     allowNull: false

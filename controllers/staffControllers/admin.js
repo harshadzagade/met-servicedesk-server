@@ -220,13 +220,25 @@ exports.getOutgoingRequests = async (req, res, next) => {
     }
 };
 
-exports.searchOutgoingRequests = async (req, res, next) => { // not done yet
-    const department = req.params.department;
+exports.searchOutgoingRequests = async (req, res, next) => {
+    const staffDepartment = req.params.staffDepartment;
     const query = req.params.query;
     try {
+        const admin = await Staff.findOne({
+            where: {
+                department: { [Op.contains]: [staffDepartment] },
+                role: 'admin'
+            }
+        });
+        if (!admin) {
+            const error = new Error('Department admin not found');
+            error.statusCode = 401;
+            throw error;
+        }
         const request = await Request.findAll({
             where: {
-                department: department,
+                staffDepartment: staffDepartment,
+                staffId: { [Op.ne]: admin.id },
                 [Op.or]: [
                     { ticketId: { [Op.iLike]: `%${query}%` } },
                     { subject: { [Op.iLike]: `%${query}%` } },

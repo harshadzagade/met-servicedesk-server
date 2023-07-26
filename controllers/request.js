@@ -25,6 +25,7 @@ exports.sendRequest = async (req, res, next) => {
     let behalfId = null;
     let requestStaffId = staffId;
     const department = req.body.department;
+    const staffDepartment = req.body.staffDepartment;
     const category = req.body.category;
     const priority = req.body.priority;
     const subject = req.body.subject;
@@ -72,6 +73,7 @@ exports.sendRequest = async (req, res, next) => {
                 status: 'pending',
                 assign: null,
                 department: department,
+                staffDepartment: staffDepartment,
                 category: category,
                 priority: priority,
                 subject: subject,
@@ -90,6 +92,7 @@ exports.sendRequest = async (req, res, next) => {
                 status: 'pending',
                 assign: null,
                 department: department,
+                staffDepartment: staffDepartment,
                 category: category,
                 priority: priority,
                 subject: subject,
@@ -114,6 +117,7 @@ exports.sendRequest = async (req, res, next) => {
             subject: result.subject,
             description: result.description,
             department: result.department,
+            staffDepartment: result.staffDepartment,
             status: result.status,
             loggedTime: result.createdAt
         });
