@@ -7,6 +7,7 @@ const Request = require("../../models/request");
 const nodemailer = require('nodemailer');
 const Report = require("../../models/report");
 const { validationResult } = require("express-validator");
+const { Sequelize } = require("sequelize");
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -66,7 +67,37 @@ exports.getAllStaff = async (req, res, next) => {
     }
 };
 
-exports.searchDepartmentStaff = async (req, res, next) => {};
+exports.searchDepartmentStaff = async (req, res, next) => {
+    const query = req.params.query;
+    const currentDepartment = req.params.currentDepartment;
+    try {
+        const staff = await Staff.findAll({
+            where: {
+                department: { [Op.contains]: [currentDepartment] },
+                role: { [Op.ne]: 'admin' },
+                [Op.or]: [
+                    { firstname: { [Op.iLike]: `%${query}%` } },
+                    { middlename: { [Op.iLike]: `%${query}%` } },
+                    { lastname: { [Op.iLike]: `%${query}%` } },
+                    { email: { [Op.iLike]: `%${query}%` } },
+                    { role: { [Op.iLike]: `%${query}%` } },
+                    { institute: { [Op.iLike]: `%${query}%` } },
+                    { contactExtension: { [Op.iLike]: `%${query}%` } },
+                    Sequelize.where(
+                        Sequelize.cast(Sequelize.col('phoneNumber'), 'TEXT'),
+                        { [Op.iLike]: `%${query}%` }
+                    )
+                ],
+            },
+        });
+        res.json(staff);
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
 
 exports.getStaffDetails = async (req, res, next) => {
     const staffId = req.params.staffId;
