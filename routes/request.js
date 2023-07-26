@@ -22,6 +22,8 @@ router.get('/requestdepartments', requestController.getRequestDepartments);
 
 router.get('/requestsbydepartment/:department', requestController.getRequestByDepartment);
 
+router.get('/requestsbydepartmentsearch/:department/:query', requestController.searchRequestsByDepartment);
+
 router.get('/requestcategories', requestController.getRequestCategories);
 
 router.get('/requestsbycategory/:category', requestController.getRequestByCategory);
