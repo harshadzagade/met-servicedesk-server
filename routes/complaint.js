@@ -18,6 +18,8 @@ router.get('/owncomplaintsearch/:staffId/:query', complaintController.searchOwnC
 
 router.get('/complaints/incoming/:department', complaintController.getIncomingComplaints);
 
+router.get('/complaints/incomingcomplaintsearch/:department/:query', complaintController.searchIncomingComplaints);
+
 router.get('/getcomplaintdetails/:complaintId', complaintController.getComplaintDetails);
 
 router.get('/complaintdepartments', complaintController.getComplaintDepartments);

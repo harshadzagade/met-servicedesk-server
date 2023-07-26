@@ -253,6 +253,34 @@ exports.getIncomingComplaints = async (req, res, next) => {
     }
 };
 
+exports.searchIncomingComplaints= async (req, res, next) => {
+    const department = req.params.department;
+    const query = req.params.query;
+    try {
+        const complaint = await Complaint.findAll({
+            where: {
+                department: department,
+                [Op.or]: [
+                    { ticketId: { [Op.iLike]: `%${query}%` } },
+                    { subject: { [Op.iLike]: `%${query}%` } },
+                    { description: { [Op.iLike]: `%${query}%` } },
+                    { name: { [Op.iLike]: `%${query}%` } },
+                    { department: { [Op.iLike]: `%${query}%` } },
+                    { category: { [Op.iLike]: `%${query}%` } },
+                    { priority: { [Op.iLike]: `%${query}%` } },
+                    { status: { [Op.iLike]: `%${query}%` } }
+                ],
+            },
+        });
+        res.json(complaint);
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 exports.getComplaintDetails = async (req, res, next) => {
     const complaintId = req.params.complaintId;
     try {
