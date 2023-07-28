@@ -157,7 +157,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                 if (requester.role === 'admin') {
                     hodEmail = requester.email;
                 } else {
-                    const staff = await Staff.findOne({
+                    const admin = await Staff.findOne({
                         where: {
                             department: {
                                 [Op.contains]: requester.department
@@ -165,12 +165,12 @@ exports.changeRequestStatus = async (req, res, next) => {
                             role: 'admin'
                         }
                     });
-                    if (!staff) {
-                        const error = new Error('Staff not found');
+                    if (!admin) {
+                        const error = new Error('Department admin not found');
                         error.statusCode = 401;
                         throw error;
                     }
-                    hodEmail = staff.email;
+                    hodEmail = admin.email;
                 }
                 await sendMail('Request', requester.email, hodEmail, request.category, request.id, request.subject, request.description, next);
                 break;
@@ -387,7 +387,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                 if (complainan.role === 'admin') {
                     hodEmail = complainan.email;
                 } else {
-                    const staff = await Staff.findOne({
+                    const admin = await Staff.findOne({
                         where: {
                             department: {
                                 [Op.contains]: complainan.department
@@ -395,12 +395,12 @@ exports.changeComplaintStatus = async (req, res, next) => {
                             role: 'admin'
                         }
                     });
-                    if (!staff) {
-                        const error = new Error('Staff not found');
+                    if (!admin) {
+                        const error = new Error('Department admin not found');
                         error.statusCode = 401;
                         throw error;
                     }
-                    hodEmail = staff.email;
+                    hodEmail = admin.email;
                 }
                 await sendMail('Complaint', complainan.email, hodEmail, complaint.category, complaint.id, complaint.subject, complaint.description, next);
                 break;

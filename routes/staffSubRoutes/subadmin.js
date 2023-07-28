@@ -20,7 +20,7 @@ router.put('/staffdetails/updateStaff/:staffId',
             .custom((value) => {
                 if (value === 'superadmin' || value === 'admin') {
                     return Promise.reject('Not allowed to edit role of admin or super-admin');
-                } else if (value !== 'subadmin' && value !== 'technician' && value !== 'user') {
+                } else if (value !== 'technician' && value !== 'user') {
                     return Promise.reject('Please select valid role');
                 } else {
                     return true;

@@ -40,6 +40,10 @@ exports.checkAuth = async (req, res, next) => {
                 res.status(200).json({ id: staffId, role: 'admin' });
                 break;
 
+            case 'subadmin':
+                res.status(200).json({ id: staffId, role: 'subadmin' });
+                break;
+
             case 'technician':
                 res.status(200).json({ id: staffId, role: 'technician' });
                 break;
