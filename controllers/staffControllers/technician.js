@@ -172,7 +172,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                     }
                     hodEmail = staff.email;
                 }
-                await sendMail(requester.email, hodEmail, request.category, request.id, request.subject, request.description, next);
+                await sendMail('Request', requester.email, hodEmail, request.category, request.id, request.subject, request.description, next);
                 break;
 
             case 'forwarded':
@@ -402,7 +402,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     }
                     hodEmail = staff.email;
                 }
-                await sendMail(complainan.email, hodEmail, complaint.category, complaint.id, complaint.subject, complaint.description, next);
+                await sendMail('Complaint', complainan.email, hodEmail, complaint.category, complaint.id, complaint.subject, complaint.description, next);
                 break;
 
             case 'forwarded':
@@ -492,18 +492,18 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
     }
 };
 
-const sendMail = async (complainanEmail, hodEmail, category, complaintId, subject, description, next) => {
+const sendMail = async (ticketType, ticketRaiserEmail, hodEmail, category, ticketId, subject, description, next) => {
     try {
         await transporter.sendMail({
-            to: complainanEmail,
+            to: ticketRaiserEmail,
             cc: hodEmail,
             from: 'helpdeskinfo@met.edu',
-            subject: `Complaint regarding ${category} #${complaintId}`,
+            subject: `${ticketType} regarding ${category} #${ticketId}`,
             html:
                 `
             <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
                 <h2>MET Service Desk</h2>
-                <h4>Complaint received ✔</h4>
+                <h4>${ticketType} received ✔</h4>
                 <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${subject}</h1>
                 <p style="margin-bottom: 30px;">${description}</p>
             </div>

@@ -31,6 +31,7 @@ router.post('/createdepartment',
                 }
             }),
         body('category')
+            .if(body('type').equals('service'))
             .isArray().withMessage('Please enter valid categories')
             .custom((value) => {
                 if (value.length === 0) {

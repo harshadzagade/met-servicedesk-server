@@ -359,7 +359,7 @@ exports.searchOutgoingComplaints = async (req, res, next) => {
 exports.putApproval1 = async (req, res, next) => {
     const errors = validationResult(req);
     const requestId = req.params.requestId;
-    const approval = req.body.approval;
+    const approval = +req.body.approval;
     const approvalComment = req.body.approvalComment;
     try {
         if (!errors.isEmpty()) {
@@ -417,7 +417,7 @@ exports.putApproval2 = async (req, res, next) => {
     const errors = validationResult(req);
     const requestId = req.params.requestId;
     let staffId = null;
-    const approval = req.body.approval;
+    const approval = +req.body.approval;
     const approvalComment = req.body.approvalComment;
     try {
         if (!errors.isEmpty()) {

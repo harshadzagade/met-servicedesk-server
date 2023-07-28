@@ -37,6 +37,8 @@ router.put('/changerequeststatus/:requestId',
                     } else {
                         return true;
                     }
+                } else {
+                    return true;
                 }
             }),
         body('actionTaken')
@@ -48,6 +50,8 @@ router.put('/changerequeststatus/:requestId',
                     } else {
                         return true;
                     }
+                } else {
+                    return true;
                 }
             }),
         body('forwardComment')
