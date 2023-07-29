@@ -5,7 +5,7 @@ const router = express.Router();
 
 const subadminController = require('../../controllers/staffControllers/subadmin');
 
-router.get('/:staffId', subadminController.getAdmin);
+router.get('/:staffId', subadminController.getSubadmin);
 
 router.get('/allstaff/:staffId/:currentDepartment', subadminController.getAllStaff);
 
@@ -28,8 +28,6 @@ router.put('/staffdetails/updateStaff/:staffId',
             })
             .trim()
     ], subadminController.updateStaff);
-
-router.get('/admindepartments/:staffId', subadminController.getAdminDepartments);
 
 router.get('/admindepartmenttechnicians/:staffId/:currentDepartment', subadminController.getDepartmentTechnicians);
 

@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-exports.getAdmin = async (req, res, next) => {
+exports.getSubadmin = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
         const staff = await Staff.findByPk(staffId);
@@ -28,7 +28,7 @@ exports.getAdmin = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (staff.role !== 'admin') {
+        if (staff.role !== 'subadmin') {
             const error = new Error('Unauthorised staff');
             error.statusCode = 401;
             throw error;
@@ -52,12 +52,12 @@ exports.getAllStaff = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (staff.role === 'admin') {
+        if (staff.role === 'subadmin') {
             const department = currentDepartment;
-            const totalStaff = await Staff.findAll({ where: { department: [department], id: { [Op.ne]: staff.id } } });
+            const totalStaff = await Staff.findAll({ where: { department: [department], role: { [Op.ne]: ['subadmin', 'admin'] } } });
             res.status(200).json({ message: 'Fetched all staff as per specific department successfully.', totalStaff: totalStaff });
         } else {
-            const error = new Error('Invalid admin id');
+            const error = new Error('Invalid sub-admin id');
             error.statusCode = 401;
             throw error;
         }
@@ -76,7 +76,7 @@ exports.searchDepartmentStaff = async (req, res, next) => {
         const staff = await Staff.findAll({
             where: {
                 department: { [Op.contains]: [currentDepartment] },
-                role: { [Op.ne]: 'admin' },
+                role: { [Op.ne]: ['subadmin', 'admin'] },
                 [Op.or]: [
                     { firstname: { [Op.iLike]: `%${query}%` } },
                     { middlename: { [Op.iLike]: `%${query}%` } },
@@ -150,7 +150,7 @@ exports.updateStaff = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([{ activity: `Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`, dateTime: new Date() }]) : [{ activity: `Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`, dateTime: new Date() }];
+        subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`, dateTime: new Date() }]) : [{ activity: `Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`, dateTime: new Date() }];
         staff.role = role;
         if (staff.role === '' || staff.role === null) {
             staff.role = 'user';
@@ -159,24 +159,6 @@ exports.updateStaff = async (req, res, next) => {
         const result = await staff.save();
         await subadminActivities.save();
         res.status(200).json({ message: 'Staff details updated', staff: result });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-};
-
-exports.getAdminDepartments = async (req, res, next) => {
-    const staffId = req.params.staffId;
-    try {
-        const staff = await Staff.findByPk(staffId);
-        if (!staff) {
-            const error = new Error('Staff not found');
-            error.statusCode = 401;
-            throw error;
-        }
-        res.status(200).json({ message: 'Departments fetched successfully', departments: staff.department });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -195,7 +177,7 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (staff.role === 'admin') {
+        if (staff.role === 'subadmin') {
             const department = currentDepartment;
             const technicians = await Staff.findAll({ where: { department: [department], role: 'technician' } });
             res.status(200).json({ message: 'Fetched all technicians as per specific department successfully.', technicians: technicians });
@@ -242,8 +224,31 @@ exports.getOutgoingRequests = async (req, res, next) => {
     const staffId = req.params.staffId;
     const department = req.params.department;
     try {
-        const requests = await getRequestsFromDepartment(staffId, department, next);
-        res.status(200).json({ message: 'Fetched all requests successfully.', requests: requests });
+        const subadmin = await Staff.findByPk(staffId);
+        if (!subadmin) {
+            const error = new Error('Subadmin not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const admin = await Staff.findOne({
+            where: {
+                department: { [Op.contains]: subadmin.department },
+                role: 'admin'
+            }
+        });
+        if (!admin) {
+            const error = new Error('Department admin not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        // const requests = await Request.findAll({
+        //     where: {
+        //         staffDepartment: department,
+        //         staffId: { [Op.ne]: [subadmin.id, admin.id] }
+        //     }
+        // });
+        const results = await requests.save();
+        res.status(200).json({ message: 'Fetched all requests successfully.', requests: results });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -455,14 +460,14 @@ exports.putApproval1 = async (req, res, next) => {
             request.approval1Time = new Date();
             report.approval1Time = new Date();
             report.approval1Duration = new Date() - request.createdAt;
-            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([{ activity: `HOD approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `HOD approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
+            subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `HOD approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `HOD approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
         } else if (approval === 2) {
             request.approval1 = 2;
             request.status = 'disapproved';
             request.approval1Comment = approvalComment;
             request.approval1Time = new Date();
             report.destroy();
-            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([{ activity: `HOD disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `HOD disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
+            subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `HOD disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `HOD disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
         }
         const result = await request.save();
         await report.save();
@@ -571,7 +576,7 @@ exports.putApproval2 = async (req, res, next) => {
             report.approval2Time = result.approval2Time;
             report.assignedTime = result.approval2Time;
             report.assignDuration = result.approval2Time - result.createdAt;
-            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([{ activity: `Admin approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `Admin approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
+            subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `Admin approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `Admin approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
             await report.save();
             await subadminActivities.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
@@ -584,7 +589,7 @@ exports.putApproval2 = async (req, res, next) => {
             request.approval2Time = new Date();
             const result = await request.save();
             await report.destroy();
-            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([{ activity: `Admin disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `Admin disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
+            subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `Admin disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `Admin disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
             await report.save();
             await subadminActivities.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
