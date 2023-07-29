@@ -9,6 +9,7 @@ const Report = require("../../models/report");
 const { validationResult } = require("express-validator");
 const { Sequelize } = require("sequelize");
 const Complaint = require("../../models/complaint");
+const SubadminActivities = require('../../models/subadminactivities');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -122,6 +123,19 @@ exports.updateStaff = async (req, res, next) => {
             throw error;
         }
         staff.role = role;
+        if (role === 'subadmin') {
+            const admin = await Staff.findOne({
+                where: {
+                    department: { [Op.contains]: staff.department },
+                    role: 'admin'
+                }
+            });
+            const subadminActivities = new SubadminActivities({
+                adminId: admin.id,
+                department: staff.department[0]
+            });
+            await subadminActivities.save();
+        }
         if (staff.role === '' || staff.role === null) {
             staff.role = 'user';
             await staff.save();

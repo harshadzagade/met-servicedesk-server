@@ -8,17 +8,17 @@ const SubadminActivities = sequelize.define('subadminactivities', {
     allowNull: false,
     primaryKey: true
   },
-  adminName: {
-    type: Sequelize.STRING,
+  adminId: {
+    type: Sequelize.INTEGER,
     allowNull: false
   },
   department: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   activities: {
     type: Sequelize.ARRAY(Sequelize.STRING),
-    allowNull: false
+    allowNull: true
   }
 });
 
