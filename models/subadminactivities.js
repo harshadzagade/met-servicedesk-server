@@ -17,7 +17,7 @@ const SubadminActivities = sequelize.define('subadminactivities', {
     allowNull: false
   },
   activities: {
-    type: Sequelize.ARRAY(Sequelize.STRING),
+    type: Sequelize.ARRAY(Sequelize.JSONB),
     allowNull: true
   }
 });

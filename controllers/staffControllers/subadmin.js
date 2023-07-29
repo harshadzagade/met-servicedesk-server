@@ -150,7 +150,7 @@ exports.updateStaff = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([`Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`]) : [`Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`];
+        subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([{ activity: `Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`, dateTime: new Date() }]) : [{ activity: `Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`, dateTime: new Date() }];
         staff.role = role;
         if (staff.role === '' || staff.role === null) {
             staff.role = 'user';
@@ -455,14 +455,14 @@ exports.putApproval1 = async (req, res, next) => {
             request.approval1Time = new Date();
             report.approval1Time = new Date();
             report.approval1Duration = new Date() - request.createdAt;
-            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([`HOD approval has been done of request with an ID ${request.ticketId}`]) : [`HOD approval has been done of request with an ID ${request.ticketId}`];
+            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([{ activity: `HOD approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `HOD approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
         } else if (approval === 2) {
             request.approval1 = 2;
             request.status = 'disapproved';
             request.approval1Comment = approvalComment;
             request.approval1Time = new Date();
             report.destroy();
-            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([`HOD disapproval has been done of request with an ID ${request.ticketId}`]) : [`HOD disapproval has been done of request with an ID ${request.ticketId}`];
+            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([{ activity: `HOD disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `HOD disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
         }
         const result = await request.save();
         await report.save();
@@ -571,7 +571,7 @@ exports.putApproval2 = async (req, res, next) => {
             report.approval2Time = result.approval2Time;
             report.assignedTime = result.approval2Time;
             report.assignDuration = result.approval2Time - result.createdAt;
-            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([`Admin approval has been done of request with an ID ${request.ticketId}`]) : [`Admin approval has been done of request with an ID ${request.ticketId}`];
+            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([{ activity: `Admin approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `Admin approval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
             await report.save();
             await subadminActivities.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
@@ -584,7 +584,7 @@ exports.putApproval2 = async (req, res, next) => {
             request.approval2Time = new Date();
             const result = await request.save();
             await report.destroy();
-            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([`Admin disapproval has been done of request with an ID ${request.ticketId}`]) : [`Admin disapproval has been done of request with an ID ${request.ticketId}`];
+            subadminActivities.activities = subadminActivities.activities !== null? subadminActivities.activities.concat([{ activity: `Admin disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }]) : [{ activity: `Admin disapproval has been done of request with an ID ${request.ticketId}`, dateTime: new Date() }];
             await report.save();
             await subadminActivities.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
