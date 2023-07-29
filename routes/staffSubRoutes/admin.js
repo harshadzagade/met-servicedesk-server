@@ -84,4 +84,6 @@ router.put('/approval2/:requestId',
             .isLength({ min: 1 }).withMessage('Please provide valid staff ID to assign task to technician')
     ], adminController.putApproval2);
 
+router.get('/subadminactivities/:adminId', adminController.getsubadminActivities);
+
 module.exports = router;

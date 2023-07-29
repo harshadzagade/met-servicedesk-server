@@ -516,6 +516,26 @@ exports.putApproval2 = async (req, res, next) => {
     }
 };
 
+exports.getsubadminActivities = async (req, res, next) => {
+    const adminId = req.params.adminId;
+    try {
+        const subadminActivities = await SubadminActivities.findOne({
+            where: { adminId: adminId }
+        });
+        if (!subadminActivities) {
+            const error = new Error('Subadmin activities not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Subadmin activities fetched successfully', activities: subadminActivities });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 const sendMail = async (requestId, department, category, subject, description, next) => {
     let email = '';
     let cc = [];
