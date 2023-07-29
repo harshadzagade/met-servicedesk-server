@@ -14,7 +14,7 @@ const SubadminActivities = sequelize.define('subadminactivities', {
   },
   department: {
     type: Sequelize.STRING,
-    allowNull: true
+    allowNull: false
   },
   activities: {
     type: Sequelize.ARRAY(Sequelize.STRING),

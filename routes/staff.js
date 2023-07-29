@@ -7,6 +7,7 @@ const staffController = require('../controllers/staff');
 
 const superAdminRoutes = require('./staffSubRoutes/superadmin');
 const adminRoutes = require('./staffSubRoutes/admin');
+const subadminRoutes = require('./staffSubRoutes/subadmin');
 const technicianRoutes = require('./staffSubRoutes/technician');
 const userRoutes = require('./staffSubRoutes/user');
 
@@ -65,6 +66,8 @@ router.get('/checkstaffexistence/:staffId', staffController.getStaffExistance);
 router.use('/superadmin', superAdminRoutes);
 
 router.use('/admin', adminRoutes);
+
+router.use('/subadmin', subadminRoutes);
 
 router.use('/technician', technicianRoutes);
 

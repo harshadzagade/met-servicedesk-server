@@ -3,15 +3,15 @@ const { body } = require('express-validator');
 
 const router = express.Router();
 
-const adminController = require('../../controllers/staffControllers/admin');
+const subadminController = require('../../controllers/staffControllers/subadmin');
 
-router.get('/:staffId', adminController.getAdmin);
+router.get('/:staffId', subadminController.getAdmin);
 
-router.get('/allstaff/:staffId/:currentDepartment', adminController.getAllStaff);
+router.get('/allstaff/:staffId/:currentDepartment', subadminController.getAllStaff);
 
-router.get('/searchalldepartmentstaff/:currentDepartment/:query', adminController.searchDepartmentStaff);
+router.get('/searchalldepartmentstaff/:currentDepartment/:query', subadminController.searchDepartmentStaff);
 
-router.get('/staffdetails/:staffId', adminController.getStaffDetails);
+router.get('/staffdetails/:staffId', subadminController.getStaffDetails);
 
 router.put('/staffdetails/updateStaff/:staffId',
     [
@@ -27,25 +27,25 @@ router.put('/staffdetails/updateStaff/:staffId',
                 }
             })
             .trim()
-    ], adminController.updateStaff);
+    ], subadminController.updateStaff);
 
-router.get('/admindepartments/:staffId', adminController.getAdminDepartments);
+router.get('/admindepartments/:staffId', subadminController.getAdminDepartments);
 
-router.get('/admindepartmenttechnicians/:staffId/:currentDepartment', adminController.getDepartmentTechnicians);
+router.get('/admindepartmenttechnicians/:staffId/:currentDepartment', subadminController.getDepartmentTechnicians);
 
-router.get('/staffbyrole/:department/:role', adminController.getDepartmentStaffByRole);
+router.get('/staffbyrole/:department/:role', subadminController.getDepartmentStaffByRole);
 
-router.get('/requests/incoming/:department', adminController.getIncomingRequests);
+router.get('/requests/incoming/:department', subadminController.getIncomingRequests);
 
-router.get('/requests/incomingrequestsearch/:department/:query', adminController.searchIncomingRequests);
+router.get('/requests/incomingrequestsearch/:department/:query', subadminController.searchIncomingRequests);
 
-router.get('/requests/outgoing/:staffId/:department', adminController.getOutgoingRequests);
+router.get('/requests/outgoing/:staffId/:department', subadminController.getOutgoingRequests);
 
-router.get('/requests/outgoingrequestsearch/:staffDepartment/:query', adminController.searchOutgoingRequests);
+router.get('/requests/outgoingrequestsearch/:staffDepartment/:query', subadminController.searchOutgoingRequests);
 
-router.get('/complaints/outgoing/:staffId/:department', adminController.getOutgoingComplaints);
+router.get('/complaints/outgoing/:staffId/:department', subadminController.getOutgoingComplaints);
 
-router.get('/complaints/outgoingcomplaintsearch/:staffDepartment/:query', adminController.searchOutgoingComplaints);
+router.get('/complaints/outgoingcomplaintsearch/:staffDepartment/:query', subadminController.searchOutgoingComplaints);
 
 router.put('/approval1/:requestId',
     [
@@ -61,7 +61,7 @@ router.put('/approval1/:requestId',
         body('approvalComment')
             .trim()
             .isLength({ min: 1 }).withMessage('Please enter valid approval comment')
-    ], adminController.putApproval1);
+    ], subadminController.putApproval1);
 
 router.put('/approval2/:requestId',
     [
@@ -82,6 +82,6 @@ router.put('/approval2/:requestId',
             .trim()
             .isNumeric().withMessage('Please provide valid staff ID to assign task to technician')
             .isLength({ min: 1 }).withMessage('Please provide valid staff ID to assign task to technician')
-    ], adminController.putApproval2);
+    ], subadminController.putApproval2);
 
 module.exports = router;
