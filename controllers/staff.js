@@ -2,7 +2,6 @@ const Staff = require('../models/staff');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const Op = require('sequelize').Op;
-
 const otpGenerator = require('otp-generator');
 const OneTimePassword = require('../models/onetimepassword');
 const { getStaffDetailsCommon, getDepartments } = require('../utils/functions');
@@ -263,6 +262,11 @@ exports.getAllContacts = async (req, res, next) => {
                 attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
             });
         } else if (staff.role === 'admin') {
+            contacts = await Staff.findAll({
+                where: { id: { [Op.ne]: 1 } },
+                attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
+            });
+        } else if (staff.role === 'subadmin') {
             contacts = await Staff.findAll({
                 where: { id: { [Op.ne]: 1 } },
                 attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
