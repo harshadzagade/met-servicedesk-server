@@ -1,3 +1,4 @@
+const { Parser } = require("json2csv");
 const Report = require("../models/report");
 const Staff = require("../models/staff");
 
@@ -66,7 +67,7 @@ exports.getReportCategories = async (req, res, next) => {
         allCategory.push(category);
     });
     const allCategories = allCategory;
-    const uniqueCategories = allCategories.filter(function(item, position) {
+    const uniqueCategories = allCategories.filter(function (item, position) {
         return allCategories.indexOf(item) == position;
     })
     const categories = uniqueCategories;
@@ -131,6 +132,52 @@ exports.getReportByStaff = async (req, res, next) => {
             throw error;
         }
         res.status(200).json({ message: 'Report fetched successfully', report: report });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getReportCsv = async (req, res, next) => {
+    const reportData = req.body.reportData;
+    const fields = [
+        'id',
+        'isRequest',
+        'isComplaint',
+        'requestComplaintId',
+        'staffId',
+        'staffName',
+        'assignedName',
+        'category',
+        'priority',
+        'subject',
+        'description',
+        'department',
+        'staffDepartment',
+        'status',
+        'loggedTime',
+        'approval1Time',
+        'approval1Duration',
+        'approval2Time',
+        'assignedTime',
+        'assignDuration',
+        'attendedTime',
+        'attendDuration',
+        'lastUpdatedTime',
+        'lastUpdateDuration',
+        'problemDescription',
+        'actionTaken',
+        'createdAt',
+        'updatedAt'
+    ];
+    const json2csv = new Parser({ fields });
+    try {
+        const csv = json2csv.parse(reportData);
+        res.setHeader('Content-disposition', 'attachment; filename=data.csv');
+        res.set('Content-Type', 'text/csv');
+        res.status(200).send(csv);
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
