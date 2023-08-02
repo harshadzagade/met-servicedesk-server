@@ -6,29 +6,6 @@ const Op = require('sequelize').Op;
 const { validationResult } = require('express-validator');
 const { Sequelize } = require("sequelize");
 
-exports.getSuperAdmin = async (req, res, next) => {
-    const staffId = req.params.staffId;
-    try {
-        const staff = await Staff.findByPk(staffId);
-        if (!staff) {
-            const error = new Error('Staff not found');
-            error.statusCode = 401;
-            throw error;
-        }
-        if (staff.role !== 'superadmin') {
-            const error = new Error('Unauthorised staff');
-            error.statusCode = 401;
-            throw error;
-        }
-        res.status(200).json({ message: 'Staff verification successful!', staffId: staff.id })
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-};
-
 exports.createStaff = async (req, res, next) => {
     const errors = validationResult(req);
     const firstname = req.body.firstname;

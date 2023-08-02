@@ -6,8 +6,6 @@ const router = express.Router();
 const superAdminController = require('../../controllers/staffControllers/superadmin');
 const Staff = require('../../models/staff');
 
-router.get('/:staffId', superAdminController.getSuperAdmin);
-
 router.post('/createStaff',
     [
         body('firstname', 'Please enter valid firstname')
@@ -68,7 +66,7 @@ router.post('/createStaff',
             .matches(/^[^a-zA-Z]+$/).withMessage('Please enter valid extension number')
     ], superAdminController.createStaff);
 
-router.get('/allstafflist/fullstaff', superAdminController.getAllStaff);
+router.get('/allstafflist', superAdminController.getAllStaff);
 
 router.put('/staffdetails/updateStaff/:staffId',
     [

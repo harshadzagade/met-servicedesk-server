@@ -5,13 +5,9 @@ const router = express.Router();
 
 const adminController = require('../../controllers/staffControllers/admin');
 
-router.get('/:staffId', adminController.getAdmin);
-
 router.get('/allstaff/:staffId/:currentDepartment', adminController.getAllStaff);
 
 router.get('/searchalldepartmentstaff/:currentDepartment/:query', adminController.searchDepartmentStaff);
-
-router.get('/staffdetails/:staffId', adminController.getStaffDetails);
 
 router.put('/staffdetails/updateStaff/:staffId',
     [
@@ -32,8 +28,6 @@ router.put('/staffdetails/updateStaff/:staffId',
 router.get('/admindepartments/:staffId', adminController.getAdminDepartments);
 
 router.get('/admindepartmenttechnicians/:staffId/:currentDepartment', adminController.getDepartmentTechnicians);
-
-router.get('/staffbyrole/:department/:role', adminController.getDepartmentStaffByRole);
 
 router.get('/requests/incoming/:department', adminController.getIncomingRequests);
 

@@ -9,7 +9,6 @@ const superAdminRoutes = require('./staffSubRoutes/superadmin');
 const adminRoutes = require('./staffSubRoutes/admin');
 const subadminRoutes = require('./staffSubRoutes/subadmin');
 const technicianRoutes = require('./staffSubRoutes/technician');
-const userRoutes = require('./staffSubRoutes/user');
 
 router.get('/check/:staffId', staffController.checkAuth);
 
@@ -70,7 +69,5 @@ router.use('/admin', adminRoutes);
 router.use('/subadmin', subadminRoutes);
 
 router.use('/technician', technicianRoutes);
-
-router.use('/user', userRoutes);
 
 module.exports = router;
