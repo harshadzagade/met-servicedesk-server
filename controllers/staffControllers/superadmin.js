@@ -84,11 +84,6 @@ exports.getAllStaff = async (req, res, next) => {
     }
 };
 
-exports.getStaffDetails = async (req, res, next) => {
-    const staffId = req.params.staffId;
-    getStaffDetailsCommon(staffId, res, next);
-};
-
 exports.updateStaff = async (req, res, next) => {
     const errors = validationResult(req);
     const staffId = req.params.staffId;
@@ -214,28 +209,6 @@ exports.deleteStaff = async (req, res, next) => {
         res.status(201).json({ message: 'Staff added to trash.', staffId: result.id });
         await staff.destroy();
         await staff.save();
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-};
-
-exports.getStaffByRole = async (req, res, next) => {
-    const role = req.params.role;
-    try {
-        const staff = await Staff.findAll({
-            where: {
-                role: role
-            }
-        });
-        if (!staff) {
-            const error = new Error('Staff not found');
-            error.statusCode = 401;
-            throw error;
-        }
-        res.status(200).json({ message: 'Staff fetched successfully', staff: staff });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;

@@ -70,8 +70,6 @@ router.post('/createStaff',
 
 router.get('/allstafflist/fullstaff', superAdminController.getAllStaff);
 
-router.get('/staffdetails/:staffId', superAdminController.getStaffDetails);
-
 router.put('/staffdetails/updateStaff/:staffId',
     [
         body('firstname', 'Please enter valid firstname')
@@ -132,8 +130,6 @@ router.put('/staffdetails/updateStaff/:staffId',
 router.delete('/staffdetails/:staffId', superAdminController.deleteStaff);
 
 router.delete('/deletemultiple', superAdminController.deleteMultipleStaff);
-
-router.get('/staffbyrole/:role', superAdminController.getStaffByRole);
 
 router.get('/searchallstaff/:query', superAdminController.searchAllStaff);
 
