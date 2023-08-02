@@ -22,18 +22,6 @@ router.get('/complaints/incomingcomplaintsearch/:department/:query', complaintCo
 
 router.get('/getcomplaintdetails/:complaintId', complaintController.getComplaintDetails);
 
-router.get('/complaintdepartments', complaintController.getComplaintDepartments);
-
-router.get('/complaintsbydepartment/:department', complaintController.getComplaintByDepartment);
-
-router.get('/complaintcategories', complaintController.getComplaintCategories);
-
-router.get('/complaintsbycategory/:category', complaintController.getComplaintByCategory);
-
-router.get('/complaintsbypriority/:priority', complaintController.getComplaintByPriority);
-
-router.get('/complaintsbystatus/:status', complaintController.getComplaintByStatus);
-
 router.get('/downloadfile/:complaintId', complaintController.downloadFiles);
 
 module.exports = router;

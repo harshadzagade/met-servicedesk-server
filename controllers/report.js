@@ -118,28 +118,6 @@ exports.getReportByPriority = async (req, res, next) => {
     }
 };
 
-exports.getReportByStaff = async (req, res, next) => {
-    const staffId = req.params.staffId;
-    try {
-        const report = await Report.findOne({
-            where: {
-                staffId: staffId
-            }
-        });
-        if (!report) {
-            const error = new Error('Report not found');
-            error.statusCode = 401;
-            throw error;
-        }
-        res.status(200).json({ message: 'Report fetched successfully', report: report });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-};
-
 exports.getReportCsv = async (req, res, next) => {
     const reportData = req.body.reportData;
     const fields = [
