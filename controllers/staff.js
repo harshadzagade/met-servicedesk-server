@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const Op = require('sequelize').Op;
 const otpGenerator = require('otp-generator');
 const OneTimePassword = require('../models/onetimepassword');
-const { getStaffDetailsCommon, getDepartments } = require('../utils/functions');
 const { validationResult } = require('express-validator');
 const { Sequelize } = require('sequelize');
 
@@ -64,9 +63,22 @@ exports.checkAuth = async (req, res, next) => {
     }
 };
 
-exports.getStaffDetails = (req, res, next) => {
+exports.getStaffDetails = async (req, res, next) => {
     const staffId = req.params.staffId;
-    getStaffDetailsCommon(staffId, res, next);
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Staff fetched.', staff: staff });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
 };
 
 exports.sendMail = async (req, res, next) => {
@@ -420,4 +432,18 @@ exports.getStaffExistance = async (req, res, next) => {
         }
         next(error);
     }
+};
+
+const getDepartments = async () => {
+    const totalStaff = await Staff.findAll({ where: { id: { [Op.ne]: 1 } } });
+    let allDept = [];
+    totalStaff.map((staff) => {
+        const department = staff.department;
+        allDept = allDept.concat(department);
+    });
+    const departments = allDept;
+    const uniqueDepartments = departments.filter(function(item, position) {
+        return departments.indexOf(item) == position;
+    })
+    return uniqueDepartments;
 };

@@ -1,5 +1,4 @@
 const Staff = require("../../models/staff");
-const { getStaffDetailsCommon } = require("../../utils/functions");
 const { getRequestsToDepartment, getRequestsFromDepartment } = require("../request");
 const { getComplaintsFromDepartment } = require("../complaint");
 const Op = require('sequelize').Op;

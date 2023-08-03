@@ -1,7 +1,6 @@
 const Staff = require("../../models/staff");
 const bcrypt = require('bcryptjs');
 const Trash = require("../../models/trash");
-const { getStaffDetailsCommon } = require("../../utils/functions");
 const Op = require('sequelize').Op;
 const { validationResult } = require('express-validator');
 const { Sequelize } = require("sequelize");
