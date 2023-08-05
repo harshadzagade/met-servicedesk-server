@@ -58,9 +58,11 @@ router.post('/createStaff',
                 }
             }),
         body('phoneNumber', 'Please enter valid phone number')
+        .optional()
             .trim()
-            .matches(/^(\+\d{1,3})?(\d{10})$/),
+            .matches(/^\d{10}$/),
         body('contactExtension')
+        .optional()
             .trim()
             .isLength({ min: 3 }).withMessage('Please enter valid extension number')
             .matches(/^[^a-zA-Z]+$/).withMessage('Please enter valid extension number')
@@ -117,9 +119,11 @@ router.put('/staffdetails/updateStaff/:staffId',
                 }
             }),
         body('phoneNumber', 'Please enter valid phone number')
+            .optional()
             .trim()
-            .matches(/^(\+\d{1,3})?(\d{10})$/),
+            .matches(/^\d{10}$/),
         body('contactExtension')
+            .optional()
             .trim()
             .isLength({ min: 3 }).withMessage('Please enter valid extension number')
             .matches(/^[^a-zA-Z]+$/).withMessage('Please enter valid extension number')
