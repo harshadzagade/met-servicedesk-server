@@ -108,12 +108,18 @@ exports.sendMail = async (req, res, next) => {
             subject: 'Reset Password OTP',
             html:
                 `
-            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
-                <h2>MET Service Desk</h2>
-                <h4>Verify OTP ✔</h4>
-                <p style="margin-bottom: 30px;">Please enter the sign up OTP to get started</p>
-                <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${OTP}</h1>
-            </div>
+                <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
+                <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 400px; margin: 0 auto;">
+                    <h2 style="color: #0088cc;">OTP Verification</h2>
+                    <p>Dear ${staff.firstname + ' ' + staff.lastname},</p>
+                    <p>Your One-Time Password (OTP) for verification is:</p>
+                    <p style="font-size: 18px; font-weight: bold; color: #ff0000;">${OTP}</p>
+                    <p>This OTP will be valid for a limited time period of one minute. Please do not share it with anyone.</p>
+                    <p>If you did not request this OTP, please ignore this email.</p>
+                    <p>Thank you,</p>
+                    <p>Helpdesk MET</p>
+                </div>
+            </body>
             `
         });
     } catch (error) {
