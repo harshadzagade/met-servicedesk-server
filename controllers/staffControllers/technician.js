@@ -149,7 +149,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                     }
                     hodEmail = admin.email;
                 }
-                await sendMail('Request', requester.email, hodEmail, request.category, request.id, request.subject, request.description, next);
+                await sendMail('Request', requester.email, hodEmail, request.category, request.ticketId, request.subject, request.description, next);
                 break;
 
             case 'forwarded':
@@ -379,7 +379,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     }
                     hodEmail = admin.email;
                 }
-                await sendMail('Complaint', complainan.email, hodEmail, complaint.category, complaint.id, complaint.subject, complaint.description, next);
+                await sendMail('Concern', complainan.email, hodEmail, complaint.category, complaint.ticketId, complaint.subject, complaint.description, next);
                 break;
 
             case 'forwarded':
@@ -471,19 +471,49 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
 
 const sendMail = async (ticketType, ticketRaiserEmail, hodEmail, category, ticketId, subject, description, next) => {
     try {
+        const staff = await Staff.findOne({ where: { email: ticketRaiserEmail } });
+        if (!staff) {
+            const error = new Error('Ticket raiser not found');
+            error.statusCode = 401;
+            throw error;
+        }
         await transporter.sendMail({
             to: ticketRaiserEmail,
             cc: hodEmail,
             from: 'helpdeskinfo@met.edu',
-            subject: `${ticketType} regarding ${category} #${ticketId}`,
+            subject: `${ticketType} regarding ${category} ${ticketId}`,
             html:
                 `
-            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
-                <h2>MET Service Desk</h2>
-                <h4>${ticketType} received ✔</h4>
-                <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${subject}</h1>
-                <p style="margin-bottom: 30px;">${description}</p>
-            </div>
+                <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
+                <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #0088cc;">Ticket Closure Notification</h2>
+                    <p>Dear ${staff.firstname},</p>
+                    <p>We are pleased to inform you that your helpdesk ticket (ID: ${ticketId}) has been successfully resolved and closed.</p>
+                    <p>Issue Details:</p>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
+                            <td style="padding: 5px;">${ticketType}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
+                            <td style="padding: 5px;">${category}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; font-weight: bold;">Subject:</td>
+                            <td style="padding: 5px;">${subject}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; font-weight: bold;">Description:</td>
+                            <td style="padding: 5px;">${description}</td>
+                        </tr>
+                    </table>
+                    <p>We appreciate your patience and cooperation throughout the resolution process. If you have any further questions or concerns, please don't hesitate to contact us.</p>
+                    <p>Thank you for using our helpdesk services!</p>
+                    <p>Best regards,</p>
+                    <p>The Helpdesk Team</p>
+                </div>
+            </body>
             `
         });
     } catch (error) {

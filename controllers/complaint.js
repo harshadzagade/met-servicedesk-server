@@ -325,20 +325,47 @@ exports.downloadFiles = async (req, res, next) => {
     }
 };
 
-const sendMail = async (adminEmail, category, requestId, subject, description, next) => {
+const sendMail = async (adminEmail, category, complaintId, subject, description, next) => {
     try {
         await transporter.sendMail({
             to: adminEmail,
             from: 'helpdeskinfo@met.edu',
-            subject: `Complaint regarding ${category} #${requestId}`,
+            subject: `Complaint regarding ${category} #${complaintId}`,
             html:
                 `
-            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
-                <h2>MET Service Desk</h2>
-                <h4>Complaint received ✔</h4>
-                <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${subject}</h1>
-                <p style="margin-bottom: 30px;">${description}</p>
-            </div>
+                <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
+                    <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
+                        <p>Dear Admin,</p>
+                        <p>A new ticket has been generated with the following details:</p>
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket ID:</td>
+                                <td style="padding: 5px;">${complaintId}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
+                                <td style="padding: 5px;">Concern</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
+                                <td style="padding: 5px;">${category}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Subject:</td>
+                                <td style="padding: 5px;">${subject}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Description:</td>
+                                <td style="padding: 5px;">${description}</td>
+                            </tr>
+                        </table>
+                        <p>Please log in to the helpdesk system to review and assign the ticket.</p>
+                        <p>Thank you for your attention!</p>
+                        <p>Best regards,</p>
+                        <p>The Helpdesk Team</p>
+                    </div>
+                </body>
             `
         });
     } catch (error) {
