@@ -235,7 +235,7 @@ exports.getStaffDepartments = async (req, res, next) => {
 
 const setOTP = async (OTP) => {
     const currentDate = new Date();
-    const expiration_time = new Date(currentDate.getTime() + 60000);
+    const expiration_time = new Date(currentDate.getTime() + 66000);
     try {
         const otpModel = await OneTimePassword.findByPk(1);
         if (!otpModel) {

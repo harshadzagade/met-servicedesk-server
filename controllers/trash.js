@@ -47,13 +47,12 @@ exports.restoreStaff = async (req, res, next) => {
         const email = trashStaff.email;
         const password = trashStaff.password;
         const role = trashStaff.role;
-        const institute = staff.institute;
-        const department = staff.department;
-        const departmentType = staff.departmentType;
+        const institute = trashStaff.institute;
+        const department = trashStaff.department;
+        const departmentType = trashStaff.departmentType;
         const phoneNumber = trashStaff.phoneNumber;
         const contactExtension = trashStaff.contactExtension;
         const isNew = trashStaff.isNew;
-
         const staff = new Staff({
             id: trashStaffId,
             firstname: firstname,
