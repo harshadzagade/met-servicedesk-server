@@ -404,7 +404,8 @@ exports.getStaffByDepartment = async (req, res, next) => {
             where: {
                 department: {
                     [Op.contains]: [department]
-                }
+                },
+                role: 'technician'
             }
         });
         if (!staff) {
