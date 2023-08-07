@@ -559,7 +559,7 @@ exports.putApproval2 = async (req, res, next) => {
             await report.save();
             await subadminActivities.save();
             res.status(200).json({ message: 'Staff details updated', request: result });
-            await sendMail(result.id, result.department, result.category, result.subject, result.description, next);
+            await sendMail(result.ticketId, result.department, result.category, result.subject, result.description, next);
         } else if (approval === 2) {
             request.approval2 = 2;
             request.assign = null;
@@ -612,7 +612,7 @@ const sendMail = async (requestId, department, category, subject, description, n
             to: email,
             cc: cc,
             from: 'helpdeskinfo@met.edu',
-            subject: `Requested ${category} #${requestId}`,
+            subject: `Requested ${category} ${requestId}`,
             html:
                 `
                 <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
@@ -676,9 +676,9 @@ const sendSubadminActivityMail = async (adminEmail, activitySubject, subadminNam
                         <p>A new activity has been performed by a sub-admin in the helpdesk system. Here are the details:</p>
                         
                         <ul>
-                            <li><strong>Sub-Admin:</strong>${subadminName}</li>
-                            <li><strong>Activity:</strong>${activity}</li>
-                            <li><strong>Date and Time:</strong>${activityDateTime}</li>
+                            <li><strong>Sub-Admin:</strong>&nbsp;${subadminName}</li>
+                            <li><strong>Activity:</strong>&nbsp;${activity}</li>
+                            <li><strong>Date and Time:</strong>&nbsp;${activityDateTime}</li>
                         </ul>
                         
                         <p>Please review this activity and take any necessary actions.</p>
