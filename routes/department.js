@@ -55,7 +55,9 @@ router.put('/editcategories/:departmentId',
             })
     ], departmentController.editCategories);
 
-router.get('/departments', departmentController.getAllDepartments);
+router.get('/alldepartments', departmentController.getAllDepartments);
+
+router.get('/departments', departmentController.getAllServiceDepartments);
 
 router.get('/categories/:departmentId', departmentController.getAllCategories);
 

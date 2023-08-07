@@ -105,6 +105,29 @@ exports.editCategories = async (req, res, next) => {
 exports.getAllDepartments = async (req, res, next) => {
     try {
         const departmentData = await Department.findAll({
+            attributes: ['department']
+        });
+        if (!departmentData) {
+            const error = new Error('Departments not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        let departments = [];
+        departmentData.map((singleDepartment) => (
+            singleDepartment.department !== null && departments.push(singleDepartment.department)
+        ));
+        res.status(200).json({ message: 'Department data fetched successfully', departments: departments })
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getAllServiceDepartments = async (req, res, next) => {
+    try {
+        const departmentData = await Department.findAll({
             attributes: ['department'],
             where: {
                 type: 'service'
