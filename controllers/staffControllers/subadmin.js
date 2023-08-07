@@ -639,11 +639,30 @@ const sendSubadminActivityMail = async (adminEmail, activitySubject, subadminNam
             subject: `${activitySubject}`,
             html:
                 `
-            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
-                <h2>MET Service Desk</h2>
-                <h4>Activity by Sub-Admin ${subadminName}</h4>
-                <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${activity}</h1>
-                <p style="margin-bottom: 30px;">At ${activityDateTime}</p>
+                <div style="background-color: #f4f4f4; padding: 20px;">
+                <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <div style="padding: 20px; text-align: center; background-color: #007bff; color: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                        <h2>Sub-Admin Activity Notification</h2>
+                    </div>
+                    <div style="padding: 20px;">
+                        <p>Hello Admin,</p>
+                        <p>A new activity has been performed by a sub-admin in the helpdesk system. Here are the details:</p>
+                        
+                        <ul>
+                            <li><strong>Sub-Admin:</strong>${subadminName}</li>
+                            <li><strong>Activity:</strong>${activity}</li>
+                            <li><strong>Date and Time:</strong>${activityDateTime}</li>
+                        </ul>
+                        
+                        <p>Please review this activity and take any necessary actions.</p>
+                        
+                        <p>Best regards,</p>
+                        <p>Your Helpdesk Team</p>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background-color: #f4f4f4; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+                        <p>This is an automated email. Please do not reply.</p>
+                    </div>
+                </div>
             </div>
             `
         });
