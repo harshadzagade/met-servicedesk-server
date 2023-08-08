@@ -120,6 +120,19 @@ exports.getReportByPriority = async (req, res, next) => {
 
 exports.getReportCsv = async (req, res, next) => {
     const reportData = req.body.reportData;
+    let filteredData = reportData.map((singleReport) => {
+        return {
+            ...singleReport,
+            loggedTime: getFormattedDate(singleReport.loggedTime),
+            approval1Time: getFormattedDate(singleReport.approval1Time),
+            approval2Time: getFormattedDate(singleReport.approval2Time),
+            assignedTime: getFormattedDate(singleReport.assignedTime),
+            attendedTime: getFormattedDate(singleReport.attendedTime),
+            lastUpdatedTime: getFormattedDate(singleReport.lastUpdatedTime),
+            createdAt: getFormattedDate(singleReport.createdAt),
+            updatedAt: getFormattedDate(singleReport.updatedAt)
+        };
+    });
     const fields = [
         'id',
         'isRequest',
@@ -152,7 +165,7 @@ exports.getReportCsv = async (req, res, next) => {
     ];
     const json2csv = new Parser({ fields });
     try {
-        const csv = json2csv.parse(reportData);
+        const csv = json2csv.parse(filteredData);
         res.setHeader('Content-disposition', 'attachment; filename=data.csv');
         res.set('Content-Type', 'text/csv');
         res.status(200).send(csv);
@@ -162,4 +175,24 @@ exports.getReportCsv = async (req, res, next) => {
         }
         next(error);
     }
+};
+
+const getFormattedDate = (rawDate) => {
+    if (rawDate === null) {
+        return null;
+    }
+    const date = new Date(rawDate);
+    return (date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + formatAMPM(date));
+};
+
+const formatAMPM = (date) => {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    let strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+    return strTime;
 };
