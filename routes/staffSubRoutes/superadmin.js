@@ -56,16 +56,7 @@ router.post('/createStaff',
                 } else {
                     return true;
                 }
-            }),
-        body('phoneNumber', 'Please enter valid phone number')
-        .optional()
-            .trim()
-            .matches(/^\d{10}$/),
-        body('contactExtension')
-        .optional()
-            .trim()
-            .isLength({ min: 3 }).withMessage('Please enter valid extension number')
-            .matches(/^[^a-zA-Z]+$/).withMessage('Please enter valid extension number')
+            })
     ], superAdminController.createStaff);
 
 router.get('/allstafflist', superAdminController.getAllStaff);
@@ -100,7 +91,6 @@ router.put('/staffdetails/updateStaff/:staffId',
         body('department')
             .trim()
             .isArray().withMessage('Please enter valid department')
-            .isArray().withMessage('Please enter valid department')
             .custom((value) => {
                 if (value.length === 0) {
                     return Promise.reject('Please enter valid department');
@@ -117,16 +107,7 @@ router.put('/staffdetails/updateStaff/:staffId',
                 } else {
                     return true;
                 }
-            }),
-        body('phoneNumber', 'Please enter valid phone number')
-            .optional()
-            .trim()
-            .matches(/^\d{10}$/),
-        body('contactExtension')
-            .optional()
-            .trim()
-            .isLength({ min: 3 }).withMessage('Please enter valid extension number')
-            .matches(/^[^a-zA-Z]+$/).withMessage('Please enter valid extension number')
+            })
     ], superAdminController.updateStaff);
 
 router.delete('/staffdetails/:staffId', superAdminController.deleteStaff);
