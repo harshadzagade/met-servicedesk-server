@@ -123,6 +123,10 @@ exports.getReportCsv = async (req, res, next) => {
     let filteredData = reportData.map((singleReport) => {
         return {
             ...singleReport,
+            approval1Duration: getReportDuration(singleReport.approval1Duration),
+            assignDuration: getReportDuration(singleReport.assignDuration),
+            attendDuration: getReportDuration(singleReport.attendDuration),
+            lastUpdateDuration: getReportDuration(singleReport.lastUpdateDuration),
             loggedTime: getFormattedDate(singleReport.loggedTime),
             approval1Time: getFormattedDate(singleReport.approval1Time),
             approval2Time: getFormattedDate(singleReport.approval2Time),
@@ -196,3 +200,13 @@ const formatAMPM = (date) => {
     let strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
     return strTime;
 };
+
+const getReportDuration = (duration) => {
+    if (duration === null) {
+        return null;
+    }
+    const assignDuration = duration;
+    let diffHrs = Math.floor((assignDuration % 86400000) / 3600000);
+    let diffMins = Math.round(((assignDuration % 86400000) % 3600000) / 60000);
+    return (diffHrs + ' Hours and ' + diffMins + ' Minutes');
+}
