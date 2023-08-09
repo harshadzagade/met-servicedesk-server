@@ -21,13 +21,13 @@ const Report = sequelize.define('report', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    staffId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
     staffName: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    assignId: {
+        type: Sequelize.INTEGER,
+        allowNull: true
     },
     assignedName: {
         type: Sequelize.STRING,

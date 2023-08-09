@@ -110,7 +110,6 @@ exports.sendRequest = async (req, res, next) => {
             isRequest: true,
             isComplaint: false,
             requestComplaintId: result.id,
-            staffId: result.staffId,
             staffName: result.name,
             category: result.category,
             priority: result.priority,

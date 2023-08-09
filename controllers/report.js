@@ -1,11 +1,10 @@
 const { Parser } = require("json2csv");
 const Report = require("../models/report");
-const Staff = require("../models/staff");
 
 exports.getFullReport = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
-        const report = await Report.findAll({ where: { staffId: staffId } });
+        const report = await Report.findAll({ where: { assignId: staffId } });
         res.status(200).json({ message: 'Fetched report successfully.', report: report });
     } catch (error) {
         if (!error.statusCode) {
@@ -18,7 +17,7 @@ exports.getFullReport = async (req, res, next) => {
 exports.getRequestReport = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
-        const report = await Report.findAll({ where: { staffId: staffId, isRequest: true, isComplaint: false } });
+        const report = await Report.findAll({ where: { assignId: staffId, isRequest: true, isComplaint: false } });
         res.status(200).json({ message: 'Fetched report successfully.', report: report });
     } catch (error) {
         if (!error.statusCode) {
@@ -31,7 +30,7 @@ exports.getRequestReport = async (req, res, next) => {
 exports.getComplaintReport = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
-        const report = await Report.findAll({ where: { staffId: staffId, isRequest: false, isComplaint: true } });
+        const report = await Report.findAll({ where: { assignId: staffId, isRequest: false, isComplaint: true } });
         res.status(200).json({ message: 'Fetched report successfully.', report: report });
     } catch (error) {
         if (!error.statusCode) {
@@ -142,8 +141,8 @@ exports.getReportCsv = async (req, res, next) => {
         'isRequest',
         'isComplaint',
         'requestComplaintId',
-        'staffId',
         'staffName',
+        'assignId',
         'assignedName',
         'category',
         'priority',

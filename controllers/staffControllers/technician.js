@@ -98,7 +98,7 @@ exports.changeRequestStatus = async (req, res, next) => {
         switch (statusChange) {
             case 'attending':
                 request.status = 'attending';
-                report = await Report.findOne({ where: { requestComplaintId: request.id } });
+                report = await Report.findOne({ where: { requestComplaintId: request.id, isRequest: true } });
                 report.attendedTime = new Date();
                 report.attendDuration = report.attendedTime - report.assignedTime;
                 await report.save();
@@ -113,7 +113,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                 request.status = 'closed';
                 request.problemDescription = problemDescription;
                 request.actionTaken = actionTaken;
-                report = await Report.findOne({ where: { requestComplaintId: request.id } });
+                report = await Report.findOne({ where: { requestComplaintId: request.id, isRequest: true } });
                 report.status = 'closed';
                 report.lastUpdatedTime = new Date();
                 report.lastUpdateDuration = report.lastUpdatedTime - report.attendedTime;
@@ -154,7 +154,7 @@ exports.changeRequestStatus = async (req, res, next) => {
 
             case 'forwarded':
                 if (request.status !== 'attending') {
-                    const error = new Error('Cannot forwared request before attending');
+                    const error = new Error('Cannot forward request before attending');
                     error.statusCode = 401;
                     throw error;
                 }
@@ -188,7 +188,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                     request.forwardComment = forwardComment;
                     request.problemDescription = problemDescription;
                     request.actionTaken = actionTaken;
-                    report = await Report.findOne({ where: { requestComplaintId: request.id } });
+                    report = await Report.findOne({ where: { requestComplaintId: request.id, isRequest: true } });
                     report.status = 'forwarded';
                     report.lastUpdatedTime = new Date();
                     report.lastUpdateDuration = report.lastUpdatedTime - report.attendedTime;
@@ -249,7 +249,8 @@ exports.selfAssignComplaint = async (req, res, next) => {
         const reportCheck = await Report.findOne({
             where: {
                 requestComplaintId: complaint.id,
-                staffId: staffId
+                isComplaint: true,
+                assignId: staffId
             }
         });
         let report;
@@ -258,7 +259,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
             report.isRequest = false;
             report.isComplaint = true;
             report.requestComplaintId = complaint.id;
-            report.staffId = staffId;
+            report.assignId = staffId;
             report.staffName = complaint.name;
             report.assignedName = staff.firstname + ' ' + staff.lastname;
             report.category = complaint.category;
@@ -276,7 +277,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
                 isRequest: false,
                 isComplaint: true,
                 requestComplaintId: complaint.id,
-                staffId: staffId,
+                assignId: staffId,
                 staffName: complaint.name,
                 assignedName: staff.firstname + ' ' + staff.lastname,
                 category: complaint.category,
@@ -343,7 +344,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                 complaint.status = 'closed';
                 complaint.problemDescription = problemDescription;
                 complaint.actionTaken = actionTaken;
-                report = await Report.findOne({ where: { requestComplaintId: complaint.id } });
+                report = await Report.findOne({ where: { requestComplaintId: complaint.id, isComplaint: true } });
                 report.status = 'closed';
                 report.lastUpdatedTime = new Date();
                 report.lastUpdateDuration = report.lastUpdatedTime - report.attendedTime;
@@ -413,7 +414,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     complaint.forwardComment = forwardComment;
                     complaint.problemDescription = problemDescription;
                     complaint.actionTaken = actionTaken;
-                    report = await Report.findOne({ where: { requestComplaintId: complaint.id } });
+                    report = await Report.findOne({ where: { requestComplaintId: complaint.id, isComplaint: true } });
                     report.status = 'forwarded';
                     report.lastUpdatedTime = new Date();
                     report.lastUpdateDuration = report.lastUpdatedTime - report.attendedTime;

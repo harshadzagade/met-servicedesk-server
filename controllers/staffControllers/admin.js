@@ -334,7 +334,8 @@ exports.putApproval1 = async (req, res, next) => {
         }
         const report = await Report.findOne({
             where: {
-                requestComplaintId: requestId
+                requestComplaintId: requestId,
+                isRequest: true
             }
         });
         if (!report) {
@@ -392,7 +393,8 @@ exports.putApproval2 = async (req, res, next) => {
         }
         const report = await Report.findOne({
             where: {
-                requestComplaintId: requestId
+                requestComplaintId: requestId,
+                isRequest: true
             }
         });
         if (!report) {
@@ -435,6 +437,7 @@ exports.putApproval2 = async (req, res, next) => {
             request.approval2Comment = approvalComment;
             request.approval2Time = new Date();
             const result = await request.save();
+            report.assignId = staffId;
             report.assignedName = staff.firstname + ' ' + staff.lastname;
             report.approval2Time = result.approval2Time;
             report.assignedTime = result.approval2Time;

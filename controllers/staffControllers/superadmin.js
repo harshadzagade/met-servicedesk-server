@@ -128,7 +128,7 @@ exports.updateStaff = async (req, res, next) => {
         staff.institute = institute;
         staff.department = department;
         staff.departmentType = departmentType;
-        staff.phoneNumber = phoneNumber;
+        staff.phoneNumber = phoneNumber === '0'? null : phoneNumber;
         staff.contactExtension = contactExtension;
         if (staff.role === '' || staff.role === null) {
             staff.role = 'user';
