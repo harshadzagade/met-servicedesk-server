@@ -9,6 +9,7 @@ const Staff = require('./models/staff');
 
 const loginRoute = require('./routes/login');
 const instituteRoutes = require('./routes/institute');
+const feedbackRoutes = require('./routes/feedback');
 const departmentRoutes = require('./routes/department');
 const staffRoutes = require('./routes/staff');
 const trashRoutes = require('./routes/trash');
@@ -24,6 +25,7 @@ app.use('/api/request', requestRoutes);
 app.use('/api/complaint', complaintRoutes);
 app.use('/api', loginRoute);
 app.use('/api/institute', instituteRoutes);
+app.use('/api/feedback', feedbackRoutes);
 app.use('/api/department', departmentRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/trash', trashRoutes);
