@@ -1,5 +1,7 @@
 const Feedback = require("../models/feedback");
 const { validationResult } = require("express-validator");
+const Request = require("../models/request");
+const Complaint = require("../models/complaint");
 
 exports.postFeedback = async (req, res, next) => {
     const errors = validationResult(req);
@@ -19,6 +21,41 @@ exports.postFeedback = async (req, res, next) => {
         });
         const result = await feedback.save();
         res.status(201).json({ message: 'Feedback sent successfully', feedback: result });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getAllDepartmentFeedbacks = async (req, res, next) => {
+    const department = req.params.department;
+    try {
+        const requests = await Request.findAll({
+            where: { department: department },
+            attributes: ['ticketId']
+        });
+        const complaints = await Complaint.findAll({
+            where: { department: department },
+            attributes: ['ticketId']
+        });
+        let allFeedbacks = [];
+        for (let index = 0; index < requests.length; index++) {
+            const element = requests[index].ticketId;
+            const feedback = await Feedback.findOne({ where: { ticketId: element, ticketType: 'request' } });
+            if (feedback) {
+                allFeedbacks.push(feedback);
+            }
+        }
+        for (let index = 0; index < complaints.length; index++) {
+            const element = complaints[index].ticketId;
+            const feedback = await Feedback.findOne({ where: { ticketId: element, ticketType: 'complaint' } });
+            if (feedback) {
+                allFeedbacks.push(feedback);
+            }
+        }
+        res.status(200).json({ message: 'Fetched all department feedback successfully', feedback: allFeedbacks });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;

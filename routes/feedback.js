@@ -36,4 +36,6 @@ router.post('/',
         })
     ], feedbackController.postFeedback);
 
+router.get('/requestfeedbacks/:department', feedbackController.getAllDepartmentFeedbacks);
+
 module.exports = router;
