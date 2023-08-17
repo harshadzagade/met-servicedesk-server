@@ -8,11 +8,11 @@ const Feedback = sequelize.define('feedback', {
         allowNull: false,
         primaryKey: true
     },
-    ticketId: {
+    ticketType: {
         type: Sequelize.STRING,
         allowNull: false
     },
-    ticketType: {
+    ticketId: {
         type: Sequelize.STRING,
         allowNull: false
     },
