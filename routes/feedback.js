@@ -33,7 +33,9 @@ router.post('/',
                 default:
                     return Promise.reject('Invalid ticket type');
             }
-        })
+        }),
+        body('feedback')
+            .isLength({ max: 150 }).withMessage('Cannot exceed above 150 characters')
     ], feedbackController.postFeedback);
 
 router.get('/requestfeedbacks/:department', feedbackController.getAllDepartmentFeedbacks);
