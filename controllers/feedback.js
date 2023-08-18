@@ -24,6 +24,17 @@ exports.postFeedback = async (req, res, next) => {
             error.statusCode = 422;
             throw error;
         }
+        const existingFeedback = await Feedback.findOne({
+            where: {
+                ticketType: ticketType,
+                ticketId: ticketId
+            }
+        });
+        if (existingFeedback) {
+            const error = new Error('Feedback can be only submitted once');
+            error.statusCode = 401;
+            throw error;
+        }
         const feedback = new Feedback({
             ticketType: ticketType,
             ticketId: ticketId,
