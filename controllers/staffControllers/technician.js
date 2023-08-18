@@ -195,6 +195,18 @@ exports.changeRequestStatus = async (req, res, next) => {
                     report.problemDescription = problemDescription;
                     report.actionTaken = actionTaken;
                     await report.save();
+                    const hod = await Staff.findOne({
+                        where: {
+                            department: [request.department],
+                            role: 'admin'
+                        }
+                    });
+                    if (!hod) {
+                        const error = new Error('Department admin not found');
+                        error.statusCode = 401;
+                        throw error;
+                    }
+                    await sendForwardEmail(hod.email, staff.email, staff.firstname + ' ' + staff.lastname, 'Request', request.ticketId, request.subject, forwardComment, getFormattedDate(new Date()), next);
                 } else {
                     const error = new Error('Forwarded staff not found');
                     error.statusCode = 401;
@@ -421,6 +433,18 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     report.problemDescription = problemDescription;
                     report.actionTaken = actionTaken;
                     await report.save();
+                    const hod = await Staff.findOne({
+                        where: {
+                            department: [complaint.department],
+                            role: 'admin'
+                        }
+                    });
+                    if (!hod) {
+                        const error = new Error('Department admin not found');
+                        error.statusCode = 401;
+                        throw error;
+                    }
+                    await sendForwardEmail(hod.email, staff.email, staff.firstname + ' ' + staff.lastname, 'Concern', complaint.ticketId, complaint.subject, forwardComment, getFormattedDate(new Date()), next);
                 } else {
                     const error = new Error('Forwarded staff not found');
                     error.statusCode = 401;
@@ -486,35 +510,35 @@ const sendMail = async (ticketType, ticketRaiserEmail, hodEmail, category, ticke
             html:
                 `
                 <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
-                <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #0088cc;">Ticket Closure Notification</h2>
-                    <p>Dear ${staff.firstname},</p>
-                    <p>We are pleased to inform you that your helpdesk ticket (ID: ${ticketId}) has been successfully resolved and closed.</p>
-                    <p>Issue Details:</p>
-                    <table style="width: 100%;">
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
-                            <td style="padding: 5px;">${ticketType}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
-                            <td style="padding: 5px;">${category}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Subject:</td>
-                            <td style="padding: 5px;">${subject}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Description:</td>
-                            <td style="padding: 5px;">${description}</td>
-                        </tr>
-                    </table>
-                    <p>We appreciate your patience and cooperation throughout the resolution process. If you have any further questions or concerns, please don't hesitate to contact us.</p>
-                    <p>Thank you for using our helpdesk services!</p>
-                    <p>Best regards,</p>
-                    <p>The Helpdesk Team</p>
-                </div>
-            </body>
+                    <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #0088cc;">Ticket Closure Notification</h2>
+                        <p>Dear ${staff.firstname},</p>
+                        <p>We are pleased to inform you that your helpdesk ticket (ID: ${ticketId}) has been successfully resolved and closed.</p>
+                        <p>Issue Details:</p>
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
+                                <td style="padding: 5px;">${ticketType}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
+                                <td style="padding: 5px;">${category}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Subject:</td>
+                                <td style="padding: 5px;">${subject}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Description:</td>
+                                <td style="padding: 5px;">${description}</td>
+                            </tr>
+                        </table>
+                        <p>We appreciate your patience and cooperation throughout the resolution process. If you have any further questions or concerns, please don't hesitate to contact us.</p>
+                        <p>Thank you for using our helpdesk services!</p>
+                        <p>Best regards,</p>
+                        <p>The Helpdesk Team</p>
+                    </div>
+                </body>
             `
         });
     } catch (error) {
@@ -523,4 +547,68 @@ const sendMail = async (ticketType, ticketRaiserEmail, hodEmail, category, ticke
         }
         next(error);
     }
+};
+
+const sendForwardEmail = async (hodEmail, technicianEmail, name, ticketType, ticketId, subject, reason, date, next) => {
+    try {
+        await transporter.sendMail({
+            to: technicianEmail,
+            cc: hodEmail,
+            from: 'helpdeskinfo@met.edu',
+            subject: `Helpdesk Ticket Forwarded`,
+            html:
+                `
+                <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                        <div style="background-color: #007bff; color: #ffffff; text-align: center; padding: 10px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+                        <h1>Helpdesk Ticket Forwarded</h1>
+                        </div>
+                        <div style="padding: 20px;">
+                        <p>Hello ${name},</p>
+                        <p>This is to inform you that a helpdesk ticket has been forwarded to you for further action.</p>
+                        <p>Ticket Details:</p>
+                        <ul>
+                            <li><strong>Ticket Type:</strong> ${ticketType}</li>
+                            <li><strong>Ticket ID:</strong> ${ticketId}</li>
+                            <li><strong>Subject:</strong> ${subject}</li>
+                            <li><strong>Reason:</strong> ${reason}</li>
+                            <li><strong>Forwarded On:</strong> ${date}</li>
+                        </ul>
+                        <p>Please review the ticket and take appropriate action. If you have any questions or need assistance, please respond to this email or log in to the helpdesk system.</p>
+                        <p>Thank you for your prompt attention to this matter.</p>
+                        <p>Best regards,<br> The Helpdesk Team</p>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background-color: #f4f4f4; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+                        <p>This is an automated notification. Please do not reply.</p>
+                        </div>
+                    </div>
+                </body>
+            `
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+const getFormattedDate = (rawDate) => {
+    if (rawDate === null) {
+        return null;
+    }
+    const date = new Date(rawDate);
+    return (date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + formatAMPM(date));
+};
+
+const formatAMPM = (date) => {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    let strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+    return strTime;
 };
