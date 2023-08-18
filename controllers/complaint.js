@@ -188,7 +188,7 @@ exports.ownComplaints = async (req, res, next) => {
                 ]
             }
         });
-        res.status(200).json({ message: 'Staff created!', complaints: complaints });
+        res.status(200).json({ message: 'Complaint created!', complaints: complaints });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
