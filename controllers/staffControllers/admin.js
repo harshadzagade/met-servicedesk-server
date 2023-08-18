@@ -335,6 +335,53 @@ exports.assignComplaint = async (req, res, next) => {
             complaint.assign = staff.id;
             complaint.assignedName = staff.firstname + '' + staff.lastname;
             const result = await complaint.save();
+            const reportCheck = await Report.findOne({
+                where: {
+                    requestComplaintId: complaint.id,
+                    isComplaint: true,
+                    assignId: assignId
+                }
+            });
+            let report;
+            if (reportCheck) {
+                report = await Report.findByPk(reportCheck.id);
+                report.isRequest = false;
+                report.isComplaint = true;
+                report.requestComplaintId = complaint.id;
+                report.assignId = assignId;
+                report.staffName = complaint.name;
+                report.assignedName = staff.firstname + ' ' + staff.lastname;
+                report.category = complaint.category;
+                report.priority = complaint.priority;
+                report.subject = complaint.subject;
+                report.description = complaint.description;
+                report.department = complaint.department;
+                report.staffDepartment = complaint.staffDepartment;
+                report.status = complaint.status;
+                report.loggedTime = complaint.createdAt;
+                report.attendedTime = new Date();
+                report.attendDuration = new Date() - complaint.createdAt;
+            } else {
+                report = new Report({
+                    isRequest: false,
+                    isComplaint: true,
+                    requestComplaintId: complaint.id,
+                    assignId: assignId,
+                    staffName: complaint.name,
+                    assignedName: staff.firstname + ' ' + staff.lastname,
+                    category: complaint.category,
+                    priority: complaint.priority,
+                    subject: complaint.subject,
+                    description: complaint.description,
+                    department: complaint.department,
+                    staffDepartment: complaint.staffDepartment,
+                    status: complaint.status,
+                    loggedTime: complaint.createdAt,
+                    attendedTime: new Date(),
+                    attendDuration: new Date() - complaint.createdAt
+                });
+            }
+            await report.save();
             res.status(201).json({ message: 'Complaint assigned successfully', complaint: result });
         } else {
             const error = new Error('Cannot assign to closed and forwarded requests');
