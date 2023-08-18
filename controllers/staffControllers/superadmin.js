@@ -4,6 +4,15 @@ const Trash = require("../../models/trash");
 const Op = require('sequelize').Op;
 const { validationResult } = require('express-validator');
 const { Sequelize } = require("sequelize");
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'helpdeskinfo@met.edu',
+        pass: 'lzhqhnnscnxiwwqc'
+    }
+});
 
 exports.createStaff = async (req, res, next) => {
     const errors = validationResult(req);
@@ -39,6 +48,7 @@ exports.createStaff = async (req, res, next) => {
             isNew: true
         });
         const result = await staff.save();
+        await userWelcomeEmail(firstname + ' ' + lastname, email, password, next);
         res.status(201).json({ message: 'Staff created!', staffId: result.id });
     } catch (error) {
         if (!error.statusCode) {
@@ -128,7 +138,7 @@ exports.updateStaff = async (req, res, next) => {
         staff.institute = institute;
         staff.department = department;
         staff.departmentType = departmentType;
-        staff.phoneNumber = phoneNumber === '0'? null : phoneNumber;
+        staff.phoneNumber = phoneNumber === '0' ? null : phoneNumber;
         staff.contactExtension = contactExtension;
         if (staff.role === '' || staff.role === null) {
             staff.role = 'user';
@@ -237,6 +247,46 @@ exports.searchAllStaff = async (req, res, next) => {
         res.json(staff);
     } catch (error) {
         console.log(error);
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+const userWelcomeEmail = async (name, email, password, next) => {
+    try {
+        await transporter.sendMail({
+            to: email,
+            from: 'helpdeskinfo@met.edu',
+            subject: `Welcome to MET`,
+            html:
+                `
+                <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                        <div style="background-color: #007bff; color: #ffffff; text-align: center; padding: 10px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+                        <h1>Welcome to MET!</h1>
+                        </div>
+                        <div style="padding: 20px;">
+                        <p>Hello ${name},</p>
+                        <p>Thank you for joining MET! We're excited to have you on board.</p>
+                        <p>Your login credentials are as follows:</p>
+                        <ul>
+                            <li><strong>Email:</strong> ${email}</li>
+                            <li><strong>Password:</strong> ${password}</li>
+                        </ul>
+                        <p>Please log in using the provided credentials and change your password after the initial login for security reasons.</p>
+                        <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+                        <p>Best regards,<br> The Helpdesk Team</p>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background-color: #f4f4f4; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+                        <p>This is an automated email. Please do not reply.</p>
+                        </div>
+                    </div>
+                </body>
+            `
+        });
+    } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
         }
