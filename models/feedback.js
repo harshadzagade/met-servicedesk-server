@@ -16,6 +16,10 @@ const Feedback = sequelize.define('feedback', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    department: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     feedback: {
         type: Sequelize.STRING,
         allowNull: false

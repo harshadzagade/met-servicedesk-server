@@ -4,6 +4,7 @@ const Request = require("../models/request");
 const Complaint = require("../models/complaint");
 const Staff = require("../models/staff");
 const nodemailer = require('nodemailer');
+const { Op } = require("sequelize");
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -17,6 +18,7 @@ exports.postFeedback = async (req, res, next) => {
     const errors = validationResult(req);
     const ticketType = req.body.ticketType;
     const ticketId = req.body.ticketId;
+    const department = req.body.department;
     const feedbackMessage = req.body.feedback;
     try {
         if (!errors.isEmpty()) {
@@ -38,22 +40,20 @@ exports.postFeedback = async (req, res, next) => {
         const feedback = new Feedback({
             ticketType: ticketType,
             ticketId: ticketId,
+            department: department,
             feedback: feedbackMessage
         });
         let staffId;
-        let ticketDepartment;
         if (ticketType === 'request') {
             const request = await Request.findOne({ where: { ticketId: ticketId } });
             staffId = request.staffId;
-            ticketDepartment = request.department;
         } else {
             const complaint = await Complaint.findOne({ where: { ticketId: ticketId } });
             staffId = complaint.staffId;
-            ticketDepartment = complaint.department;
         }
         const admin = await Staff.findOne({
             where: {
-                department: [ticketDepartment],
+                department: [department],
                 role: 'admin'
             }
         });
@@ -82,30 +82,31 @@ exports.postFeedback = async (req, res, next) => {
 exports.getAllDepartmentFeedbacks = async (req, res, next) => {
     const department = req.params.department;
     try {
-        const requests = await Request.findAll({
-            where: { department: department },
-            attributes: ['ticketId']
-        });
-        const complaints = await Complaint.findAll({
-            where: { department: department },
-            attributes: ['ticketId']
-        });
-        let allFeedbacks = [];
-        for (let index = 0; index < requests.length; index++) {
-            const element = requests[index].ticketId;
-            const feedback = await Feedback.findOne({ where: { ticketId: element, ticketType: 'request' } });
-            if (feedback) {
-                allFeedbacks.push(feedback);
-            }
+        const feedback = await Feedback.findAll({ where: { department: department } });
+        res.status(200).json({ message: 'Fetched all department feedback successfully', feedback: feedback });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        for (let index = 0; index < complaints.length; index++) {
-            const element = complaints[index].ticketId;
-            const feedback = await Feedback.findOne({ where: { ticketId: element, ticketType: 'complaint' } });
-            if (feedback) {
-                allFeedbacks.push(feedback);
+        next(error);
+    }
+};
+
+exports.searchFeedback = async (req, res, next) => {
+    const department = req.params.department;
+    const query = req.params.query;
+    try {
+        const feedback = await Feedback.findAll({
+            where: {
+                department: department,
+                [Op.or]: [
+                    { ticketType: { [Op.iLike]: `%${query}%` } },
+                    { ticketId: { [Op.iLike]: `%${query}%` } },
+                    { feedback: { [Op.iLike]: `%${query}%` } },
+                ]
             }
-        }
-        res.status(200).json({ message: 'Fetched all department feedback successfully', feedback: allFeedbacks });
+        });
+        res.json(feedback);
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;

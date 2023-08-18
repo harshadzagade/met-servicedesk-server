@@ -38,6 +38,8 @@ router.post('/',
             .isLength({ max: 150 }).withMessage('Cannot exceed above 150 characters')
     ], feedbackController.postFeedback);
 
-router.get('/requestfeedbacks/:department', feedbackController.getAllDepartmentFeedbacks);
+router.get('/allfeedbacks/:department', feedbackController.getAllDepartmentFeedbacks);
+
+router.get('/feedbacksearch/:department/:query', feedbackController.searchFeedback);
 
 module.exports = router;
