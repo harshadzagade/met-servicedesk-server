@@ -32,7 +32,7 @@ exports.postFeedback = async (req, res, next) => {
         });
         if (existingFeedback) {
             const error = new Error('Feedback can be only submitted once');
-            error.statusCode = 401;
+            error.statusCode = 403;
             throw error;
         }
         const feedback = new Feedback({
