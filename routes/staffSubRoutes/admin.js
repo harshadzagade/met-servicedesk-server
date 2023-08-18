@@ -41,6 +41,8 @@ router.get('/complaints/outgoing/:staffId/:department', adminController.getOutgo
 
 router.get('/complaints/outgoingcomplaintsearch/:staffDepartment/:query', adminController.searchOutgoingComplaints);
 
+router.put('/assigncomplaint/:complaintId', adminController.assignComplaint);
+
 router.put('/approval1/:requestId',
     [
         body('approval')

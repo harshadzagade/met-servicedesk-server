@@ -315,6 +315,40 @@ exports.searchOutgoingComplaints = async (req, res, next) => {
     }
 };
 
+exports.assignComplaint = async (req, res, next) => {
+    const complaintId = req.params.complaintId;
+    const assignId = req.body.assignId;
+    try {
+        const complaint = await Complaint.findByPk(complaintId);
+        if (!complaint) {
+            const error = new Error('Concern not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const staff = await Staff.findByPk(assignId);
+        if (!staff) {
+            const error = new Error('Staff not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if ((complaint.status !== 'closed') && (complaint.status !== 'forwarded')) {
+            complaint.assign = staff.id;
+            complaint.assignedName = staff.firstname + '' + staff.lastname;
+            const result = await complaint.save();
+            res.status(201).json({ message: 'Complaint assigned successfully', complaint: result });
+        } else {
+            const error = new Error('Cannot assign to closed and forwarded requests');
+            error.statusCode = 403;
+            throw error;
+        }
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 exports.putApproval1 = async (req, res, next) => {
     const errors = validationResult(req);
     const requestId = req.params.requestId;
@@ -518,38 +552,38 @@ const sendMail = async (requestId, department, category, subject, description, n
             html:
                 `
                 <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
-                <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
-                    <p>Dear Admin,</p>
-                    <p>A new ticket has been generated with the following details:</p>
-                    <table style="width: 100%;">
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Ticket ID:</td>
-                            <td style="padding: 5px;">${requestId}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
-                            <td style="padding: 5px;">Request</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
-                            <td style="padding: 5px;">${category}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Subject:</td>
-                            <td style="padding: 5px;">${subject}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Description:</td>
-                            <td style="padding: 5px;">${description}</td>
-                        </tr>
-                    </table>
-                    <p>Please log in to the helpdesk system to review and assign the ticket.</p>
-                    <p>Thank you for your attention!</p>
-                    <p>Best regards,</p>
-                    <p>The Helpdesk Team</p>
-                </div>
-            </body>
+                    <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
+                        <p>Dear Admin,</p>
+                        <p>A new ticket has been generated with the following details:</p>
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket ID:</td>
+                                <td style="padding: 5px;">${requestId}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
+                                <td style="padding: 5px;">Request</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
+                                <td style="padding: 5px;">${category}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Subject:</td>
+                                <td style="padding: 5px;">${subject}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Description:</td>
+                                <td style="padding: 5px;">${description}</td>
+                            </tr>
+                        </table>
+                        <p>Please log in to the helpdesk system to review and assign the ticket.</p>
+                        <p>Thank you for your attention!</p>
+                        <p>Best regards,</p>
+                        <p>The Helpdesk Team</p>
+                    </div>
+                </body>
             `
         });
     } catch (error) {
