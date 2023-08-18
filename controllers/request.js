@@ -101,26 +101,6 @@ exports.sendRequest = async (req, res, next) => {
                 isRepeated: isRepeated
             });
         }
-        const requestRes = await request.save();
-        const setId = await Request.findByPk(requestRes.id);
-        const currentDate = new Date();
-        setId.ticketId = '#' + currentDate.getFullYear() + setId.id;
-        const result = await setId.save();
-        const report = new Report({
-            isRequest: true,
-            isComplaint: false,
-            requestComplaintId: result.id,
-            staffName: result.name,
-            category: result.category,
-            priority: result.priority,
-            subject: result.subject,
-            description: result.description,
-            department: result.department,
-            staffDepartment: result.staffDepartment,
-            status: result.status,
-            loggedTime: result.createdAt
-        });
-        await report.save();
         if (requester.role !== 'admin' && requester.department.length > 1) {
             const error = new Error('Non-admin staff cannot have multiple department');
             error.statusCode = 401;
@@ -157,6 +137,26 @@ exports.sendRequest = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+        const requestRes = await request.save();
+        const setId = await Request.findByPk(requestRes.id);
+        const currentDate = new Date();
+        setId.ticketId = '#' + currentDate.getFullYear() + setId.id;
+        const result = await setId.save();
+        const report = new Report({
+            isRequest: true,
+            isComplaint: false,
+            requestComplaintId: result.id,
+            staffName: result.name,
+            category: result.category,
+            priority: result.priority,
+            subject: result.subject,
+            description: result.description,
+            department: result.department,
+            staffDepartment: result.staffDepartment,
+            status: result.status,
+            loggedTime: result.createdAt
+        });
+        await report.save();
         adminEmail = admin.email;
         await sendMail(hodEmail, adminEmail, category, result.ticketId, subject, description, next);
         res.status(201).json({ message: 'Staff created!', request: result });

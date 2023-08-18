@@ -58,6 +58,19 @@ exports.sendComplaint = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+        const admin = await Staff.findOne({
+            where: {
+                role: 'admin',
+                department: {
+                    [Op.contains]: [department]
+                }
+            }
+        });
+        if (!admin) {
+            const error = new Error('Department or department admin not found');
+            error.statusCode = 401;
+            throw error;
+        }
         const complaint = new Complaint({
             staffId: staffId,
             behalf: behalf,
@@ -79,19 +92,6 @@ exports.sendComplaint = async (req, res, next) => {
         const currentDate = new Date();
         setId.ticketId = '#' + currentDate.getFullYear() + setId.id;
         const result = await setId.save();
-        const admin = await Staff.findOne({
-            where: {
-                role: 'admin',
-                department: {
-                    [Op.contains]: [department]
-                }
-            }
-        });
-        if (!admin) {
-            const error = new Error('Department or department admin not found');
-            error.statusCode = 401;
-            throw error;
-        }
         await sendMail(admin.email, category, result.id, subject, description, next);
         res.status(201).json({ message: 'Staff created!', complaint: result });
     } catch (error) {
