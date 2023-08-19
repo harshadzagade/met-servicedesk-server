@@ -201,11 +201,8 @@ const formatAMPM = (date) => {
 };
 
 const getReportDuration = (duration) => {
-    if (duration === null) {
-        return null;
-    }
-    const assignDuration = duration;
-    let diffHrs = Math.floor((assignDuration % 86400000) / 3600000);
-    let diffMins = Math.round(((assignDuration % 86400000) % 3600000) / 60000);
-    return (diffHrs + ' Hours and ' + diffMins + ' Minutes');
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration % 3600) / 60);
+    const remainingSeconds = duration % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
