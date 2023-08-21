@@ -2,7 +2,7 @@ const Complaint = require('../models/complaint');
 const Staff = require('../models/staff');
 const Op = require('sequelize').Op;
 const nodemailer = require('nodemailer');
-const io = require('../socket');
+const { getIO } = require('../socket');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -94,7 +94,7 @@ exports.sendComplaint = async (req, res, next) => {
         setId.ticketId = '#' + currentDate.getFullYear() + setId.id;
         const result = await setId.save();
         await sendMail(admin.email, category, result.id, subject, description, next);
-        io.getIO().emit('complaints');
+        getIO().emit('complaints');
         res.status(201).json({ message: 'Complaint created!', complaint: result });
     } catch (error) {
         if (!error.statusCode) {

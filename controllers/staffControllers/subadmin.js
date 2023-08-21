@@ -8,7 +8,7 @@ const { validationResult } = require("express-validator");
 const { Sequelize } = require("sequelize");
 const Complaint = require("../../models/complaint");
 const SubadminActivities = require("../../models/subadminactivities");
-const io = require('../../socket');
+const { getIO } = require('../../socket');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -130,7 +130,7 @@ exports.updateStaff = async (req, res, next) => {
         }
         const result = await staff.save();
         await subadminActivities.save();
-        io.getIO().emit('subadminactivities');
+        getIO().emit('subadminactivities');
         res.status(200).json({ message: 'Staff details updated', staff: result });
     } catch (error) {
         if (!error.statusCode) {
@@ -453,7 +453,8 @@ exports.putApproval1 = async (req, res, next) => {
         const result = await request.save();
         await report.save();
         await subadminActivities.save();
-        io.getIO().emit('subadminactivities');
+        getIO().emit('subadminactivities');
+        getIO().emit('requestStatus');
         res.status(200).json({ message: 'Staff details updated', request: result });
     } catch (error) {
         if (!error.statusCode) {
@@ -565,7 +566,8 @@ exports.putApproval2 = async (req, res, next) => {
             await report.save();
             await subadminActivities.save();
             await sendMail(result.ticketId, result.department, result.category, result.subject, result.description, next);
-            io.getIO().emit('subadminactivities');
+            getIO().emit('subadminactivities');
+            getIO().emit('requestStatus');
             res.status(200).json({ message: 'Staff details updated', request: result });
         } else if (approval === 2) {
             request.approval2 = 2;
@@ -579,7 +581,8 @@ exports.putApproval2 = async (req, res, next) => {
             await sendSubadminActivityMail(admin.email, 'Request disapproved', subadmin.firstname + ' ' + subadmin.lastname, `Admin disapproval has been done of request with an ID ${request.ticketId}`, getFormattedDate(new Date()));
             await report.save();
             await subadminActivities.save();
-            io.getIO().emit('subadminactivities');
+            getIO().emit('subadminactivities');
+            getIO().emit('requestStatus');
             res.status(200).json({ message: 'Staff details updated', request: result });
         }
     } catch (error) {

@@ -9,6 +9,7 @@ const { validationResult } = require("express-validator");
 const { Sequelize } = require("sequelize");
 const Complaint = require("../../models/complaint");
 const SubadminActivities = require('../../models/subadminactivities');
+const { getIO } = require("../../socket");
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -382,6 +383,7 @@ exports.assignComplaint = async (req, res, next) => {
                 });
             }
             await report.save();
+            getIO().emit('complaintStatus');
             res.status(201).json({ message: 'Complaint assigned successfully', complaint: result });
         } else {
             const error = new Error('Cannot assign to closed and forwarded requests');
@@ -445,6 +447,7 @@ exports.putApproval1 = async (req, res, next) => {
         }
         const result = await request.save();
         await report.save();
+        getIO().emit('requestStatus');
         res.status(200).json({ message: 'Staff details updated', request: result });
     } catch (error) {
         if (!error.statusCode) {
@@ -524,8 +527,9 @@ exports.putApproval2 = async (req, res, next) => {
             report.assignedTime = result.approval2Time;
             report.assignDuration = result.approval2Time - result.createdAt;
             await report.save();
-            res.status(200).json({ message: 'Staff details updated', request: result });
             await sendMail(result.id, result.department, result.category, result.subject, result.description, next);
+            getIO().emit('requestStatus');
+            res.status(200).json({ message: 'Staff details updated', request: result });
         } else if (approval === 2) {
             request.approval2 = 2;
             request.assign = null;
@@ -535,6 +539,7 @@ exports.putApproval2 = async (req, res, next) => {
             const result = await request.save();
             await report.destroy();
             await report.save();
+            getIO().emit('requestStatus');
             res.status(200).json({ message: 'Staff details updated', request: result });
         }
     } catch (error) {

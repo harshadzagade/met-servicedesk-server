@@ -5,6 +5,7 @@ const Report = require("../../models/report");
 const Op = require('sequelize').Op;
 const nodemailer = require('nodemailer');
 const { validationResult } = require("express-validator");
+const { getIO } = require("../../socket");
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -220,6 +221,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                 throw error;
         }
         const result = await request.save();
+        getIO().emit('requestStatus');
         res.status(200).json({ message: 'status updated successfully!', request: result });
     } catch (error) {
         if (!error.statusCode) {
@@ -306,6 +308,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
         }
         await report.save();
         const result = await complaint.save();
+        getIO().emit('complaintStatus');
         res.status(200).json({ message: 'Task self assigned successfully!', complaint: result })
     } catch (error) {
         if (!error.statusCode) {
@@ -458,6 +461,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                 throw error;
         }
         const result = await complaint.save();
+        getIO().emit('complaintStatus');
         res.status(200).json({ message: 'status updated successfully!', complaint: result });
     } catch (error) {
         if (!error.statusCode) {
