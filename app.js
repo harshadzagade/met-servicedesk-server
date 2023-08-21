@@ -40,7 +40,11 @@ app.use((error, req, res, next) => {
 });
 
 sequelize.sync().then((result) => { // 'force:true' means overriding table with new changes
-    app.listen(8001);
+    const server = app.listen(8001);
+    const io = require('./socket').init(server);
+    io.on('connection', socket => {
+        console.log('Client connected');
+    });
 }).then(staff => {
     bcrypt.hash('super@met.edu', 12).then((password) => {
         staff = Staff.findOrCreate({

@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const archiver = require('archiver');
 const Report = require('../models/report');
+const io = require('../socket');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -159,6 +160,7 @@ exports.sendRequest = async (req, res, next) => {
         await report.save();
         adminEmail = admin.email;
         await sendMail(hodEmail, adminEmail, category, result.ticketId, subject, description, next);
+        io.getIO().emit('requests');
         res.status(201).json({ message: 'Staff created!', request: result });
     } catch (error) {
         if (!error.statusCode) {
