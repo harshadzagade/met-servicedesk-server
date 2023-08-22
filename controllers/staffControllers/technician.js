@@ -195,6 +195,8 @@ exports.changeRequestStatus = async (req, res, next) => {
                     report.lastUpdateDuration = report.lastUpdatedTime - report.attendedTime;
                     report.problemDescription = problemDescription;
                     report.actionTaken = actionTaken;
+                    report.assignId = assign;
+                    report.assignedName = staff.firstname + ' ' + staff.lastname;
                     await report.save();
                     const hod = await Staff.findOne({
                         where: {
@@ -435,6 +437,8 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     report.lastUpdateDuration = report.lastUpdatedTime - report.attendedTime;
                     report.problemDescription = problemDescription;
                     report.actionTaken = actionTaken;
+                    report.assignId = assign;
+                    report.assignedName = staff.firstname + ' ' + staff.lastname;
                     await report.save();
                     const hod = await Staff.findOne({
                         where: {

@@ -335,6 +335,7 @@ exports.assignComplaint = async (req, res, next) => {
         if ((complaint.status !== 'closed') && (complaint.status !== 'forwarded')) {
             complaint.assign = staff.id;
             complaint.assignedName = staff.firstname + '' + staff.lastname;
+            complaint.status = 'attending';
             const result = await complaint.save();
             const reportCheck = await Report.findOne({
                 where: {
