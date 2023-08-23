@@ -626,39 +626,46 @@ const sendMail = async (requestId, department, category, subject, description, n
             subject: `Requested ${category} ${requestId}`,
             html:
                 `
-                <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
-                <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
-                    <p>Dear Admin,</p>
-                    <p>A new ticket has been generated with the following details:</p>
-                    <table style="width: 100%;">
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Ticket ID:</td>
-                            <td style="padding: 5px;">${requestId}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
-                            <td style="padding: 5px;">Request</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
-                            <td style="padding: 5px;">${category}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Subject:</td>
-                            <td style="padding: 5px;">${subject}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px; font-weight: bold;">Description:</td>
-                            <td style="padding: 5px;">${description}</td>
-                        </tr>
-                    </table>
-                    <p>Please log in to the helpdesk system to review and assign the ticket.</p>
-                    <p>Thank you for your attention!</p>
-                    <p>Best regards,</p>
-                    <p>The Helpdesk Team</p>
-                </div>
-            </body>
+                <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                        <div style="background-color: #DA251C; color: #ffffff; text-align: center; padding: 10px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+                        <h1>MET Helpdesk</h1>
+                        </div>
+                        <div style="padding: 20px;">
+                        <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
+                        <p>Dear Admin,</p>
+                        <p>A new ticket has been generated with the following details:</p>
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket ID:</td>
+                                <td style="padding: 5px;">${requestId}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
+                                <td style="padding: 5px;">Request</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
+                                <td style="padding: 5px;">${category}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Subject:</td>
+                                <td style="padding: 5px;">${subject}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Description:</td>
+                                <td style="padding: 5px;">${description}</td>
+                            </tr>
+                        </table>
+                        <p>Please log in to the helpdesk system to review and assign the ticket.</p>
+                        <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+                        <p>Best regards,<br> The Helpdesk Team</p>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background-color: #f4f4f4; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+                        <p>This is an automated email. Please do not reply.</p>
+                        </div>
+                    </div>
+                </body>
             `
         });
     } catch (error) {

@@ -530,7 +530,7 @@ exports.putApproval2 = async (req, res, next) => {
             await report.save();
             await sendMail(result.id, result.department, result.category, result.subject, result.description, next);
             getIO().emit('requestStatus');
-            res.status(200).json({ message: 'Staff details updated', request: result });
+            res.status(200).json({ message: 'Approved ticket', request: result });
         } else if (approval === 2) {
             request.approval2 = 2;
             request.assign = null;
@@ -541,7 +541,7 @@ exports.putApproval2 = async (req, res, next) => {
             await report.destroy();
             await report.save();
             getIO().emit('requestStatus');
-            res.status(200).json({ message: 'Staff details updated', request: result });
+            res.status(200).json({ message: 'Disapproved ticket', request: result });
         }
     } catch (error) {
         if (!error.statusCode) {
@@ -604,8 +604,12 @@ const sendMail = async (requestId, department, category, subject, description, n
             subject: `Requested ${category} #${requestId}`,
             html:
                 `
-                <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
-                    <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
+                <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                        <div style="background-color: #DA251C; color: #ffffff; text-align: center; padding: 10px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+                        <h1>MET Helpdesk</h1>
+                        </div>
+                        <div style="padding: 20px;">
                         <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
                         <p>Dear Admin,</p>
                         <p>A new ticket has been generated with the following details:</p>
@@ -632,9 +636,12 @@ const sendMail = async (requestId, department, category, subject, description, n
                             </tr>
                         </table>
                         <p>Please log in to the helpdesk system to review and assign the ticket.</p>
-                        <p>Thank you for your attention!</p>
-                        <p>Best regards,</p>
-                        <p>The Helpdesk Team</p>
+                        <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+                        <p>Best regards,<br> The Helpdesk Team</p>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background-color: #f4f4f4; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+                        <p>This is an automated email. Please do not reply.</p>
+                        </div>
                     </div>
                 </body>
             `

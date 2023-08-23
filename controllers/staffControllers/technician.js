@@ -517,8 +517,12 @@ const sendMail = async (ticketType, ticketRaiserEmail, hodEmail, category, ticke
             subject: `${ticketType} regarding ${category} ${ticketId}`,
             html:
                 `
-                <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
-                    <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
+                <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                        <div style="background-color: #DA251C; color: #ffffff; text-align: center; padding: 10px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+                        <h1>MET Helpdesk</h1>
+                        </div>
+                        <div style="padding: 20px;">
                         <h2 style="color: #0088cc;">Ticket Closure Notification</h2>
                         <p>Dear ${staff.firstname},</p>
                         <p>We are pleased to inform you that your helpdesk ticket (ID: ${ticketId}) has been successfully resolved and closed.</p>
@@ -542,6 +546,16 @@ const sendMail = async (ticketType, ticketRaiserEmail, hodEmail, category, ticke
                             </tr>
                         </table>
                         <p>We appreciate your patience and cooperation throughout the resolution process. If you have any further questions or concerns, please don't hesitate to contact us.</p>
+                        <p>Best regards,<br> The Helpdesk Team</p>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background-color: #f4f4f4; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+                        <p>This is an automated email. Please do not reply.</p>
+                        </div>
+                    </div>
+                </body>
+                <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
+                    <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
+                        
                         <p>Thank you for using our helpdesk services!</p>
                         <p>Best regards,</p>
                         <p>The Helpdesk Team</p>

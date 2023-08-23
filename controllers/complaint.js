@@ -337,7 +337,7 @@ const sendMail = async (adminEmail, category, complaintId, subject, description,
                 `
                 <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
                     <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
-                        <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
+                        <h2 style="color: #DA251C;">Helpdesk Ticket Notification</h2>
                         <p>Dear Admin,</p>
                         <p>A new ticket has been generated with the following details:</p>
                         <table style="width: 100%;">
