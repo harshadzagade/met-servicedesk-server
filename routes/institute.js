@@ -24,7 +24,7 @@ router.post('/createinstitute',
 
 router.put('/editinstitute/:instituteId',
     [
-        body('institute')
+        body('instituteName')
             .trim()
             .isLength({ min: 1 }).withMessage('Please enter institute name')
     ], instituteController.editInstitute);
