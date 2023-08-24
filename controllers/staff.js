@@ -336,7 +336,6 @@ exports.getSearchedContacts = async (req, res, next) => {
                         id: { [Op.ne]: 1 },
                         [Op.or]: [
                             { firstname: { [Op.iLike]: `%${query}%` } },
-                            { middlename: { [Op.iLike]: `%${query}%` } },
                             { lastname: { [Op.iLike]: `%${query}%` } },
                             { email: { [Op.iLike]: `%${query}%` } },
                             Sequelize.literal(
@@ -360,7 +359,6 @@ exports.getSearchedContacts = async (req, res, next) => {
                         id: { [Op.ne]: 1 },
                         [Op.or]: [
                             { firstname: { [Op.iLike]: `%${query}%` } },
-                            { middlename: { [Op.iLike]: `%${query}%` } },
                             { lastname: { [Op.iLike]: `%${query}%` } },
                             { email: { [Op.iLike]: `%${query}%` } },
                             Sequelize.literal(
@@ -384,7 +382,6 @@ exports.getSearchedContacts = async (req, res, next) => {
                         id: { [Op.ne]: 1 },
                         [Op.or]: [
                             { firstname: { [Op.iLike]: `%${query}%` } },
-                            { middlename: { [Op.iLike]: `%${query}%` } },
                             { lastname: { [Op.iLike]: `%${query}%` } },
                             { email: { [Op.iLike]: `%${query}%` } },
                             Sequelize.literal(
