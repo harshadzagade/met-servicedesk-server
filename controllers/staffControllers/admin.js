@@ -444,12 +444,17 @@ exports.putApproval1 = async (req, res, next) => {
             request.approval1Time = new Date();
             report.approval1Time = new Date();
             report.approval1Duration = new Date() - request.createdAt;
+            report.approval1Comment = approvalComment;
+            report.approval1Status = 'approved';
         } else if (approval === 2) {
             request.approval1 = 2;
             request.status = 'disapproved';
             request.approval1Comment = approvalComment;
             request.approval1Time = new Date();
-            report.destroy();
+            report.approval1Time = new Date();
+            report.approval1Duration = new Date() - request.createdAt;
+            report.approval1Comment = approvalComment;
+            report.approval1Status = 'disapproved';
         }
         const result = await request.save();
         await report.save();
@@ -532,6 +537,8 @@ exports.putApproval2 = async (req, res, next) => {
             report.approval2Time = result.approval2Time;
             report.assignedTime = result.approval2Time;
             report.assignDuration = result.approval2Time - result.createdAt;
+            report.approval2Comment = approvalComment;
+            report.approval2Status = 'approved';
             await report.save();
             await sendMail(result.id, result.department, result.category, result.subject, result.description, next);
             getIO().emit('requestStatus');
@@ -542,8 +549,12 @@ exports.putApproval2 = async (req, res, next) => {
             request.status = 'disapproved';
             request.approval2Comment = approvalComment;
             request.approval2Time = new Date();
+            report.approval2Time = result.approval2Time;
+            report.assignedTime = result.approval2Time;
+            report.assignDuration = result.approval2Time - result.createdAt;
+            report.approval2Comment = approvalComment;
+            report.approval2Status = 'disapproved';
             const result = await request.save();
-            await report.destroy();
             await report.save();
             getIO().emit('requestStatus');
             res.status(200).json({ message: 'Disapproved ticket', request: result });

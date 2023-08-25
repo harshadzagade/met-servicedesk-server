@@ -439,6 +439,8 @@ exports.putApproval1 = async (req, res, next) => {
             request.approval1Time = new Date();
             report.approval1Time = new Date();
             report.approval1Duration = new Date() - request.createdAt;
+            report.approval1Comment = approvalComment;
+            report.approval1Status = 'approved';
             subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `HOD approval has been done of request with an ID ${request.ticketId}`, data: { type: 'request', id: requestId }, dateTime: new Date() }]) : [{ activity: `HOD approval has been done of request with an ID ${request.ticketId}`, data: { type: 'request', id: requestId }, dateTime: new Date() }];
             await sendSubadminActivityMail(admin.email, 'Request approved', subadmin.firstname + ' ' + subadmin.lastname, `HOD approval has been done of request with an ID ${request.ticketId}`, getFormattedDate(new Date()));
         } else if (approval === 2) {
@@ -446,7 +448,10 @@ exports.putApproval1 = async (req, res, next) => {
             request.status = 'disapproved';
             request.approval1Comment = approvalComment;
             request.approval1Time = new Date();
-            report.destroy();
+            report.approval1Time = new Date();
+            report.approval1Duration = new Date() - request.createdAt;
+            report.approval1Comment = approvalComment;
+            report.approval1Status = 'disapproved';
             subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `HOD disapproval has been done of request with an ID ${request.ticketId}`, data: { type: 'request', id: requestId }, dateTime: new Date() }]) : [{ activity: `HOD disapproval has been done of request with an ID ${request.ticketId}`, data: { type: 'request', id: requestId }, dateTime: new Date() }];
             await sendSubadminActivityMail(admin.email, 'Request disapproved', subadmin.firstname + ' ' + subadmin.lastname, `HOD disapproval has been done of request with an ID ${request.ticketId}`, getFormattedDate(new Date()));
         }
@@ -561,6 +566,8 @@ exports.putApproval2 = async (req, res, next) => {
             report.approval2Time = result.approval2Time;
             report.assignedTime = result.approval2Time;
             report.assignDuration = result.approval2Time - result.createdAt;
+            report.approval2Comment = approvalComment;
+            report.approval2Status = 'approved';
             subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `Admin approval has been done of request with an ID ${request.ticketId}`, data: { type: 'request', id: requestId }, dateTime: new Date() }]) : [{ activity: `Admin approval has been done of request with an ID ${request.ticketId}`, data: { type: 'request', id: requestId }, dateTime: new Date() }];
             await sendSubadminActivityMail(admin.email, 'Request approved', subadmin.firstname + ' ' + subadmin.lastname, `Admin approval has been done of request with an ID ${request.ticketId}`, getFormattedDate(new Date()));
             await report.save();
@@ -576,7 +583,11 @@ exports.putApproval2 = async (req, res, next) => {
             request.approval2Comment = approvalComment;
             request.approval2Time = new Date();
             const result = await request.save();
-            await report.destroy();
+            report.approval2Time = result.approval2Time;
+            report.assignedTime = result.approval2Time;
+            report.assignDuration = result.approval2Time - result.createdAt;
+            report.approval2Comment = approvalComment;
+            report.approval2Status = 'disapproved';
             subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `Admin disapproval has been done of request with an ID ${request.ticketId}`, data: { type: 'request', id: requestId }, dateTime: new Date() }]) : [{ activity: `Admin disapproval has been done of request with an ID ${request.ticketId}`, data: { type: 'request', id: requestId }, dateTime: new Date() }];
             await sendSubadminActivityMail(admin.email, 'Request disapproved', subadmin.firstname + ' ' + subadmin.lastname, `Admin disapproval has been done of request with an ID ${request.ticketId}`, getFormattedDate(new Date()));
             await report.save();

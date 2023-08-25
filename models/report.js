@@ -108,6 +108,22 @@ const Report = sequelize.define('report', {
     actionTaken: {
         type: Sequelize.STRING,
         allowNull: true
+    },
+    approval1Comment: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    approval2Comment: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    approval1Status: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    approval2Status: {
+        type: Sequelize.STRING,
+        allowNull: true
     }
 });
 

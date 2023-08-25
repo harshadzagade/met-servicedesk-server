@@ -143,20 +143,43 @@ exports.sendRequest = async (req, res, next) => {
         const currentDate = new Date();
         setId.ticketId = '#' + currentDate.getFullYear() + setId.id;
         const result = await setId.save();
-        const report = new Report({
-            isRequest: true,
-            isComplaint: false,
-            requestComplaintId: result.id,
-            staffName: result.name,
-            category: result.category,
-            priority: result.priority,
-            subject: result.subject,
-            description: result.description,
-            department: result.department,
-            staffDepartment: result.staffDepartment,
-            status: result.status,
-            loggedTime: result.createdAt
-        });
+        let report;
+        if (requester.department.includes(department)) {
+            report = new Report({
+                isRequest: true,
+                isComplaint: false,
+                requestComplaintId: result.id,
+                staffName: result.name,
+                category: result.category,
+                priority: result.priority,
+                subject: result.subject,
+                description: result.description,
+                department: result.department,
+                staffDepartment: result.staffDepartment,
+                status: result.status,
+                loggedTime: result.createdAt,
+                approval1Time: new Date(),
+                approval1Duration: 0,
+                approval1: 1,
+                approval1Comment: 'Auto approved request',
+                approval1Status: 'approved'
+            });
+        } else {
+            report = new Report({
+                isRequest: true,
+                isComplaint: false,
+                requestComplaintId: result.id,
+                staffName: result.name,
+                category: result.category,
+                priority: result.priority,
+                subject: result.subject,
+                description: result.description,
+                department: result.department,
+                staffDepartment: result.staffDepartment,
+                status: result.status,
+                loggedTime: result.createdAt
+            });
+        }
         await report.save();
         adminEmail = admin.email;
         await sendMail(hodEmail, adminEmail, category, result.ticketId, subject, description, next);
