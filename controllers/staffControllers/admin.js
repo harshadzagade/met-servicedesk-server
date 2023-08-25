@@ -553,9 +553,10 @@ exports.putApproval2 = async (req, res, next) => {
 
 exports.getsubadminActivities = async (req, res, next) => {
     const adminId = req.params.adminId;
+    const department = req.params.department;
     try {
         const subadminActivities = await SubadminActivities.findOne({
-            where: { adminId: adminId }
+            where: { adminId: adminId, department: department }
         });
         if (!subadminActivities) {
             const error = new Error('Subadmin activities not found');
