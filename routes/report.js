@@ -6,6 +6,8 @@ const reportController = require('../controllers/report');
 
 router.get('/:staffId', reportController.getFullReport);
 
+router.get('/departmentreport/:department', reportController.getDepartmentReport);
+
 router.get('/request/:staffId', reportController.getRequestReport);
 
 router.get('/complaint/:staffId', reportController.getComplaintReport);

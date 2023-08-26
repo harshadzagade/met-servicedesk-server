@@ -14,6 +14,19 @@ exports.getFullReport = async (req, res, next) => {
     }
 };
 
+exports.getDepartmentReport = async (req, res, next) => {
+    const department = req.params.department;
+    try {
+        const report = await Report.findAll({ where: { department: department } });
+        res.status(200).json({ message: 'Fetched report successfully.', report: report });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 exports.getRequestReport = async (req, res, next) => {
     const staffId = req.params.staffId;
     try {
@@ -121,7 +134,7 @@ exports.getReportCsv = async (req, res, next) => {
     const reportData = req.body.reportData;
     let filteredData = reportData.map((singleReport) => {
         return {
-            'Ticket Type': singleReport.isRequest? 'Request' : 'Concern',
+            'Ticket Type': singleReport.isRequest ? 'Request' : 'Concern',
             'Ticket ID': singleReport.requestComplaintId,
             'Ticket raised by': singleReport.staffName,
             'Engineer Name': singleReport.assignedName,

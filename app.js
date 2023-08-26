@@ -46,19 +46,19 @@ sequelize.sync().then((result) => { // 'force:true' means overriding table with 
         console.log('Client connected');
     });
 }).then(staff => {
-    bcrypt.hash('super@met.edu', 12).then((password) => {
+    bcrypt.hash('ERPDevTeam@364', 12).then((password) => {
         staff = Staff.findOrCreate({
             where: { id: 1 },
             defaults: {
                 firstname: 'Super',
                 middlename: '',
                 lastname: 'Admin',
-                email: 'superadmin@gmail.com',
+                email: 'helpdeskinfo@met.edu',
                 password: password,
                 role: 'superadmin',
                 institute: 'ERP',
                 department: ['ALL'],
-                departmentType: 'service',
+                departmentType: 'trust',
                 isNew: false
             }
         });
