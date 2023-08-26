@@ -48,7 +48,7 @@ exports.createStaff = async (req, res, next) => {
             isNew: true
         });
         const result = await staff.save();
-        await userWelcomeEmail(firstname + ' ' + lastname, email, password, next);
+        // await userWelcomeEmail(firstname + ' ' + lastname, email, password, next);
         res.status(201).json({ message: 'Staff created!', staffId: result.id });
     } catch (error) {
         if (!error.statusCode) {
