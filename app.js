@@ -51,7 +51,7 @@ sequelize.sync().then((result) => { // 'force:true' means overriding table with 
             where: { id: 1 },
             defaults: {
                 firstname: 'Super',
-                middlename: '',
+                middlename: 'Erp',
                 lastname: 'Admin',
                 email: 'helpdeskinfo@met.edu',
                 password: password,
