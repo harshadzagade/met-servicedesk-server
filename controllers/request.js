@@ -56,6 +56,11 @@ exports.sendRequest = async (req, res, next) => {
                 throw error;
             }
             behalfId = staff.id;
+            if (behalfId === staffId) {
+                const error = new Error('Cannot use your own email ID as behalf email ID');
+                error.statusCode = 401;
+                throw error;
+            }
             requestStaffId = behalfId;
         }
         const requester = await Staff.findByPk(requestStaffId);

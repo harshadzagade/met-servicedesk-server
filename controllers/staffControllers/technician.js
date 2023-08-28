@@ -81,17 +81,17 @@ exports.changeRequestStatus = async (req, res, next) => {
         let assign = request.assign;
         const staff = await Staff.findByPk(assign);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
         if (staff.department[0] !== request.department) {
-            const error = new Error('Staff does not belong to expected department');
+            const error = new Error('Employee does not belong to expected department');
             error.statusCode = 401;
             throw error;
         }
         if (staff.role !== 'technician') {
-            const error = new Error('Staff other than technicians cannot forward requests');
+            const error = new Error('Employee other than technicians cannot forward requests');
             error.statusCode = 401;
             throw error;
         }
@@ -128,7 +128,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                 }
                 const requester = await Staff.findByPk(requesterId);
                 if (!requester) {
-                    const error = new Error('Staff not found');
+                    const error = new Error('Employee not found');
                     error.statusCode = 401;
                     throw error;
                 }
@@ -239,23 +239,23 @@ exports.selfAssignComplaint = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
-            const error = new Error('Complaint not found');
+            const error = new Error('Concern not found');
             error.statusCode = 401;
             throw error;
         }
         if (complaint.assign !== null) {
-            const error = new Error('Complaint already assigned');
+            const error = new Error('Concern already assigned');
             error.statusCode = 401;
             throw error;
         }
         if (staff.department[0] !== complaint.department) {
-            const error = new Error('Staff does not belong to expected department');
+            const error = new Error('Employee does not belong to expected department');
             error.statusCode = 401;
             throw error;
         }
@@ -334,24 +334,24 @@ exports.changeComplaintStatus = async (req, res, next) => {
         }
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
-            const error = new Error('Complaint not found');
+            const error = new Error('Concern not found');
             error.statusCode = 401;
             throw error;
         }
         let assign = complaint.assign;
         const staff = await Staff.findByPk(assign);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
         if (staff.department[0] !== complaint.department) {
-            const error = new Error('Staff does not belong to expected department');
+            const error = new Error('Employee does not belong to expected department');
             error.statusCode = 401;
             throw error;
         }
         if (staff.role !== 'technician') {
-            const error = new Error('Staff other than technicians cannot forward complaints');
+            const error = new Error('Employee other than technicians cannot forward complaints');
             error.statusCode = 401;
             throw error;
         }
