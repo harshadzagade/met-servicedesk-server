@@ -64,6 +64,8 @@ exports.createDepartment = async (req, res, next) => {
 exports.editCategories = async (req, res, next) => {
     const errors = validationResult(req);
     const departmentId = req.params.departmentId;
+    const departmentName = req.body.departmentName;
+    const type = req.body.type;
     const categories = req.body.category;
     try {
         if (!errors.isEmpty()) {
@@ -77,23 +79,11 @@ exports.editCategories = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        switch (department.type) {
-            case 'service':
-                department.category = categories;
-                const result = await department.save();
-                res.status(200).json({ message: 'Categories updated successfully', department: result });
-                break;
-
-            case 'regular':
-                const error1 = new Error('Department does not have any categories');
-                error1.statusCode = 401;
-                throw error1;
-
-            default:
-                const error2 = new Error('Invalid department type');
-                error2.statusCode = 401;
-                throw error2;
-        }
+        department.department = departmentName;
+        department.type = type;
+        department.category = categories;
+        const result = await department.save();
+        res.status(200).json({ message: 'Department updated successfully', department: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -151,7 +141,7 @@ exports.getAllServiceDepartments = async (req, res, next) => {
     }
 };
 
-exports.getAllCategories = async (req, res, next) => {
+exports.getDepartmentDetails = async (req, res, next) => {
     const departmentId = req.params.departmentId;
     try {
         const department = await Department.findByPk(departmentId);
@@ -160,7 +150,7 @@ exports.getAllCategories = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        res.status(200).json({ message: 'Categories fetched successfully', categories: department.category })
+        res.status(200).json({ message: 'Categories fetched successfully', department: department })
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;

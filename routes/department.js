@@ -42,8 +42,19 @@ router.post('/createdepartment',
             })
     ], departmentController.createDepartment);
 
-router.put('/editcategories/:departmentId',
+router.put('/editdepartment/:departmentId',
     [
+        body('departmentName')
+            .isLength({ min: 1 }).withMessage('Please enter valid department name'),
+        body('type')
+            .custom((value) => {
+                console.log(value);
+                if (value !== 'service' && value !== 'regular') {
+                    return Promise.reject('Please enter valid department type');
+                } else {
+                    return true;
+                }
+            }),
         body('category')
             .isArray().withMessage('Please enter valid categories')
             .custom((value) => {
@@ -59,7 +70,7 @@ router.get('/alldepartments', departmentController.getAllDepartments);
 
 router.get('/departments', departmentController.getAllServiceDepartments);
 
-router.get('/categories/:departmentId', departmentController.getAllCategories);
+router.get('/departmentdetails/:departmentId', departmentController.getDepartmentDetails);
 
 router.get('/categoriesbydepartment/:departmentName', departmentController.getAllCategoriesByDepartment);
 
