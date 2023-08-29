@@ -91,7 +91,7 @@ exports.sendComplaint = async (req, res, next) => {
         const complaintRes = await complaint.save();
         const setId = await Complaint.findByPk(complaintRes.id);
         const currentDate = new Date();
-        setId.ticketId = '#' + currentDate.getFullYear() + setId.id;
+        setId.ticketId = '#' + currentDate.getFullYear() + (currentDate.getMonth() + 1) + setId.id;
         const result = await setId.save();
         await sendMail(admin.email, category, result.id, subject, description, next);
         getIO().emit('complaints');
