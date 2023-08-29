@@ -326,6 +326,11 @@ exports.assignComplaint = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+        if (complaint.assign !== null) {
+            const error = new Error('Concern already assigned');
+            error.statusCode = 401;
+            throw error;
+        }
         const staff = await Staff.findByPk(assignId);
         if (!staff) {
             const error = new Error('Staff not found');
