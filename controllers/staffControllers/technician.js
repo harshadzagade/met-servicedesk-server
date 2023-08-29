@@ -553,14 +553,6 @@ const sendMail = async (ticketType, ticketRaiserEmail, hodEmail, category, ticke
                         </div>
                     </div>
                 </body>
-                <body style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
-                    <div style="background-color: #ffffff; border-radius: 5px; padding: 20px; max-width: 600px; margin: 0 auto;">
-                        
-                        <p>Thank you for using our helpdesk services!</p>
-                        <p>Best regards,</p>
-                        <p>The Helpdesk Team</p>
-                    </div>
-                </body>
             `
         });
     } catch (error) {
