@@ -24,14 +24,14 @@ exports.getAllStaff = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
         if (staff.role === 'subadmin') {
             const department = currentDepartment;
             const totalStaff = await Staff.findAll({ where: { department: [department], role: { [Op.notIn]: ['subadmin', 'admin'] } } });
-            res.status(200).json({ message: 'Fetched all staff as per specific department successfully.', totalStaff: totalStaff });
+            res.status(200).json({ message: 'Fetched all employees as per specific department successfully.', totalStaff: totalStaff });
         } else {
             const error = new Error('Invalid sub-admin id');
             error.statusCode = 401;
@@ -117,12 +117,12 @@ exports.updateStaff = async (req, res, next) => {
         }
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
         subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`, data: { type: 'role', id: staffId }, dateTime: new Date() }]) : [{ activity: `Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`, data: { type: 'role', id: staffId }, dateTime: new Date() }];
-        await sendSubadminActivityMail(admin.email, 'Staff role changed', subadmin.firstname + ' ' + subadmin.lastname, `Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`, getFormattedDate(new Date()));
+        await sendSubadminActivityMail(admin.email, 'Employee role changed', subadmin.firstname + ' ' + subadmin.lastname, `Role of staff ${staff.firstname + ' ' + staff.lastname} has been changed from ${staff.role} to ${role}`, getFormattedDate(new Date()));
         staff.role = role;
         if (staff.role === '' || staff.role === null) {
             staff.role = 'user';
@@ -131,7 +131,7 @@ exports.updateStaff = async (req, res, next) => {
         const result = await staff.save();
         await subadminActivities.save();
         getIO().emit('subadminactivities');
-        res.status(200).json({ message: 'Staff details updated', staff: result });
+        res.status(200).json({ message: 'Employee details updated', staff: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -146,14 +146,14 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
         if (staff.role === 'subadmin') {
             const department = currentDepartment;
             const technicians = await Staff.findAll({ where: { department: [department], role: 'engineer' } });
-            res.status(200).json({ message: 'Fetched all technicians as per specific department successfully.', technicians: technicians });
+            res.status(200).json({ message: 'Fetched all engineers as per specific department successfully.', technicians: technicians });
         } else {
             const error = new Error('Invalid admin id');
             error.statusCode = 401;
@@ -460,7 +460,7 @@ exports.putApproval1 = async (req, res, next) => {
         await subadminActivities.save();
         getIO().emit('subadminactivities');
         getIO().emit('requestStatus');
-        res.status(200).json({ message: 'Staff details updated', request: result });
+        res.status(200).json({ message: 'Employee details updated', request: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -540,17 +540,17 @@ exports.putApproval2 = async (req, res, next) => {
             staffId = req.body.staffId;
             const staff = await Staff.findByPk(staffId);
             if (!staff) {
-                const error = new Error('Staff not found');
+                const error = new Error('Employee not found');
                 error.statusCode = 401;
                 throw error;
             }
             if (staff.role !== 'engineer') {
-                const error = new Error('Staff is not a technician');
+                const error = new Error('Employee is not a engineer');
                 error.statusCode = 401;
                 throw error;
             }
             if (staff.department[0] !== request.department) {
-                const error = new Error('Not assigned department staff');
+                const error = new Error('Not assigned department employee');
                 error.statusCode = 401;
                 throw error;
             }
@@ -575,7 +575,7 @@ exports.putApproval2 = async (req, res, next) => {
             await sendMail(result.ticketId, result.department, result.category, result.subject, result.description, next);
             getIO().emit('subadminactivities');
             getIO().emit('requestStatus');
-            res.status(200).json({ message: 'Staff details updated', request: result });
+            res.status(200).json({ message: 'Employee details updated', request: result });
         } else if (approval === 2) {
             request.approval2 = 2;
             request.assign = null;
@@ -594,7 +594,7 @@ exports.putApproval2 = async (req, res, next) => {
             await subadminActivities.save();
             getIO().emit('subadminactivities');
             getIO().emit('requestStatus');
-            res.status(200).json({ message: 'Staff details updated', request: result });
+            res.status(200).json({ message: 'Employee details updated', request: result });
         }
     } catch (error) {
         if (!error.statusCode) {

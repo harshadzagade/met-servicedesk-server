@@ -49,7 +49,7 @@ exports.createStaff = async (req, res, next) => {
         });
         const result = await staff.save();
         // await userWelcomeEmail(firstname + ' ' + lastname, email, password, next);
-        res.status(201).json({ message: 'Staff created!', staffId: result.id });
+        res.status(201).json({ message: 'Employee created!', staffId: result.id });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -61,7 +61,7 @@ exports.createStaff = async (req, res, next) => {
 exports.getAllStaff = async (req, res, next) => {
     try {
         const totalStaff = await Staff.findAll({ where: { id: { [Op.ne]: 1 } } });
-        res.status(200).json({ message: 'Fetched all staff successfully.', totalStaff: totalStaff });
+        res.status(200).json({ message: 'Fetched all employees successfully.', totalStaff: totalStaff });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -96,7 +96,7 @@ exports.updateStaff = async (req, res, next) => {
         });
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -145,7 +145,7 @@ exports.updateStaff = async (req, res, next) => {
             await staff.save();
         }
         const result = await staff.save();
-        res.status(200).json({ message: 'Staff details updated', staff: result });
+        res.status(200).json({ message: 'Employee details updated', staff: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -159,7 +159,7 @@ exports.deleteStaff = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -192,7 +192,7 @@ exports.deleteStaff = async (req, res, next) => {
             isNew: isNew
         });
         const result = await trash.save();
-        res.status(201).json({ message: 'Staff added to trash.', staffId: result.id });
+        res.status(201).json({ message: 'Employee added to trash.', staffId: result.id });
         await staff.destroy();
         await staff.save();
     } catch (error) {

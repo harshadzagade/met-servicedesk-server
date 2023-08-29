@@ -25,7 +25,7 @@ exports.getAllStaff = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -90,7 +90,7 @@ exports.updateStaff = async (req, res, next) => {
         }
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -113,7 +113,7 @@ exports.updateStaff = async (req, res, next) => {
             await staff.save();
         }
         const result = await staff.save();
-        res.status(200).json({ message: 'Staff details updated', staff: result });
+        res.status(200).json({ message: 'Employee details updated', staff: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -127,7 +127,7 @@ exports.getAdminDepartments = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -146,14 +146,14 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
         if (staff.role === 'admin') {
             const department = currentDepartment;
             const technicians = await Staff.findAll({ where: { department: [department], role: 'engineer' } });
-            res.status(200).json({ message: 'Fetched all technicians as per specific department successfully.', technicians: technicians });
+            res.status(200).json({ message: 'Fetched all engineers as per specific department successfully.', technicians: technicians });
         } else {
             const error = new Error('Invalid admin id');
             error.statusCode = 401;
@@ -267,7 +267,7 @@ exports.getOutgoingComplaints = async (req, res, next) => {
     const department = req.params.department;
     try {
         const complaints = await getComplaintsFromDepartment(staffId, department, next);
-        res.status(200).json({ message: 'Fetched all complaints successfully.', complaints: complaints });
+        res.status(200).json({ message: 'Fetched all concerns successfully.', complaints: complaints });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -390,7 +390,7 @@ exports.assignComplaint = async (req, res, next) => {
             }
             await report.save();
             getIO().emit('complaintStatus');
-            res.status(201).json({ message: 'Complaint assigned successfully', complaint: result });
+            res.status(201).json({ message: 'Concern assigned successfully', complaint: result });
         } else {
             const error = new Error('Cannot assign to closed and forwarded requests');
             error.statusCode = 403;
@@ -464,7 +464,7 @@ exports.putApproval1 = async (req, res, next) => {
         const result = await request.save();
         await report.save();
         getIO().emit('requestStatus');
-        res.status(200).json({ message: 'Staff details updated', request: result });
+        res.status(200).json({ message: 'Employee details updated', request: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -516,12 +516,12 @@ exports.putApproval2 = async (req, res, next) => {
             staffId = req.body.staffId;
             const staff = await Staff.findByPk(staffId);
             if (!staff) {
-                const error = new Error('Staff not found');
+                const error = new Error('Employee not found');
                 error.statusCode = 401;
                 throw error;
             }
             if (staff.role !== 'engineer') {
-                const error = new Error('Staff is not a engineer');
+                const error = new Error('Employee is not a engineer');
                 error.statusCode = 401;
                 throw error;
             }

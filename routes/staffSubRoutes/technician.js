@@ -31,7 +31,7 @@ router.put('/changerequeststatus/:requestId',
                 const status = req.body.status;
                 if (status === 'closed' || status === 'forwarded') {
                     if (value.trim().length < 1) {
-                        return Promise.reject('Please select valid problem description statement');
+                        return Promise.reject('Please enter valid problem description statement');
                     } else {
                         return true;
                     }
@@ -44,7 +44,7 @@ router.put('/changerequeststatus/:requestId',
                 const status = req.body.status;
                 if (status === 'closed' || status === 'forwarded') {
                     if (value.trim().length < 1) {
-                        return Promise.reject('Please select valid action taken statement');
+                        return Promise.reject('Please enter valid action taken statement');
                     } else {
                         return true;
                     }
@@ -82,7 +82,7 @@ router.put('/changecomplaintstatus/:complaintId',
                 const status = req.body.status;
                 if (status === 'closed' || status === 'forwarded') {
                     if (value.trim().length < 1) {
-                        return Promise.reject('Please select valid problem description statement');
+                        return Promise.reject('Please enter valid problem description statement');
                     } else {
                         return true;
                     }
@@ -93,7 +93,7 @@ router.put('/changecomplaintstatus/:complaintId',
                 const status = req.body.status;
                 if (status === 'closed' || status === 'forwarded') {
                     if (value.trim().length < 1) {
-                        return Promise.reject('Please select valid action taken statement');
+                        return Promise.reject('Please enter valid action taken statement');
                     } else {
                         return true;
                     }
