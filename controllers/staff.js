@@ -42,8 +42,8 @@ exports.checkAuth = async (req, res, next) => {
                 res.status(200).json({ id: staffId, role: 'subadmin' });
                 break;
 
-            case 'technician':
-                res.status(200).json({ id: staffId, role: 'technician' });
+            case 'engineer':
+                res.status(200).json({ id: staffId, role: 'engineer' });
                 break;
 
             case 'user':
@@ -410,7 +410,7 @@ exports.getStaffByDepartment = async (req, res, next) => {
                 department: {
                     [Op.contains]: [department]
                 },
-                role: 'technician'
+                role: 'engineer'
             }
         });
         if (!staff) {

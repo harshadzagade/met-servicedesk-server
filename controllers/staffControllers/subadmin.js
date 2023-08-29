@@ -152,7 +152,7 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
         }
         if (staff.role === 'subadmin') {
             const department = currentDepartment;
-            const technicians = await Staff.findAll({ where: { department: [department], role: 'technician' } });
+            const technicians = await Staff.findAll({ where: { department: [department], role: 'engineer' } });
             res.status(200).json({ message: 'Fetched all technicians as per specific department successfully.', technicians: technicians });
         } else {
             const error = new Error('Invalid admin id');
@@ -544,7 +544,7 @@ exports.putApproval2 = async (req, res, next) => {
                 error.statusCode = 401;
                 throw error;
             }
-            if (staff.role !== 'technician') {
+            if (staff.role !== 'engineer') {
                 const error = new Error('Staff is not a technician');
                 error.statusCode = 401;
                 throw error;
@@ -623,7 +623,7 @@ const sendMail = async (requestId, department, category, subject, description, n
         const departmentTechnicians = await Staff.findAll({
             where: {
                 department: { [Op.contains]: [department] },
-                role: 'technician'
+                role: 'engineer'
             }
         });
         for (let i = 0; i < departmentTechnicians.length; i++) {

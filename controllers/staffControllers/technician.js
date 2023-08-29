@@ -90,7 +90,7 @@ exports.changeRequestStatus = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (staff.role !== 'technician') {
+        if (staff.role !== 'engineer') {
             const error = new Error('Employee other than technicians cannot forward requests');
             error.statusCode = 401;
             throw error;
@@ -173,7 +173,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                     error.statusCode = 401;
                     throw error;
                 }
-                if (staff.role !== 'technician') {
+                if (staff.role !== 'engineer') {
                     const error = new Error('Staff is not a technician');
                     error.statusCode = 401;
                     throw error;
@@ -350,7 +350,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (staff.role !== 'technician') {
+        if (staff.role !== 'engineer') {
             const error = new Error('Employee other than technicians cannot forward complaints');
             error.statusCode = 401;
             throw error;
@@ -415,8 +415,8 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     error.statusCode = 401;
                     throw error;
                 }
-                if (staff.role !== 'technician') {
-                    const error = new Error('Staff is not a technician');
+                if (staff.role !== 'engineer') {
+                    const error = new Error('Staff is not an engineer');
                     error.statusCode = 401;
                     throw error;
                 }
@@ -485,10 +485,10 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (staff.role === 'technician') {
+        if (staff.role === 'engineer') {
             const department = currentDepartment;
-            const technicians = await Staff.findAll({ where: { department: [department], role: 'technician', id: { [Op.ne]: [staffId] } } });
-            res.status(200).json({ message: 'Fetched all technicians as per specific department successfully.', technicians: technicians });
+            const technicians = await Staff.findAll({ where: { department: [department], role: 'engineer', id: { [Op.ne]: [staffId] } } });
+            res.status(200).json({ message: 'Fetched all engineers as per specific department successfully.', technicians: technicians });
         } else {
             const error = new Error('Invalid admin id');
             error.statusCode = 401;

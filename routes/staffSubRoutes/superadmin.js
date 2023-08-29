@@ -79,7 +79,7 @@ router.put('/staffdetails/updateStaff/:staffId',
             .trim()
             .isLength({ min: 1 }).withMessage('Please select valid role')
             .custom((value) => {
-                if (value !== 'admin' && value !== 'technician' && value !== 'user') {
+                if (value !== 'admin' && value !== 'engineer' && value !== 'user') {
                     return Promise.reject('Please select valid role');
                 } else {
                     return true;
