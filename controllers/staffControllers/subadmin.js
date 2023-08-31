@@ -697,7 +697,7 @@ const sendSubadminActivityMail = async (adminEmail, activitySubject, subadminNam
                 `
                 <div style="background-color: #f4f4f4; padding: 20px;">
                 <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <div style="padding: 20px; text-align: center; background-color: #007bff; color: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                    <div style="padding: 20px; text-align: center; background-color: #DA251C; color: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px;">
                         <h2>Sub-Admin Activity Notification</h2>
                     </div>
                     <div style="padding: 20px;">
