@@ -574,7 +574,7 @@ const sendForwardEmail = async (hodEmail, technicianEmail, name, ticketType, tic
                 `
                 <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
                     <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
-                        <div style="background-color: #007bff; color: #ffffff; text-align: center; padding: 10px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+                        <div style="background-color: #DA251C; color: #ffffff; text-align: center; padding: 10px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
                         <h1>Helpdesk Ticket Forwarded</h1>
                         </div>
                         <div style="padding: 20px;">

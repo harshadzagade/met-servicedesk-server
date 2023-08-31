@@ -332,7 +332,7 @@ const sendMail = async (adminEmail, category, complaintId, subject, description,
         await transporter.sendMail({
             to: adminEmail,
             from: 'helpdeskinfo@met.edu',
-            subject: `Complaint regarding ${category} #${complaintId}`,
+            subject: `Concern regarding ${category} #${complaintId}`,
             html:
                 `
                 <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
@@ -341,7 +341,7 @@ const sendMail = async (adminEmail, category, complaintId, subject, description,
                         <h1>MET Helpdesk</h1>
                         </div>
                         <div style="padding: 20px;">
-                        <h2 style="color: #DA251C;">Helpdesk Ticket Notification</h2>
+                        <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
                         <p>Dear Admin,</p>
                         <p>A new ticket has been generated with the following details:</p>
                         <table style="width: 100%;">
