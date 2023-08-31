@@ -82,4 +82,6 @@ router.put('/approval2/:requestId',
 
 router.get('/subadminactivities/:adminId/:department', adminController.getsubadminActivities);
 
+router.get('/checksubadmin/:department/:adminId', adminController.checkSubadmin);
+
 module.exports = router;

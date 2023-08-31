@@ -593,6 +593,26 @@ exports.getsubadminActivities = async (req, res, next) => {
     }
 };
 
+exports.checkSubadmin = async (req, res, next) => {
+    const department = req.params.department;
+    const adminId = req.params.adminId;
+    try {
+        const subadminActivities = await SubadminActivities.findOne({
+            where: { adminId: adminId, department: department }
+        });
+        let ifExists = true;
+        if (!subadminActivities) {
+            ifExists = false;
+        }
+        res.status(200).json({ message: 'Checked subadmin activities successfully', isSubadminExists: ifExists });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 const sendMail = async (requestId, department, category, subject, description, next) => {
     let email = '';
     let cc = [];
