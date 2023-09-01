@@ -1,5 +1,6 @@
 const { Parser } = require("json2csv");
 const Report = require("../models/report");
+const Department = require("../models/department");
 
 exports.getFullReport = async (req, res, next) => {
     const staffId = req.params.staffId;
@@ -72,18 +73,22 @@ exports.getReportDetails = async (req, res, next) => {
 };
 
 exports.getReportCategories = async (req, res, next) => {
-    const allReports = await Report.findAll();
-    let allCategory = [];
-    allReports.map((report) => {
-        const category = report.category;
-        allCategory.push(category);
-    });
-    const allCategories = allCategory;
-    const uniqueCategories = allCategories.filter(function (item, position) {
-        return allCategories.indexOf(item) == position;
-    })
-    const categories = uniqueCategories;
-    res.status(200).json({ message: 'Fetched categories', categories: categories });
+    const departmentName = req.params.department
+    try {
+        const department = await Department.findOne({
+            where: {
+                department: departmentName
+            }
+        });
+        if (!department) {
+            const error = new Error('Department not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        res.status(200).json({ message: 'Fetched categories', categories: department.category });
+    } catch (error) {
+        
+    }
 };
 
 exports.getReportByCategory = async (req, res, next) => {
