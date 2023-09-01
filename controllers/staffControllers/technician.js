@@ -256,7 +256,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
             throw error;
         }
         if (complaint.assign !== null) {
-            const error = new Error('Concern already assigned');
+            const error = new Error(`Concern already assigned to ${complaint.assignedName}`);
             error.statusCode = 401;
             throw error;
         }

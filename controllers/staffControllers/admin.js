@@ -327,13 +327,13 @@ exports.assignComplaint = async (req, res, next) => {
             throw error;
         }
         if (complaint.assign !== null) {
-            const error = new Error('Concern already assigned');
+            const error = new Error(`Concern already assigned to ${complaint.assignedName}`);
             error.statusCode = 401;
             throw error;
         }
         const staff = await Staff.findByPk(assignId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -528,7 +528,7 @@ exports.putApproval2 = async (req, res, next) => {
                 throw error;
             }
             if (staff.department[0] !== request.department) {
-                const error = new Error('Not assigned department staff');
+                const error = new Error('Not assigned department employee');
                 error.statusCode = 401;
                 throw error;
             }
