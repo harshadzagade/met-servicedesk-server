@@ -100,8 +100,14 @@ exports.changeRequestStatus = async (req, res, next) => {
             case 'attending':
                 request.status = 'attending';
                 report = await Report.findOne({ where: { requestComplaintId: request.id, isRequest: true } });
-                report.attendedTime = new Date();
-                report.attendDuration = report.attendedTime - report.assignedTime;
+                if (!report) {
+                    const error = new Error('Report not found');
+                    error.statusCode = 401;
+                    throw error;
+                }
+                const currentTime = new Date();
+                report.attendedTime = currentTime;
+                report.attendDuration = currentTime - report.assignedTime;
                 await report.save();
                 break;
 
