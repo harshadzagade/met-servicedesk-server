@@ -46,16 +46,21 @@ exports.sendComplaint = async (req, res, next) => {
             const behalfEmailId = req.body.behalfEmailId;
             const staff = await Staff.findOne({ where: { email: behalfEmailId } });
             if (!staff) {
-                const error = new Error('Staff not found');
+                const error = new Error('Employee not found');
                 error.statusCode = 401;
                 throw error;
             }
             behalfId = staff.id;
+            if (behalfId.toString() === staffId) {
+                const error = new Error('Cannot use your own email ID as behalf email ID');
+                error.statusCode = 401;
+                throw error;
+            }
             requestStaffId = behalfId;
         }
         const staff = await Staff.findByPk(requestStaffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -95,7 +100,7 @@ exports.sendComplaint = async (req, res, next) => {
         const result = await setId.save();
         await sendMail(admin.email, category, result.id, subject, description, next);
         getIO().emit('complaints');
-        res.status(201).json({ message: 'Complaint created!', complaint: result });
+        res.status(201).json({ message: 'Concern created!', complaint: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -190,7 +195,7 @@ exports.ownComplaints = async (req, res, next) => {
                 ]
             }
         });
-        res.status(200).json({ message: 'Complaint created!', complaints: complaints });
+        res.status(200).json({ message: 'Concern created!', complaints: complaints });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -205,7 +210,7 @@ exports.searchOwnComplaints = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -242,7 +247,7 @@ exports.getIncomingComplaints = async (req, res, next) => {
             }
         });
         if (!complaints) {
-            const error = new Error('Complaints not found');
+            const error = new Error('Concerns not found');
             error.statusCode = 401;
             throw error;
         }
@@ -255,7 +260,7 @@ exports.getIncomingComplaints = async (req, res, next) => {
     }
 };
 
-exports.searchIncomingComplaints= async (req, res, next) => {
+exports.searchIncomingComplaints = async (req, res, next) => {
     const department = req.params.department;
     const query = req.params.query;
     try {
@@ -288,11 +293,11 @@ exports.getComplaintDetails = async (req, res, next) => {
     try {
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
-            const error = new Error('Complaint not found');
+            const error = new Error('Concern not found');
             error.statusCode = 401;
             throw error;
         }
-        res.status(200).json({ message: 'Complaint fetched successfully!', complaint: complaint });
+        res.status(200).json({ message: 'Concern fetched successfully!', complaint: complaint });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -306,7 +311,7 @@ exports.downloadFiles = async (req, res, next) => {
     try {
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
-            const error = new Error('Complaint not found');
+            const error = new Error('Concern not found');
             error.statusCode = 401;
             throw error;
         }
