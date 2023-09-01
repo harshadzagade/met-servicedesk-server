@@ -355,6 +355,7 @@ exports.assignComplaint = async (req, res, next) => {
                 report.isRequest = false;
                 report.isComplaint = true;
                 report.requestComplaintId = complaint.id;
+                report.ticketId = complaint.ticketId;
                 report.assignId = assignId;
                 report.staffName = complaint.name;
                 report.assignedName = staff.firstname + ' ' + staff.lastname;
@@ -373,6 +374,7 @@ exports.assignComplaint = async (req, res, next) => {
                     isRequest: false,
                     isComplaint: true,
                     requestComplaintId: complaint.id,
+                    ticketId: complaint.ticketId,
                     assignId: assignId,
                     staffName: complaint.name,
                     assignedName: staff.firstname + ' ' + staff.lastname,

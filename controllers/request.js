@@ -146,7 +146,7 @@ exports.sendRequest = async (req, res, next) => {
         const requestRes = await request.save();
         const setId = await Request.findByPk(requestRes.id);
         const currentDate = new Date();
-        setId.ticketId = '#' + currentDate.getFullYear() + (currentDate.getMonth() + 1) + setId.id;
+        setId.ticketId = '#' + currentDate.getFullYear() + (String(currentDate.getMonth() + 1).padStart(2, '0')) + setId.id;
         const result = await setId.save();
         let report;
         if (requester.department.includes(department)) {
@@ -154,6 +154,7 @@ exports.sendRequest = async (req, res, next) => {
                 isRequest: true,
                 isComplaint: false,
                 requestComplaintId: result.id,
+                ticketId: result.ticketId,
                 staffName: result.name,
                 category: result.category,
                 priority: result.priority,
@@ -174,6 +175,7 @@ exports.sendRequest = async (req, res, next) => {
                 isRequest: true,
                 isComplaint: false,
                 requestComplaintId: result.id,
+                ticketId: result.ticketId,
                 staffName: result.name,
                 category: result.category,
                 priority: result.priority,
@@ -545,3 +547,8 @@ const sendMail = async (hodEmail, adminEmail, category, requestId, subject, desc
         next(error);
     }
 };
+
+const formatMonthWithLeadingZero = (month) => {
+    return String(month).padStart(2, '0');
+  }
+  
