@@ -547,8 +547,3 @@ const sendMail = async (hodEmail, adminEmail, category, requestId, subject, desc
         next(error);
     }
 };
-
-const formatMonthWithLeadingZero = (month) => {
-    return String(month).padStart(2, '0');
-  }
-  
