@@ -409,6 +409,7 @@ exports.assignComplaint = async (req, res, next) => {
 exports.putApproval1 = async (req, res, next) => {
     const errors = validationResult(req);
     const requestId = req.params.requestId;
+    const department = req.body.department;
     const approval = +req.body.approval;
     const approvalComment = req.body.approvalComment;
     try {
@@ -420,6 +421,11 @@ exports.putApproval1 = async (req, res, next) => {
         const request = await Request.findByPk(requestId);
         if (!request) {
             const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (request.staffDepartment !== department) {
+            const error = new Error('Cannot approve from currently selected department');
             error.statusCode = 401;
             throw error;
         }
@@ -479,6 +485,7 @@ exports.putApproval2 = async (req, res, next) => {
     const errors = validationResult(req);
     const requestId = req.params.requestId;
     let staffId = null;
+    const department = req.body.department;
     const approval = +req.body.approval;
     const approvalComment = req.body.approvalComment;
     try {
@@ -490,6 +497,11 @@ exports.putApproval2 = async (req, res, next) => {
         const request = await Request.findByPk(requestId);
         if (!request) {
             const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (request.department !== department) {
+            const error = new Error('Cannot approve from currently selected department');
             error.statusCode = 401;
             throw error;
         }

@@ -53,7 +53,7 @@ exports.createStaff = async (req, res, next) => {
         const result = await staff.save();
         // await userWelcomeEmail(firstname + ' ' + lastname, email, password, next);
         res.status(201).json({ message: 'Employee created!', staffId: result.id });
-        logMessage('Employee created successfully')
+        logMessage('Employee created successfully');
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
