@@ -61,6 +61,10 @@ const Report = sequelize.define('report', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    departmentType: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     status: {
         type: Sequelize.STRING,
         allowNull: false

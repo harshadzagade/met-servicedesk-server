@@ -73,7 +73,7 @@ exports.getReportDetails = async (req, res, next) => {
 };
 
 exports.getReportCategories = async (req, res, next) => {
-    const departmentName = req.params.department
+    const departmentName = req.params.department;
     try {
         const department = await Department.findOne({
             where: {
@@ -87,7 +87,10 @@ exports.getReportCategories = async (req, res, next) => {
         }
         res.status(200).json({ message: 'Fetched categories', categories: department.category });
     } catch (error) {
-        
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
     }
 };
 
@@ -145,6 +148,7 @@ exports.getReportCsv = async (req, res, next) => {
             'Engineer Name': singleReport.assignedName,
             'From Department': singleReport.staffDepartment,
             'To Department': singleReport.department,
+            'Department Type': singleReport.departmentType,
             'Category': singleReport.category,
             'Priority': singleReport.priority,
             'Subject': singleReport.subject,
@@ -175,6 +179,7 @@ exports.getReportCsv = async (req, res, next) => {
         'Engineer Name',
         'From Department',
         'To Department',
+        'Department Type',
         'Category',
         'Priority',
         'Subject',

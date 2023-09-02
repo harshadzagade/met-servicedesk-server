@@ -41,6 +41,12 @@ exports.sendRequest = async (req, res, next) => {
         isRepeated = false;
     }
     try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            const error = new Error('Employee not found');
+            error.statusCode = 401;
+            throw error;
+        }
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {
                 const file = req.files[i].path.replace("\\", "/");
@@ -155,13 +161,14 @@ exports.sendRequest = async (req, res, next) => {
                 isComplaint: false,
                 requestComplaintId: result.id,
                 ticketId: result.ticketId,
-                staffName: result.name,
+                staffName: staff.lastname === '' ? staff.firstname : staff.firstname + ' ' + staff.lastname,
                 category: result.category,
                 priority: result.priority,
                 subject: result.subject,
                 description: result.description,
                 department: result.department,
                 staffDepartment: result.staffDepartment,
+                departmentType: staff.departmentType,
                 status: result.status,
                 loggedTime: result.createdAt,
                 approval1Time: new Date(),
@@ -176,13 +183,14 @@ exports.sendRequest = async (req, res, next) => {
                 isComplaint: false,
                 requestComplaintId: result.id,
                 ticketId: result.ticketId,
-                staffName: result.name,
+                staffName: staff.lastname === '' ? staff.firstname : staff.firstname + ' ' + staff.lastname,
                 category: result.category,
                 priority: result.priority,
                 subject: result.subject,
                 description: result.description,
                 department: result.department,
                 staffDepartment: result.staffDepartment,
+                departmentType: staff.departmentType,
                 status: result.status,
                 loggedTime: result.createdAt
             });
