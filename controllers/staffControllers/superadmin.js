@@ -5,6 +5,8 @@ const Op = require('sequelize').Op;
 const { validationResult } = require('express-validator');
 const { Sequelize } = require("sequelize");
 const nodemailer = require('nodemailer');
+const logMessage = require("../../utils/logs");
+const errorLogMessage = require("../../utils/errorlogs");
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -30,6 +32,7 @@ exports.createStaff = async (req, res, next) => {
         if (!errors.isEmpty()) {
             const error = new Error(errors.errors[0].msg);
             error.statusCode = 422;
+            errorLogMessage('Cannot create employee');
             throw error;
         }
         const hashedPassword = await bcrypt.hash(password, 12);
@@ -50,6 +53,7 @@ exports.createStaff = async (req, res, next) => {
         const result = await staff.save();
         // await userWelcomeEmail(firstname + ' ' + lastname, email, password, next);
         res.status(201).json({ message: 'Employee created!', staffId: result.id });
+        logMessage('Employee created successfully')
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
