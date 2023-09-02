@@ -36,6 +36,7 @@ router.post('/',
         }),
         body('feedback')
             .isLength({ max: 150 }).withMessage('Cannot exceed above 150 characters')
+            .isLength({ min: 1 }).withMessage('Please enter feedback before submitting')
     ], feedbackController.postFeedback);
 
 router.get('/allfeedbacks/:department', feedbackController.getAllDepartmentFeedbacks);
