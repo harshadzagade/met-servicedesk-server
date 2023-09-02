@@ -125,7 +125,7 @@ const sendFeedBackMail = async (adminEmail, ticketType, ticketId, staffName, sta
                 `
                 <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
                     <div style="max-width: 600px; margin: 20px auto;">
-                        <div style="background-color: #1e6ebf; border-radius: 10px; padding: 20px; color: #ffffff;">
+                        <div style="background-color: #DA251C; border-radius: 10px; padding: 20px; color: #ffffff;">
                             <h2 style="margin-top: 0; font-size: 28px;">New Feedback on <span style="text-transform: capitalize;">${ticketType}</span> Ticket with ID <span style="text-transform: uppercase;">${ticketId}</span></h2>
                         </div>
                         <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); color: #333;">
