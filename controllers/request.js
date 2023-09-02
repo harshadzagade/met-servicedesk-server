@@ -57,7 +57,7 @@ exports.sendRequest = async (req, res, next) => {
             const behalfEmailId = req.body.behalfEmailId;
             const staff = await Staff.findOne({ where: { email: behalfEmailId } });
             if (!staff) {
-                const error = new Error('Behalf staff not found');
+                const error = new Error('Behalf employee not found');
                 error.statusCode = 401;
                 throw error;
             }
@@ -71,7 +71,7 @@ exports.sendRequest = async (req, res, next) => {
         }
         const requester = await Staff.findByPk(requestStaffId);
         if (!requester) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -114,7 +114,7 @@ exports.sendRequest = async (req, res, next) => {
             });
         }
         if (requester.role !== 'admin' && requester.department.length > 1) {
-            const error = new Error('Non-admin staff cannot have multiple department');
+            const error = new Error('Non-admin employee cannot have multiple department');
             error.statusCode = 401;
             throw error;
         }
@@ -199,7 +199,7 @@ exports.sendRequest = async (req, res, next) => {
         adminEmail = admin.email;
         await sendMail(hodEmail, adminEmail, category, result.ticketId, subject, description, next);
         getIO().emit('requests');
-        res.status(201).json({ message: 'Staff created!', request: result });
+        res.status(201).json({ message: 'Request created', request: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -298,7 +298,7 @@ exports.ownRequests = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -310,7 +310,7 @@ exports.ownRequests = async (req, res, next) => {
                 ]
             }
         });
-        res.status(200).json({ message: 'Staff created!', requests: requests });
+        res.status(200).json({ message: 'Fetched requests successfully', requests: requests });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -325,7 +325,7 @@ exports.searchOwnRequests = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -362,7 +362,7 @@ exports.getRequestDetails = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        res.status(200).json({ message: 'Request fetched successfully!', request: request });
+        res.status(200).json({ message: 'Request fetched successfully', request: request });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;

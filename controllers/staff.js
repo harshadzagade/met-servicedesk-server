@@ -25,7 +25,7 @@ exports.checkAuth = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -51,7 +51,7 @@ exports.checkAuth = async (req, res, next) => {
                 break;
 
             default:
-                const error = new Error('User not found');
+                const error = new Error('Employee not found');
                 error.statusCode = 404;
                 throw error;
         }
@@ -68,11 +68,11 @@ exports.getStaffDetails = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
-        res.status(200).json({ message: 'Staff fetched.', staff: staff });
+        res.status(200).json({ message: 'Employee fetched', staff: staff });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -96,7 +96,7 @@ exports.sendMail = async (req, res, next) => {
             where: { email: loginEmail }
         });
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -184,7 +184,7 @@ exports.resetPassword = async (req, res, next) => {
             where: { email: email }
         });
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -197,7 +197,7 @@ exports.resetPassword = async (req, res, next) => {
         staff.password = await bcrypt.hash(newPassword, 12);
         staff.isNew = false;
         const result = await staff.save();
-        res.status(200).json({ message: 'New password set successfully!', staff: result });
+        res.status(200).json({ message: 'New password set successfully', staff: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -220,7 +220,7 @@ exports.newUserLogin = async (req, res, next) => {
             where: { email: email }
         });
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -233,7 +233,7 @@ exports.newUserLogin = async (req, res, next) => {
         staff.password = await bcrypt.hash(newPassword, 12);
         staff.isNew = false;
         const result = await staff.save();
-        res.status(200).json({ message: 'Staff is not a new user now.', staff: result });
+        res.status(200).json({ message: 'Employee is not a new user now', staff: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -277,7 +277,7 @@ exports.getAllContacts = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -324,7 +324,7 @@ exports.getSearchedContacts = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -414,7 +414,7 @@ exports.getStaffByDepartment = async (req, res, next) => {
             }
         });
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }
@@ -432,11 +432,11 @@ exports.getStaffExistance = async (req, res, next) => {
     try {
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         } else {
-            res.status(200).json({ message: 'Staff exists' });
+            res.status(200).json({ message: 'Employee exists' });
         }
     } catch (error) {
         if (!error.statusCode) {
@@ -456,6 +456,6 @@ const getDepartments = async () => {
     const departments = allDept;
     const uniqueDepartments = departments.filter(function(item, position) {
         return departments.indexOf(item) == position;
-    })
+    });
     return uniqueDepartments;
 };

@@ -20,7 +20,7 @@ exports.postLogin = async (req, res, next) => {
             }
         });
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401; // 401 means not authenticated
             throw error;
         }

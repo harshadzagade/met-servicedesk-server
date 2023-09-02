@@ -64,7 +64,7 @@ exports.postFeedback = async (req, res, next) => {
         }
         const staff = await Staff.findByPk(staffId);
         if (!staff) {
-            const error = new Error('Staff not found');
+            const error = new Error('Employee not found');
             error.statusCode = 401;
             throw error;
         }

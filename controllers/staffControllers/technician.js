@@ -230,7 +230,7 @@ exports.changeRequestStatus = async (req, res, next) => {
         }
         const result = await request.save();
         getIO().emit('requestStatus');
-        res.status(200).json({ message: 'status updated successfully!', request: result });
+        res.status(200).json({ message: 'Status updated successfully!', request: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -413,7 +413,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                 assign = req.body.assign;
                 const forwardComment = req.body.forwardComment;
                 if (complaint.assign === assign) {
-                    const error = new Error('Same employee is already assigned');
+                    const error = new Error('Same engineer is already assigned');
                     error.statusCode = 401;
                     throw error;
                 }
@@ -474,7 +474,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
         }
         const result = await complaint.save();
         getIO().emit('complaintStatus');
-        res.status(200).json({ message: 'status updated successfully!', complaint: result });
+        res.status(200).json({ message: 'Status updated successfully!', complaint: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
