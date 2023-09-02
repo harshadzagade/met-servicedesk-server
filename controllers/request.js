@@ -152,7 +152,7 @@ exports.sendRequest = async (req, res, next) => {
         const requestRes = await request.save();
         const setId = await Request.findByPk(requestRes.id);
         const currentDate = new Date();
-        setId.ticketId = '#' + currentDate.getFullYear() + (String(currentDate.getMonth() + 1).padStart(2, '0')) + setId.id;
+        setId.ticketId = '#R' + currentDate.getFullYear() + (String(currentDate.getMonth() + 1).padStart(2, '0')) + setId.id;
         const result = await setId.save();
         let report;
         if (requester.department.includes(department)) {
