@@ -255,6 +255,12 @@ exports.selfAssignComplaint = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+        const ticketRaiser = await Staff.findByPk(complaint.staffId);
+        if (!ticketRaiser) {
+            const error = new Error('Ticket raiser not found');
+            error.statusCode = 401;
+            throw error;
+        }
         if (complaint.assign !== null) {
             const error = new Error(`Concern already assigned to ${complaint.assignedName}`);
             error.statusCode = 401;
@@ -291,6 +297,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
             report.description = complaint.description;
             report.department = complaint.department;
             report.staffDepartment = complaint.staffDepartment;
+            report.departmentType = ticketRaiser.departmentType;
             report.status = complaint.status;
             report.loggedTime = complaint.createdAt;
             report.attendedTime = new Date();
@@ -310,6 +317,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
                 description: complaint.description,
                 department: complaint.department,
                 staffDepartment: complaint.staffDepartment,
+                departmentType: ticketRaiser.departmentType,
                 status: complaint.status,
                 loggedTime: complaint.createdAt,
                 attendedTime: new Date(),

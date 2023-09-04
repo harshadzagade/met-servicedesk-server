@@ -53,7 +53,7 @@ exports.postFeedback = async (req, res, next) => {
         }
         const admin = await Staff.findOne({
             where: {
-                department: [department],
+                department: { [Op.contains]: [department] },
                 role: 'admin'
             }
         });
