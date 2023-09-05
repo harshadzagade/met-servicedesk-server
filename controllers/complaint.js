@@ -98,7 +98,7 @@ exports.sendComplaint = async (req, res, next) => {
         const currentDate = new Date();
         setId.ticketId = '#C' + currentDate.getFullYear() + (String(currentDate.getMonth() + 1).padStart(2, '0')) + setId.id;
         const result = await setId.save();
-        await sendMail(admin.email, category, result.id, subject, description, next);
+        await sendMail(admin.email, category, result.ticketId, subject, description, next);
         getIO().emit('complaints');
         res.status(201).json({ message: 'Concern created!', complaint: result });
     } catch (error) {
@@ -337,7 +337,7 @@ const sendMail = async (adminEmail, category, complaintId, subject, description,
         await transporter.sendMail({
             to: adminEmail,
             from: 'helpdeskinfo@met.edu',
-            subject: `Concern regarding ${category} #${complaintId}`,
+            subject: `Concern regarding ${category} ${complaintId}`,
             html:
                 `
                 <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
