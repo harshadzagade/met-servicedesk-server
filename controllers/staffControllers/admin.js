@@ -572,7 +572,7 @@ exports.putApproval2 = async (req, res, next) => {
             report.approval2Comment = approvalComment;
             report.approval2Status = 'approved';
             await report.save();
-            await sendMail(result.id, result.department, result.category, result.subject, result.description, next);
+            await sendMail(result.ticketId, result.department, result.category, result.subject, result.description, next);
             getIO().emit('requestStatus');
             res.status(200).json({ message: 'Approved ticket', request: result });
         } else if (approval === 2) {
