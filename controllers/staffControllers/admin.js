@@ -508,6 +508,11 @@ exports.putApproval2 = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+        if (request.approval2) {
+            const error = new Error('Cannot set approval multiple time');
+            error.statusCode = 401;
+            throw error;
+        }
         if (request.department !== department) {
             const error = new Error('Cannot approve from currently selected department');
             error.statusCode = 401;
@@ -576,12 +581,12 @@ exports.putApproval2 = async (req, res, next) => {
             request.status = 'disapproved';
             request.approval2Comment = approvalComment;
             request.approval2Time = new Date();
+            const result = await request.save();
             report.approval2Time = result.approval2Time;
             report.assignedTime = result.approval2Time;
             report.assignDuration = result.approval2Time - result.createdAt;
             report.approval2Comment = approvalComment;
             report.approval2Status = 'disapproved';
-            const result = await request.save();
             await report.save();
             getIO().emit('requestStatus');
             res.status(200).json({ message: 'Disapproved ticket', request: result });

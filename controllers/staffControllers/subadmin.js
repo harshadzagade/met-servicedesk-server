@@ -416,6 +416,11 @@ exports.putApproval1 = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+        if (request.approval1) {
+            const error = new Error('Cannot set approval multiple time');
+            error.statusCode = 401;
+            throw error;
+        }
         const report = await Report.findOne({
             where: {
                 requestComplaintId: requestId,
@@ -512,6 +517,11 @@ exports.putApproval2 = async (req, res, next) => {
         const request = await Request.findByPk(requestId);
         if (!request) {
             const error = new Error('Request not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (request.approval2) {
+            const error = new Error('Cannot set approval multiple time');
             error.statusCode = 401;
             throw error;
         }
