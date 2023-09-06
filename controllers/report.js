@@ -96,10 +96,12 @@ exports.getReportCategories = async (req, res, next) => {
 
 exports.getReportByCategory = async (req, res, next) => {
     const category = req.params.category;
+    const technicianId = req.params.technicianId;
     try {
         const report = await Report.findAll({
             where: {
-                category: category
+                category: category,
+                assignId: technicianId
             }
         });
         if (!report) {
@@ -118,10 +120,12 @@ exports.getReportByCategory = async (req, res, next) => {
 
 exports.getReportByPriority = async (req, res, next) => {
     const priority = req.params.priority;
+    const technicianId = req.params.technicianId;
     try {
         const report = await Report.findAll({
             where: {
-                priority: priority
+                priority: priority,
+                assignId: technicianId
             }
         });
         if (!report) {

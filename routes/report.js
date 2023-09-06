@@ -16,9 +16,9 @@ router.get('/reportdetails/:reportId', reportController.getReportDetails);
 
 router.get('/reportcategories/categories/:department', reportController.getReportCategories);
 
-router.get('/reportbycategory/:category', reportController.getReportByCategory);
+router.get('/reportbycategory/:category/:technicianId', reportController.getReportByCategory);
 
-router.get('/reportbypriority/:priority', reportController.getReportByPriority);
+router.get('/reportbypriority/:priority/:technicianId', reportController.getReportByPriority);
 
 router.post('/reportcsv', reportController.getReportCsv);
 
