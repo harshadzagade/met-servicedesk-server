@@ -400,6 +400,7 @@ exports.assignComplaint = async (req, res, next) => {
             }
             await report.save();
             getIO().emit('complaintStatus');
+            await sendAssignMail(result.ticketId, assignId, result.department, result.category, result.subject, result.description, next);
             res.status(201).json({ message: 'Concern assigned successfully', complaint: result });
         } else {
             const error = new Error('Cannot assign to closed and forwarded requests');
@@ -642,7 +643,6 @@ exports.checkSubadmin = async (req, res, next) => {
 
 const sendMail = async (requestId, assignId, department, category, subject, description, next) => {
     let email = '';
-    let cc = '';
     try {
         const departmentAdmin = await Staff.findOne({
             where: {
@@ -663,10 +663,10 @@ const sendMail = async (requestId, assignId, department, category, subject, desc
             throw error;
         }
         await transporter.sendMail({
-            to: email,
-            cc: assignedTechnician.email,
+            to: assignedTechnician.email,
+            cc: email,
             from: 'helpdeskinfo@met.edu',
-            subject: `Requested ${category} #${requestId}`,
+            subject: `Assigned request on ${category} ${requestId}`,
             html:
                 `
                 <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
@@ -676,8 +676,8 @@ const sendMail = async (requestId, assignId, department, category, subject, desc
                         </div>
                         <div style="padding: 20px;">
                         <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
-                        <p>Dear Admin,</p>
-                        <p>A new ticket has been generated with the following details:</p>
+                        <p>Dear Engineer,</p>
+                        <p>Admin have assigned a new ticket. Here are the details:</p>
                         <table style="width: 100%;">
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Ticket ID:</td>
@@ -700,7 +700,85 @@ const sendMail = async (requestId, assignId, department, category, subject, desc
                                 <td style="padding: 5px;">${description}</td>
                             </tr>
                         </table>
-                        <p>Please log in to the helpdesk system to review and assign the ticket.</p>
+                        <p>Please log in to the helpdesk system to check the assigned ticket.</p>
+                        <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+                        <p>Best regards,<br> The Helpdesk Team</p>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background-color: #f4f4f4; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+                        <p>This is an automated email. Please do not reply.</p>
+                        </div>
+                    </div>
+                </body>
+            `
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+const sendAssignMail = async (requestId, assignId, department, category, subject, description, next) => {
+    let email = '';
+    try {
+        const departmentAdmin = await Staff.findOne({
+            where: {
+                department: { [Op.contains]: [department] },
+                role: 'admin'
+            }
+        });
+        if (!departmentAdmin) {
+            const error = new Error(`Department don't have any admin`);
+            error.statusCode = 401;
+            throw error;
+        }
+        email = departmentAdmin.email;
+        const assignedTechnician = await Staff.findByPk(assignId);
+        if (!assignedTechnician) {
+            const error = new Error(`Cannot find assigned engineer`);
+            error.statusCode = 401;
+            throw error;
+        }
+        await transporter.sendMail({
+            to: assignedTechnician.email,
+            cc: email,
+            from: 'helpdeskinfo@met.edu',
+            subject: `Assigned concern on ${category} ${requestId}`,
+            html:
+                `
+                <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                        <div style="background-color: #DA251C; color: #ffffff; text-align: center; padding: 10px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+                        <h1>MET Helpdesk</h1>
+                        </div>
+                        <div style="padding: 20px;">
+                        <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
+                        <p>Dear Engineer,</p>
+                        <p>Admin have assigned a new ticket. Here are the details:</p>
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket ID:</td>
+                                <td style="padding: 5px;">${requestId}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
+                                <td style="padding: 5px;">Concern</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
+                                <td style="padding: 5px;">${category}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Subject:</td>
+                                <td style="padding: 5px;">${subject}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Description:</td>
+                                <td style="padding: 5px;">${description}</td>
+                            </tr>
+                        </table>
+                        <p>Please log in to the helpdesk system to check the assigned ticket.</p>
                         <p>If you have any questions or need assistance, feel free to contact our support team.</p>
                         <p>Best regards,<br> The Helpdesk Team</p>
                         </div>
