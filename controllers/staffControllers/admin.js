@@ -572,7 +572,7 @@ exports.putApproval2 = async (req, res, next) => {
             report.approval2Comment = approvalComment;
             report.approval2Status = 'approved';
             await report.save();
-            await sendMail(result.ticketId, result.department, result.category, result.subject, result.description, next);
+            await sendMail(result.ticketId, staffId, result.department, result.category, result.subject, result.description, next);
             getIO().emit('requestStatus');
             res.status(200).json({ message: 'Approved ticket', request: result });
         } else if (approval === 2) {
@@ -640,9 +640,9 @@ exports.checkSubadmin = async (req, res, next) => {
     }
 };
 
-const sendMail = async (requestId, department, category, subject, description, next) => {
+const sendMail = async (requestId, assignId, department, category, subject, description, next) => {
     let email = '';
-    let cc = [];
+    let cc = '';
     try {
         const departmentAdmin = await Staff.findOne({
             where: {
@@ -656,19 +656,15 @@ const sendMail = async (requestId, department, category, subject, description, n
             throw error;
         }
         email = departmentAdmin.email;
-        const departmentTechnicians = await Staff.findAll({
-            where: {
-                department: { [Op.contains]: [department] },
-                role: 'engineer'
-            }
-        });
-        for (let i = 0; i < departmentTechnicians.length; i++) {
-            const technicianEmail = departmentTechnicians[i].email;
-            cc = cc.concat(technicianEmail);
+        const assignedTechnician = await Staff.findByPk(assignId);
+        if (!assignedTechnician) {
+            const error = new Error(`Cannot find assigned engineer`);
+            error.statusCode = 401;
+            throw error;
         }
         await transporter.sendMail({
             to: email,
-            cc: cc,
+            cc: assignedTechnician.email,
             from: 'helpdeskinfo@met.edu',
             subject: `Requested ${category} #${requestId}`,
             html:
