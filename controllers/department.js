@@ -81,7 +81,7 @@ exports.editCategories = async (req, res, next) => {
         }
         department.department = departmentName;
         department.type = type;
-        department.category = categories;
+        department.category = categories || ['N/A'];
         const result = await department.save();
         res.status(200).json({ message: 'Department updated successfully', department: result });
     } catch (error) {

@@ -48,7 +48,6 @@ router.put('/editdepartment/:departmentId',
             .isLength({ min: 1 }).withMessage('Please enter valid department name'),
         body('type')
             .custom((value) => {
-                console.log(value);
                 if (value !== 'service' && value !== 'regular') {
                     return Promise.reject('Please enter valid department type');
                 } else {
@@ -56,9 +55,9 @@ router.put('/editdepartment/:departmentId',
                 }
             }),
         body('category')
-            .isArray().withMessage('Please enter valid categories')
-            .custom((value) => {
-                if (value.length === 0) {
+            .custom((value, { req }) => {
+                const type = req.body.type;
+                if (type === 'service' && value.length === 0) {
                     return Promise.reject('Please enter valid categories');
                 } else {
                     return true;
