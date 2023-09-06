@@ -206,7 +206,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                     await report.save();
                     const hod = await Staff.findOne({
                         where: {
-                            department: [request.department],
+                            department: { [Op.contains]: [request.department] },
                             role: 'admin'
                         }
                     });
