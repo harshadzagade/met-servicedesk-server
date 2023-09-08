@@ -25,7 +25,9 @@ router.put('/staffdetails/updateStaff/:staffId',
             .trim()
     ], subadminController.updateStaff);
 
-router.get('/admindepartmenttechnicians/:staffId/:currentDepartment', subadminController.getDepartmentTechnicians);
+router.put('/assigncomplaint/:complaintId', subadminController.assignComplaint);
+
+router.get('/subadmindepartmenttechnicians/:staffId/:currentDepartment', subadminController.getDepartmentTechnicians);
 
 router.get('/requests/incoming/:department', subadminController.getIncomingRequests);
 

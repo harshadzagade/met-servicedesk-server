@@ -371,6 +371,105 @@ exports.searchOutgoingComplaints = async (req, res, next) => {
     }
 };
 
+exports.assignComplaint = async (req, res, next) => {
+    const complaintId = req.params.complaintId;
+    const assignId = req.body.assignId;
+    try {
+        const complaint = await Complaint.findByPk(complaintId);
+        if (!complaint) {
+            const error = new Error('Concern not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const ticketRaiser = await Staff.findByPk(complaint.staffId);
+        if (!ticketRaiser) {
+            const error = new Error('Ticket raiser not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (complaint.assign !== null) {
+            const error = new Error(`Concern already assigned to ${complaint.assignedName}`);
+            error.statusCode = 401;
+            throw error;
+        }
+        const staff = await Staff.findByPk(assignId);
+        if (!staff) {
+            const error = new Error('Employee not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        if ((complaint.status !== 'closed') && (complaint.status !== 'forwarded')) {
+            complaint.assign = staff.id;
+            complaint.assignedName = staff.firstname + '' + staff.lastname;
+            complaint.status = 'attending';
+            const result = await complaint.save();
+            const reportCheck = await Report.findOne({
+                where: {
+                    requestComplaintId: complaint.id,
+                    isComplaint: true,
+                    assignId: assignId
+                }
+            });
+            let report;
+            if (reportCheck) {
+                report = await Report.findByPk(reportCheck.id);
+                report.isRequest = false;
+                report.isComplaint = true;
+                report.requestComplaintId = complaint.id;
+                report.ticketId = complaint.ticketId;
+                report.assignId = assignId;
+                report.staffName = complaint.name;
+                report.assignedName = staff.firstname + ' ' + staff.lastname;
+                report.category = complaint.category;
+                report.priority = complaint.priority;
+                report.subject = complaint.subject;
+                report.description = complaint.description;
+                report.department = complaint.department;
+                report.staffDepartment = complaint.staffDepartment;
+                report.departmentType = ticketRaiser.departmentType;
+                report.status = complaint.status;
+                report.loggedTime = complaint.createdAt;
+                report.attendedTime = new Date();
+                report.attendDuration = new Date() - complaint.createdAt;
+            } else {
+                report = new Report({
+                    isRequest: false,
+                    isComplaint: true,
+                    requestComplaintId: complaint.id,
+                    ticketId: complaint.ticketId,
+                    assignId: assignId,
+                    staffName: complaint.name,
+                    assignedName: staff.firstname + ' ' + staff.lastname,
+                    category: complaint.category,
+                    priority: complaint.priority,
+                    subject: complaint.subject,
+                    description: complaint.description,
+                    department: complaint.department,
+                    staffDepartment: complaint.staffDepartment,
+                    departmentType: ticketRaiser.departmentType,
+                    status: complaint.status,
+                    loggedTime: complaint.createdAt,
+                    attendedTime: new Date(),
+                    attendDuration: new Date() - complaint.createdAt
+                });
+            }
+            await report.save();
+            getIO().emit('complaintStatus');
+            await sendAssignMail(result.ticketId, assignId, result.department, result.category, result.subject, result.description, next);
+            res.status(201).json({ message: 'Concern assigned successfully', complaint: result });
+        } else {
+            const error = new Error('Cannot assign to closed and forwarded requests');
+            error.statusCode = 403;
+            throw error;
+        }
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 exports.putApproval1 = async (req, res, next) => {
     const errors = validationResult(req);
     const subadminId = req.body.subadminId;
@@ -582,7 +681,7 @@ exports.putApproval2 = async (req, res, next) => {
             await sendSubadminActivityMail(admin.email, 'Request approved', subadmin.firstname + ' ' + subadmin.lastname, `Admin approval has been done of request with an ID ${request.ticketId}`, getFormattedDate(new Date()));
             await report.save();
             await subadminActivities.save();
-            await sendMail(result.ticketId, result.department, result.category, result.subject, result.description, next);
+            await sendMail(result.ticketId, staffId, result.department, result.category, result.subject, result.description, next);
             getIO().emit('subadminactivities');
             getIO().emit('requestStatus');
             res.status(200).json({ message: 'Employee details updated', request: result });
@@ -614,14 +713,13 @@ exports.putApproval2 = async (req, res, next) => {
     }
 };
 
-const sendMail = async (requestId, department, category, subject, description, next) => {
+const sendMail = async (requestId, assignId, department, category, subject, description, next) => {
     let email = '';
-    let cc = [];
     try {
         const departmentAdmin = await Staff.findOne({
             where: {
                 department: { [Op.contains]: [department] },
-                role: 'admin'
+                role: 'subadmin'
             }
         });
         if (!departmentAdmin) {
@@ -630,19 +728,15 @@ const sendMail = async (requestId, department, category, subject, description, n
             throw error;
         }
         email = departmentAdmin.email;
-        const departmentTechnicians = await Staff.findAll({
-            where: {
-                department: { [Op.contains]: [department] },
-                role: 'engineer'
-            }
-        });
-        for (let i = 0; i < departmentTechnicians.length; i++) {
-            const technicianEmail = departmentTechnicians[i].email;
-            cc = cc.concat(technicianEmail);
+        const assignedTechnician = await Staff.findByPk(assignId);
+        if (!assignedTechnician) {
+            const error = new Error(`Cannot find assigned engineer`);
+            error.statusCode = 401;
+            throw error;
         }
         await transporter.sendMail({
-            to: email,
-            cc: cc,
+            to: assignedTechnician.email,
+            cc: email,
             from: 'helpdeskinfo@met.edu',
             subject: `Requested ${category} ${requestId}`,
             html:
@@ -755,4 +849,82 @@ const formatAMPM = (date) => {
     minutes = minutes < 10 ? '0' + minutes : minutes;
     let strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
     return strTime;
+};
+
+const sendAssignMail = async (requestId, assignId, department, category, subject, description, next) => {
+    let email = '';
+    try {
+        const departmentAdmin = await Staff.findOne({
+            where: {
+                department: { [Op.contains]: [department] },
+                role: 'subadmin'
+            }
+        });
+        if (!departmentAdmin) {
+            const error = new Error(`Department don't have any admin`);
+            error.statusCode = 401;
+            throw error;
+        }
+        email = departmentAdmin.email;
+        const assignedTechnician = await Staff.findByPk(assignId);
+        if (!assignedTechnician) {
+            const error = new Error(`Cannot find assigned engineer`);
+            error.statusCode = 401;
+            throw error;
+        }
+        await transporter.sendMail({
+            to: assignedTechnician.email,
+            cc: email,
+            from: 'helpdeskinfo@met.edu',
+            subject: `Assigned concern on ${category} ${requestId}`,
+            html:
+                `
+                <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                        <div style="background-color: #DA251C; color: #ffffff; text-align: center; padding: 10px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+                        <h1>MET Helpdesk</h1>
+                        </div>
+                        <div style="padding: 20px;">
+                        <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
+                        <p>Dear Engineer,</p>
+                        <p>Admin have assigned a new ticket. Here are the details:</p>
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket ID:</td>
+                                <td style="padding: 5px;">${requestId}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
+                                <td style="padding: 5px;">Concern</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
+                                <td style="padding: 5px;">${category}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Subject:</td>
+                                <td style="padding: 5px;">${subject}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Description:</td>
+                                <td style="padding: 5px;">${description}</td>
+                            </tr>
+                        </table>
+                        <p>Please log in to the helpdesk system to check the assigned ticket.</p>
+                        <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+                        <p>Best regards,<br> The Helpdesk Team</p>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background-color: #f4f4f4; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+                        <p>This is an automated email. Please do not reply.</p>
+                        </div>
+                    </div>
+                </body>
+            `
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
 };
