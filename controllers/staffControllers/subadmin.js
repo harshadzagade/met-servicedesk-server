@@ -786,7 +786,7 @@ const sendMail = async (requestId, assignId, department, category, subject, desc
                         </div>
                         <div style="padding: 20px;">
                         <h2 style="color: #0088cc;">Helpdesk Ticket Notification</h2>
-                        <p>Dear Admin,</p>
+                        <p>Dear Subadmin,</p>
                         <p>A new ticket has been generated with the following details:</p>
                         <table style="width: 100%;">
                             <tr>
