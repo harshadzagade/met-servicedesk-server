@@ -98,7 +98,7 @@ exports.sendComplaint = async (req, res, next) => {
         const currentDate = new Date();
         setId.ticketId = '#C' + currentDate.getFullYear() + (String(currentDate.getMonth() + 1).padStart(2, '0')) + setId.id;
         const result = await setId.save();
-        await sendMail(admin.email, category, result.ticketId, subject, description, next);
+        await sendMail(admin.email, result.department, category, result.ticketId, subject, description, next);
         getIO().emit('complaints');
         res.status(201).json({ message: 'Concern created!', complaint: result });
     } catch (error) {
@@ -332,10 +332,22 @@ exports.downloadFiles = async (req, res, next) => {
     }
 };
 
-const sendMail = async (adminEmail, category, complaintId, subject, description, next) => {
+const sendMail = async (adminEmail, department, category, complaintId, subject, description, next) => {
+    let cc = [];
+    const departmentTechnicians = await Staff.findAll({
+        where: {
+            department: { [Op.contains]: [department] },
+            role: 'engineer'
+        }
+    });
+    for (let i = 0; i < departmentTechnicians.length; i++) {
+        const technicianEmail = departmentTechnicians[i].email;
+        cc = cc.concat(technicianEmail);
+    }
     try {
         await transporter.sendMail({
             to: adminEmail,
+            cc: cc,
             from: 'helpdeskinfo@met.edu',
             subject: `Concern regarding ${category} ${complaintId}`,
             html:
