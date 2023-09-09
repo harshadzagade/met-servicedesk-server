@@ -102,10 +102,17 @@ exports.updateStaff = async (req, res, next) => {
                     role: 'admin'
                 }
             });
-            const subadminActivities = new SubadminActivities({
+            let subadminActivities;
+            subadminActivities = await SubadminActivities.findOne({
                 adminId: admin.id,
                 department: staff.department[0]
             });
+            if (!subadminActivities) {
+                subadminActivities = new SubadminActivities({
+                    adminId: admin.id,
+                    department: staff.department[0]
+                });
+            }
             await subadminActivities.save();
         }
         if (staff.role === '' || staff.role === null) {
