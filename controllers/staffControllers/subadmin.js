@@ -107,7 +107,8 @@ exports.updateStaff = async (req, res, next) => {
         }
         const subadminActivities = await SubadminActivities.findOne({
             where: {
-                adminId: admin.id
+                adminId: admin.id,
+                department: subadmin.department
             }
         });
         if (!subadminActivities) {
@@ -372,9 +373,40 @@ exports.searchOutgoingComplaints = async (req, res, next) => {
 };
 
 exports.assignComplaint = async (req, res, next) => {
+    console.log('working');
     const complaintId = req.params.complaintId;
     const assignId = req.body.assignId;
+    const subadminId = req.body.subadminId;
     try {
+        const subadmin = await Staff.findByPk(subadminId);
+        if (!subadmin) {
+            const error = new Error('Department subadmin not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const admin = await Staff.findOne({
+            where: {
+                department: { [Op.contains]: subadmin.department },
+                role: 'admin'
+            }
+        });
+        if (!admin) {
+            const error = new Error('Department admin not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const subadminActivities = await SubadminActivities.findOne({
+            where: {
+                adminId: admin.id,
+                department: subadmin.department
+            }
+        });
+        console.log(subadminActivities);
+        if (!subadminActivities) {
+            const error = new Error('Subadmin activities not found');
+            error.statusCode = 401;
+            throw error;
+        }
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
             const error = new Error('Concern not found');
@@ -454,8 +486,12 @@ exports.assignComplaint = async (req, res, next) => {
                 });
             }
             await report.save();
-            getIO().emit('complaintStatus');
+            subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `Assigned concern with ID ${complaint.ticketId} to ${staff.firstname + ' ' + staff.lastname}`, data: { type: 'concern', id: complaint.id }, dateTime: new Date() }]) : [{ activity: `Assigned concern with ID ${complaint.ticketId} to ${staff.firstname + ' ' + staff.lastname}`, data: { type: 'concern', id: complaint.id }, dateTime: new Date() }];
+            await subadminActivities.save();
+            await sendSubadminActivityMail(admin.email, 'Concern assigned to engineer', subadmin.firstname + ' ' + subadmin.lastname, `Assigned concern with ID ${complaint.ticketId} to ${staff.firstname + ' ' + staff.lastname}`, getFormattedDate(new Date()));
             await sendAssignMail(result.ticketId, assignId, result.department, result.category, result.subject, result.description, next);
+            getIO().emit('complaintStatus');
+            getIO().emit('subadminactivities');
             res.status(201).json({ message: 'Concern assigned successfully', complaint: result });
         } else {
             const error = new Error('Cannot assign to closed and forwarded requests');
@@ -501,7 +537,8 @@ exports.putApproval1 = async (req, res, next) => {
         }
         const subadminActivities = await SubadminActivities.findOne({
             where: {
-                adminId: admin.id
+                adminId: admin.id,
+                department: subadmin.department
             }
         });
         if (!subadminActivities) {
@@ -605,7 +642,8 @@ exports.putApproval2 = async (req, res, next) => {
         }
         const subadminActivities = await SubadminActivities.findOne({
             where: {
-                adminId: admin.id
+                adminId: admin.id,
+                department: subadmin.department
             }
         });
         if (!subadminActivities) {
