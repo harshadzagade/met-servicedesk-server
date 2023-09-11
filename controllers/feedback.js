@@ -142,7 +142,7 @@ const sendFeedBackMail = async (adminEmail, ticketType, ticketId, staffName, sta
                             <p style="margin-bottom: 15px;">This feedback is regarding a <strong>${ticketType}</strong> ticket with ID <strong>${ticketId}</strong>.</p>
                             <p style="margin-bottom: 15px;">Please review this feedback ticket and take appropriate action.</p>
                             <p style="margin-bottom: 15px;">Thank you!</p>
-                            <p style="text-align: center; color: #777;">Best regards,<br>The Helpdesk Team</p>
+                            <p style="color: #777;">Best regards,<br>The Helpdesk Team</p>
                         </div>
                     </div>
                 </body>
