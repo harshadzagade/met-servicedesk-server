@@ -112,7 +112,7 @@ exports.sendComplaint = async (req, res, next) => {
 exports.getAllComplaints = async (req, res, next) => {
     try {
         const complaints = await Complaint.findAll();
-        res.status(200).json({ message: 'Fetched all requests successfully.', complaints: complaints });
+        res.status(200).json({ message: 'Fetched all concerns successfully.', complaints: complaints });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;

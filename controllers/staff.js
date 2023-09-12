@@ -281,28 +281,10 @@ exports.getAllContacts = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        let contacts;
-        if (staff.role === 'superadmin') {
-            contacts = await Staff.findAll({
-                where: { id: { [Op.ne]: 1 } },
-                attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
-            });
-        } else if (staff.role === 'admin') {
-            contacts = await Staff.findAll({
-                where: { id: { [Op.ne]: 1 } },
-                attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
-            });
-        } else if (staff.role === 'subadmin') {
-            contacts = await Staff.findAll({
-                where: { id: { [Op.ne]: 1 } },
-                attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
-            });
-        } else {
-            contacts = await Staff.findAll({
-                where: { id: { [Op.ne]: 1 } },
-                attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'contactExtension']
-            });
-        }
+        const contacts = await Staff.findAll({
+            where: { id: { [Op.ne]: 1 } },
+            attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
+        });
         if (!contacts) {
             const error = new Error('Contacts not found');
             error.statusCode = 401;
@@ -328,72 +310,22 @@ exports.getSearchedContacts = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        switch (staff.role) {
-            case 'superadmin':
-                const superstaff = await Staff.findAll({
-                    attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension'],
-                    where: {
-                        id: { [Op.ne]: 1 },
-                        [Op.or]: [
-                            { firstname: { [Op.iLike]: `%${query}%` } },
-                            { lastname: { [Op.iLike]: `%${query}%` } },
-                            { email: { [Op.iLike]: `%${query}%` } },
-                            Sequelize.literal(
-                                `EXISTS (SELECT 1 FROM unnest("staff"."department") AS "dept" WHERE UPPER("dept") LIKE '%${upperQuery}%')`
-                            ),
-                            Sequelize.where(
-                                Sequelize.cast(Sequelize.col('phoneNumber'), 'TEXT'),
-                                { [Op.iLike]: `%${query}%` }
-                            ),
-                            { contactExtension: { [Op.iLike]: `%${query}%` } }
-                        ]
-                    },
-                });
-                res.json(superstaff);
-                break;
-
-            case 'admin':
-                const adminstaff = await Staff.findAll({
-                    attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension'],
-                    where: {
-                        id: { [Op.ne]: 1 },
-                        [Op.or]: [
-                            { firstname: { [Op.iLike]: `%${query}%` } },
-                            { lastname: { [Op.iLike]: `%${query}%` } },
-                            { email: { [Op.iLike]: `%${query}%` } },
-                            Sequelize.literal(
-                                `EXISTS (SELECT 1 FROM unnest("staff"."department") AS "dept" WHERE UPPER("dept") LIKE '%${upperQuery}%')`
-                            ),
-                            Sequelize.where(
-                                Sequelize.cast(Sequelize.col('phoneNumber'), 'TEXT'),
-                                { [Op.iLike]: `%${query}%` }
-                            ),
-                            { contactExtension: { [Op.iLike]: `%${query}%` } }
-                        ]
-                    },
-                });
-                res.json(adminstaff);
-                break;
-
-            default:
-                const otherstaff = await Staff.findAll({
-                    attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'contactExtension'],
-                    where: {
-                        id: { [Op.ne]: 1 },
-                        [Op.or]: [
-                            { firstname: { [Op.iLike]: `%${query}%` } },
-                            { lastname: { [Op.iLike]: `%${query}%` } },
-                            { email: { [Op.iLike]: `%${query}%` } },
-                            Sequelize.literal(
-                                `EXISTS (SELECT 1 FROM unnest("staff"."department") AS "dept" WHERE UPPER("dept") LIKE '%${upperQuery}%')`
-                            ),
-                            { contactExtension: { [Op.iLike]: `%${query}%` } }
-                        ]
-                    },
-                });
-                res.json(otherstaff);
-                break;
-        }
+        const contactStaff = await Staff.findAll({
+            attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension'],
+            where: {
+                id: { [Op.ne]: 1 },
+                [Op.or]: [
+                    { firstname: { [Op.iLike]: `%${query}%` } },
+                    { lastname: { [Op.iLike]: `%${query}%` } },
+                    { email: { [Op.iLike]: `%${query}%` } },
+                    Sequelize.literal(
+                        `EXISTS (SELECT 1 FROM unnest("staff"."department") AS "dept" WHERE UPPER("dept") LIKE '%${upperQuery}%')`
+                    ),
+                    { contactExtension: { [Op.iLike]: `%${query}%` } }
+                ]
+            },
+        });
+        res.json(contactStaff);
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -454,7 +386,7 @@ const getDepartments = async () => {
         allDept = allDept.concat(department);
     });
     const departments = allDept;
-    const uniqueDepartments = departments.filter(function(item, position) {
+    const uniqueDepartments = departments.filter(function (item, position) {
         return departments.indexOf(item) == position;
     });
     return uniqueDepartments;
