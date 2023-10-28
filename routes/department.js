@@ -45,7 +45,14 @@ router.post('/createdepartment',
 router.put('/editdepartment/:departmentId',
     [
         body('departmentName')
-            .isLength({ min: 1 }).withMessage('Please enter valid department name'),
+            .isLength({ min: 1 }).withMessage('Please enter valid department name')
+            .custom((value) => {
+                return Department.findOne({ where: { department: value } }).then((department) => {
+                    if (department) {
+                        return Promise.reject('Department already exists');
+                    }
+                });
+            }),
         body('type')
             .custom((value) => {
                 if (value !== 'service' && value !== 'regular') {

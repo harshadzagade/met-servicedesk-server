@@ -27,6 +27,13 @@ router.put('/editinstitute/:instituteId',
         body('instituteName')
             .trim()
             .isLength({ min: 1 }).withMessage('Please enter institute name')
+            .custom((value) => {
+                return Institute.findOne({ where: { institute: value } }).then((institute) => {
+                    if (institute) {
+                        return Promise.reject('Institute already exists');
+                    }
+                });
+            })
     ], instituteController.editInstitute);
 
 router.delete('/deleteinstitute/:instituteId', instituteController.deleteInstitute);
