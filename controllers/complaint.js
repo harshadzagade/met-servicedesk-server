@@ -3,6 +3,8 @@ const Staff = require('../models/staff');
 const Op = require('sequelize').Op;
 const nodemailer = require('nodemailer');
 const { getIO } = require('../socket');
+const archiver = require('archiver');
+const fs = require('fs');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
