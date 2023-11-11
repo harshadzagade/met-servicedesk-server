@@ -104,8 +104,10 @@ exports.updateStaff = async (req, res, next) => {
             });
             let subadminActivities;
             subadminActivities = await SubadminActivities.findOne({
-                adminId: admin.id,
-                department: staff.department[0]
+                where: {
+                    adminId: admin.id,
+                    department: staff.department[0]
+                }
             });
             if (!subadminActivities) {
                 subadminActivities = new SubadminActivities({
