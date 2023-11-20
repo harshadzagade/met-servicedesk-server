@@ -250,7 +250,6 @@ exports.searchAllStaff = async (req, res, next) => {
         });
         res.json(staff);
     } catch (error) {
-        console.log(error);
         if (!error.statusCode) {
             error.statusCode = 500;
         }

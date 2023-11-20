@@ -373,7 +373,6 @@ exports.searchOutgoingComplaints = async (req, res, next) => {
 };
 
 exports.assignComplaint = async (req, res, next) => {
-    console.log('working');
     const complaintId = req.params.complaintId;
     const assignId = req.body.assignId;
     const subadminId = req.body.subadminId;
@@ -401,7 +400,6 @@ exports.assignComplaint = async (req, res, next) => {
                 department: subadmin.department
             }
         });
-        console.log(subadminActivities);
         if (!subadminActivities) {
             const error = new Error('Subadmin activities not found');
             error.statusCode = 401;
@@ -459,6 +457,7 @@ exports.assignComplaint = async (req, res, next) => {
                 report.department = complaint.department;
                 report.staffDepartment = complaint.staffDepartment;
                 report.departmentType = ticketRaiser.departmentType;
+                report.institute = ticketRaiser.institute;
                 report.status = complaint.status;
                 report.loggedTime = complaint.createdAt;
                 report.attendedTime = new Date();
@@ -479,6 +478,7 @@ exports.assignComplaint = async (req, res, next) => {
                     department: complaint.department,
                     staffDepartment: complaint.staffDepartment,
                     departmentType: ticketRaiser.departmentType,
+                    institute: ticketRaiser.institute,
                     status: complaint.status,
                     loggedTime: complaint.createdAt,
                     attendedTime: new Date(),

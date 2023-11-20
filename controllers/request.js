@@ -169,6 +169,7 @@ exports.sendRequest = async (req, res, next) => {
                 department: result.department,
                 staffDepartment: result.staffDepartment,
                 departmentType: staff.departmentType,
+                institute: staff.institute,
                 status: result.status,
                 loggedTime: result.createdAt,
                 approval1Time: new Date(),
@@ -191,6 +192,7 @@ exports.sendRequest = async (req, res, next) => {
                 department: result.department,
                 staffDepartment: result.staffDepartment,
                 departmentType: staff.departmentType,
+                institute: staff.institute,
                 status: result.status,
                 loggedTime: result.createdAt
             });

@@ -298,6 +298,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
             report.department = complaint.department;
             report.staffDepartment = complaint.staffDepartment;
             report.departmentType = ticketRaiser.departmentType;
+            report.institute = ticketRaiser.institute;
             report.status = complaint.status;
             report.loggedTime = complaint.createdAt;
             report.attendedTime = new Date();
@@ -318,6 +319,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
                 department: complaint.department,
                 staffDepartment: complaint.staffDepartment,
                 departmentType: ticketRaiser.departmentType,
+                institute: ticketRaiser.institute,
                 status: complaint.status,
                 loggedTime: complaint.createdAt,
                 attendedTime: new Date(),
