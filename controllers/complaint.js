@@ -38,6 +38,12 @@ exports.sendComplaint = async (req, res, next) => {
         isRepeated = false;
     }
     try {
+        const staffDetails = await Staff.findByPk(staffId);
+        if (!staffDetails) {
+            const error = new Error('Employee not found');
+                error.statusCode = 401;
+                throw error;
+        }
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {
                 const file = req.files[i].path.replace("\\", "/");
@@ -48,7 +54,7 @@ exports.sendComplaint = async (req, res, next) => {
             const behalfEmailId = req.body.behalfEmailId;
             const staff = await Staff.findOne({ where: { email: behalfEmailId } });
             if (!staff) {
-                const error = new Error('Employee not found');
+                const error = new Error('Behalf employee not found');
                 error.statusCode = 401;
                 throw error;
             }
@@ -100,7 +106,7 @@ exports.sendComplaint = async (req, res, next) => {
         const currentDate = new Date();
         setId.ticketId = '#C' + currentDate.getFullYear() + (String(currentDate.getMonth() + 1).padStart(2, '0')) + setId.id;
         const result = await setId.save();
-        await sendMail(admin.email, result.department, category, result.ticketId, subject, description, next);
+        await sendMail(staffDetails, staffDepartment, admin.email, result.department, category, result.ticketId, subject, description, next);
         getIO().emit('complaints');
         res.status(201).json({ message: 'Concern created!', complaint: result });
     } catch (error) {
@@ -334,7 +340,7 @@ exports.downloadFiles = async (req, res, next) => {
     }
 };
 
-const sendMail = async (adminEmail, department, category, complaintId, subject, description, next) => {
+const sendMail = async (staffDetails, fromDepartment, adminEmail, department, category, complaintId, subject, description, next) => {
     let cc = [];
     const departmentTechnicians = await Staff.findAll({
         where: {
@@ -383,6 +389,14 @@ const sendMail = async (adminEmail, department, category, complaintId, subject, 
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Description:</td>
                                 <td style="padding: 5px;">${description}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Complaint by:</td>
+                                <td style="padding: 5px;">${staffDetails.firstname + ' ' + staffDetails.lastname}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">From department:</td>
+                                <td style="padding: 5px;">${fromDepartment}</td>
                             </tr>
                         </table>
                         <p>Please log in to the helpdesk system to review and assign the ticket.</p>

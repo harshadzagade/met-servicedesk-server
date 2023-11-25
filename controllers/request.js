@@ -199,7 +199,7 @@ exports.sendRequest = async (req, res, next) => {
         }
         await report.save();
         adminEmail = admin.email;
-        await sendMail(hodEmail, adminEmail, category, result.ticketId, subject, description, next);
+        await sendMail(staff, result.staffDepartment, hodEmail, adminEmail, category, result.ticketId, subject, description, next);
         getIO().emit('requests');
         res.status(201).json({ message: 'Request created', request: result });
     } catch (error) {
@@ -449,7 +449,7 @@ exports.downloadFiles = async (req, res, next) => {
     }
 };
 
-const sendMail = async (hodEmail, adminEmail, category, requestId, subject, description, next) => {
+const sendMail = async (staffDetails, fromDepartment, hodEmail, adminEmail, category, requestId, subject, description, next) => {
     try {
         if (hodEmail === adminEmail) {
             await transporter.sendMail({
@@ -487,6 +487,14 @@ const sendMail = async (hodEmail, adminEmail, category, requestId, subject, desc
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Description:</td>
                                 <td style="padding: 5px;">${description}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Request by:</td>
+                                <td style="padding: 5px;">${staffDetails.firstname + ' ' + staffDetails.lastname}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">From department:</td>
+                                <td style="padding: 5px;">${fromDepartment}</td>
                             </tr>
                         </table>
                         <p>Please log in to the helpdesk system to review and assign the ticket.</p>
@@ -536,6 +544,14 @@ const sendMail = async (hodEmail, adminEmail, category, requestId, subject, desc
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Description:</td>
                                 <td style="padding: 5px;">${description}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Request name:</td>
+                                <td style="padding: 5px;">${staffDetails.firstname + ' ' + staffDetails.lastname}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">From department:</td>
+                                <td style="padding: 5px;">${fromDepartment}</td>
                             </tr>
                         </table>
                         <p>Please log in to the helpdesk system to review and assign the ticket.</p>
