@@ -94,19 +94,19 @@ exports.updateStaff = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        const existingSubadmin = await Staff.findOne({
-            where: {
-                department: { [Op.contains]: staff.department },
-                role: 'subadmin'
-            }
-        });
-        if (existingSubadmin) {
-            const error = new Error('Subadmin already exists');
-            error.statusCode = 409;
-            throw error;
-        }
         staff.role = role;
         if (role === 'subadmin') {
+            const existingSubadmin = await Staff.findOne({
+                where: {
+                    department: { [Op.contains]: staff.department },
+                    role: 'subadmin'
+                }
+            });
+            if (existingSubadmin) {
+                const error = new Error('Subadmin already exists');
+                error.statusCode = 409;
+                throw error;
+            }
             const admin = await Staff.findOne({
                 where: {
                     department: { [Op.contains]: staff.department },
