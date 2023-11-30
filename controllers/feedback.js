@@ -68,7 +68,7 @@ exports.postFeedback = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        await sendFeedBackMail(admin.email, ticketType === 'request' ? 'Request' : 'Concern', ticketId, staff.firstname + ' ' + staff.lastname, staff.email, feedbackMessage, getFormattedDate(new Date()), next);
+        await sendFeedBackMail(admin.email, ticketType === 'request' ? 'Request' : 'Complaint', ticketId, staff.firstname + ' ' + staff.lastname, staff.email, feedbackMessage, getFormattedDate(new Date()), next);
         const result = await feedback.save();
         res.status(201).json({ message: 'Feedback sent successfully', feedback: result });
     } catch (error) {

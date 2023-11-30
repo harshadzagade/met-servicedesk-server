@@ -146,7 +146,7 @@ exports.getReportCsv = async (req, res, next) => {
     const reportData = req.body.reportData;
     let filteredData = reportData.map((singleReport) => {
         return {
-            'Ticket Type': singleReport.isRequest ? 'Request' : 'Concern',
+            'Ticket Type': singleReport.isRequest ? 'Request' : 'Complaint',
             'Ticket ID': singleReport.ticketId,
             'Ticket raised by': singleReport.staffName,
             'Engineer Name': singleReport.assignedName,

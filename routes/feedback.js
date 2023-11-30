@@ -21,7 +21,7 @@ router.post('/',
                     }
                     break;
 
-                case 'concern':
+                case 'complaint':
                     const complaint = await Complaint.findOne({ where: { ticketId: ticketId } });
                     if (!complaint) {
                         return Promise.reject('No such ticket found');

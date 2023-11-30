@@ -251,7 +251,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
         }
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
-            const error = new Error('Concern not found');
+            const error = new Error('Complaint not found');
             error.statusCode = 401;
             throw error;
         }
@@ -262,7 +262,7 @@ exports.selfAssignComplaint = async (req, res, next) => {
             throw error;
         }
         if (complaint.assign !== null) {
-            const error = new Error(`Concern already assigned to ${complaint.assignedName}`);
+            const error = new Error(`Complaint already assigned to ${complaint.assignedName}`);
             error.statusCode = 401;
             throw error;
         }
@@ -352,7 +352,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
         }
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
-            const error = new Error('Concern not found');
+            const error = new Error('Complaint not found');
             error.statusCode = 401;
             throw error;
         }
@@ -415,7 +415,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     }
                     hodEmail = admin.email;
                 }
-                await sendMail('Concern', complainan.email, hodEmail, complaint.category, complaint.ticketId, complaint.subject, complaint.description, next);
+                await sendMail('Complaint', complainan.email, hodEmail, complaint.category, complaint.ticketId, complaint.subject, complaint.description, next);
                 break;
 
             case 'forwarded':
@@ -469,7 +469,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                         error.statusCode = 401;
                         throw error;
                     }
-                    await sendForwardEmail(hod.email, staff.email, staff.firstname + ' ' + staff.lastname, 'Concern', complaint.ticketId, complaint.subject, forwardComment, getFormattedDate(new Date()), next);
+                    await sendForwardEmail(hod.email, staff.email, staff.firstname + ' ' + staff.lastname, 'Complaint', complaint.ticketId, complaint.subject, forwardComment, getFormattedDate(new Date()), next);
                 } else {
                     const error = new Error('Forwarded employee not found');
                     error.statusCode = 401;

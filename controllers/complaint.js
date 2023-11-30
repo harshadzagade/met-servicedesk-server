@@ -108,7 +108,7 @@ exports.sendComplaint = async (req, res, next) => {
         const result = await setId.save();
         await sendMail(staffDetails, staffDepartment, admin.email, result.department, category, result.ticketId, subject, description, next);
         getIO().emit('complaints');
-        res.status(201).json({ message: 'Concern created!', complaint: result });
+        res.status(201).json({ message: 'Complaint created!', complaint: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -203,7 +203,7 @@ exports.ownComplaints = async (req, res, next) => {
                 ]
             }
         });
-        res.status(200).json({ message: 'Concern created!', complaints: complaints });
+        res.status(200).json({ message: 'Complaint created!', complaints: complaints });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -301,11 +301,11 @@ exports.getComplaintDetails = async (req, res, next) => {
     try {
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
-            const error = new Error('Concern not found');
+            const error = new Error('Complaint not found');
             error.statusCode = 401;
             throw error;
         }
-        res.status(200).json({ message: 'Concern fetched successfully!', complaint: complaint });
+        res.status(200).json({ message: 'Complaint fetched successfully!', complaint: complaint });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -319,7 +319,7 @@ exports.downloadFiles = async (req, res, next) => {
     try {
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
-            const error = new Error('Concern not found');
+            const error = new Error('Complaint not found');
             error.statusCode = 401;
             throw error;
         }
@@ -357,7 +357,7 @@ const sendMail = async (staffDetails, fromDepartment, adminEmail, department, ca
             to: adminEmail,
             cc: cc,
             from: 'helpdeskinfo@met.edu',
-            subject: `Concern regarding ${category} ${complaintId}`,
+            subject: `Complaint regarding ${category} ${complaintId}`,
             html:
                 `
                 <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
@@ -376,7 +376,7 @@ const sendMail = async (staffDetails, fromDepartment, adminEmail, department, ca
                             </tr>
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
-                                <td style="padding: 5px;">Concern</td>
+                                <td style="padding: 5px;">Complaint</td>
                             </tr>
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Issue Category:</td>

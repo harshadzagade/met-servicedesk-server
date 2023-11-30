@@ -342,7 +342,7 @@ exports.assignComplaint = async (req, res, next) => {
     try {
         const complaint = await Complaint.findByPk(complaintId);
         if (!complaint) {
-            const error = new Error('Concern not found');
+            const error = new Error('Complaint not found');
             error.statusCode = 401;
             throw error;
         }
@@ -353,7 +353,7 @@ exports.assignComplaint = async (req, res, next) => {
             throw error;
         }
         if (complaint.assign !== null) {
-            const error = new Error(`Concern already assigned to ${complaint.assignedName}`);
+            const error = new Error(`Complaint already assigned to ${complaint.assignedName}`);
             error.statusCode = 401;
             throw error;
         }
@@ -423,7 +423,7 @@ exports.assignComplaint = async (req, res, next) => {
             await report.save();
             getIO().emit('complaintStatus');
             await sendAssignMail(result.ticketId, assignId, result.department, result.category, result.subject, result.description, next);
-            res.status(201).json({ message: 'Concern assigned successfully', complaint: result });
+            res.status(201).json({ message: 'Complaint assigned successfully', complaint: result });
         } else {
             const error = new Error('Cannot assign to closed and forwarded requests');
             error.statusCode = 403;
@@ -766,7 +766,7 @@ const sendAssignMail = async (requestId, assignId, department, category, subject
             to: assignedTechnician.email,
             cc: email,
             from: 'helpdeskinfo@met.edu',
-            subject: `Assigned concern on ${category} ${requestId}`,
+            subject: `Assigned complaint on ${category} ${requestId}`,
             html:
                 `
                 <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
@@ -785,7 +785,7 @@ const sendAssignMail = async (requestId, assignId, department, category, subject
                             </tr>
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Ticket Type:</td>
-                                <td style="padding: 5px;">Concern</td>
+                                <td style="padding: 5px;">Complaint</td>
                             </tr>
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Issue Category:</td>
