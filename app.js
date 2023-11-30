@@ -46,7 +46,7 @@ sequelize.sync().then((result) => { // 'force:true' means overriding table with 
         console.log('Client connected');
     });
 }).then(staff => {
-    bcrypt.hash('ERPDevTeam@364', 12).then((password) => {
+    bcrypt.hash('MetErp@364', 12).then((password) => {
         staff = Staff.findOrCreate({
             where: { id: 1 },
             defaults: {
