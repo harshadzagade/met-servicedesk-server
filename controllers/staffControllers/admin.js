@@ -422,7 +422,8 @@ exports.assignComplaint = async (req, res, next) => {
             }
             await report.save();
             getIO().emit('complaintStatus');
-            await sendAssignMail(result.ticketId, assignId, result.department, result.category, result.subject, result.description, next);
+            const ticketRaiser = await Staff.findByPk(result.staffId);
+            await sendAssignMail(ticketRaiser, result.staffDepartment, result.ticketId, assignId, result.department, result.category, result.subject, result.description, next);
             res.status(201).json({ message: 'Complaint assigned successfully', complaint: result });
         } else {
             const error = new Error('Cannot assign to closed and forwarded requests');
@@ -595,7 +596,8 @@ exports.putApproval2 = async (req, res, next) => {
             report.approval2Comment = approvalComment;
             report.approval2Status = 'approved';
             await report.save();
-            await sendMail(result.ticketId, staffId, result.department, result.category, result.subject, result.description, next);
+            const ticketRaiser = await Staff.findByPk(request.staffId);
+            await sendMail(ticketRaiser, result.staffDepartment, result.ticketId, staffId, result.department, result.category, result.subject, result.description, next);
             getIO().emit('requestStatus');
             res.status(200).json({ message: 'Approved ticket', request: result });
         } else if (approval === 2) {
@@ -663,7 +665,7 @@ exports.checkSubadmin = async (req, res, next) => {
     }
 };
 
-const sendMail = async (requestId, assignId, department, category, subject, description, next) => {
+const sendMail = async (staffDetails, fromDepartment, requestId, assignId, department, category, subject, description, next) => {
     let email = '';
     try {
         const departmentAdmin = await Staff.findOne({
@@ -721,6 +723,14 @@ const sendMail = async (requestId, assignId, department, category, subject, desc
                                 <td style="padding: 5px; font-weight: bold;">Description:</td>
                                 <td style="padding: 5px;">${description}</td>
                             </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Request by:</td>
+                                <td style="padding: 5px;">${staffDetails.firstname + ' ' + staffDetails.lastname}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">From department:</td>
+                                <td style="padding: 5px;">${fromDepartment}</td>
+                            </tr>
                         </table>
                         <p>Please log in to the helpdesk system to check the assigned ticket.</p>
                         <p>If you have any questions or need assistance, feel free to contact our support team.</p>
@@ -741,7 +751,7 @@ const sendMail = async (requestId, assignId, department, category, subject, desc
     }
 };
 
-const sendAssignMail = async (requestId, assignId, department, category, subject, description, next) => {
+const sendAssignMail = async (staffDetails, fromDepartment, requestId, assignId, department, category, subject, description, next) => {
     let email = '';
     try {
         const departmentAdmin = await Staff.findOne({
@@ -798,6 +808,14 @@ const sendAssignMail = async (requestId, assignId, department, category, subject
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Description:</td>
                                 <td style="padding: 5px;">${description}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Request by:</td>
+                                <td style="padding: 5px;">${staffDetails.firstname + ' ' + staffDetails.lastname}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">From department:</td>
+                                <td style="padding: 5px;">${fromDepartment}</td>
                             </tr>
                         </table>
                         <p>Please log in to the helpdesk system to check the assigned ticket.</p>

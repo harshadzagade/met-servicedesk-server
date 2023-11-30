@@ -156,7 +156,8 @@ exports.changeRequestStatus = async (req, res, next) => {
                     }
                     hodEmail = admin.email;
                 }
-                await sendMail('Request', requester.email, hodEmail, request.category, request.ticketId, request.subject, request.description, next);
+                const ticketRaiser = await Staff.findByPk(request.staffId);
+                await sendMail(ticketRaiser, request.staffDepartment, 'Request', requester.email, hodEmail, request.category, request.ticketId, request.subject, request.description, next);
                 break;
 
             case 'forwarded':
@@ -415,7 +416,8 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     }
                     hodEmail = admin.email;
                 }
-                await sendMail('Complaint', complainan.email, hodEmail, complaint.category, complaint.ticketId, complaint.subject, complaint.description, next);
+                const ticketRaiser = await Staff.findByPk(complaint.staffId);
+                await sendMail(ticketRaiser, complaint.staffDepartment, 'Complaint', complainan.email, hodEmail, complaint.category, complaint.ticketId, complaint.subject, complaint.description, next);
                 break;
 
             case 'forwarded':
@@ -520,7 +522,7 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
     }
 };
 
-const sendMail = async (ticketType, ticketRaiserEmail, hodEmail, category, ticketId, subject, description, next) => {
+const sendMail = async (staffDetails, fromDepartment, ticketType, ticketRaiserEmail, hodEmail, category, ticketId, subject, description, next) => {
     try {
         const staff = await Staff.findOne({ where: { email: ticketRaiserEmail } });
         if (!staff) {
@@ -561,6 +563,14 @@ const sendMail = async (ticketType, ticketRaiserEmail, hodEmail, category, ticke
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Description:</td>
                                 <td style="padding: 5px;">${description}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Request by:</td>
+                                <td style="padding: 5px;">${staffDetails.firstname + ' ' + staffDetails.lastname}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">From department:</td>
+                                <td style="padding: 5px;">${fromDepartment}</td>
                             </tr>
                         </table>
                         <p>We appreciate your patience and cooperation throughout the resolution process. If you have any further questions or concerns, please don't hesitate to contact us.</p>

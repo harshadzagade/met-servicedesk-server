@@ -489,7 +489,8 @@ exports.assignComplaint = async (req, res, next) => {
             subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `Assigned complaint with ID ${complaint.ticketId} to ${staff.firstname + ' ' + staff.lastname}`, data: { type: 'complaint', id: complaint.id }, dateTime: new Date() }]) : [{ activity: `Assigned complaint with ID ${complaint.ticketId} to ${staff.firstname + ' ' + staff.lastname}`, data: { type: 'complaint', id: complaint.id }, dateTime: new Date() }];
             await subadminActivities.save();
             await sendSubadminActivityMail(admin.email, 'Complaint assigned to engineer', subadmin.firstname + ' ' + subadmin.lastname, `Assigned complaint with ID ${complaint.ticketId} to ${staff.firstname + ' ' + staff.lastname}`, getFormattedDate(new Date()));
-            await sendAssignMail(result.ticketId, assignId, result.department, result.category, result.subject, result.description, next);
+            const ticketRaiser = await Staff.findByPk(result.staffId);
+            await sendAssignMail(ticketRaiser, result.staffDepartment, result.ticketId, assignId, result.department, result.category, result.subject, result.description, next);
             getIO().emit('complaintStatus');
             getIO().emit('subadminactivities');
             res.status(201).json({ message: 'Complaint assigned successfully', complaint: result });
@@ -719,7 +720,8 @@ exports.putApproval2 = async (req, res, next) => {
             await sendSubadminActivityMail(admin.email, 'Request approved', subadmin.firstname + ' ' + subadmin.lastname, `Admin approval has been done of request with an ID ${request.ticketId}`, getFormattedDate(new Date()));
             await report.save();
             await subadminActivities.save();
-            await sendMail(result.ticketId, staffId, result.department, result.category, result.subject, result.description, next);
+            const ticketRaiser = await Staff.findByPk(result.staffId);
+            await sendMail(ticketRaiser, result.staffDepartment, result.ticketId, staffId, result.department, result.category, result.subject, result.description, next);
             getIO().emit('subadminactivities');
             getIO().emit('requestStatus');
             res.status(200).json({ message: 'Employee details updated', request: result });
@@ -751,7 +753,7 @@ exports.putApproval2 = async (req, res, next) => {
     }
 };
 
-const sendMail = async (requestId, assignId, department, category, subject, description, next) => {
+const sendMail = async (staffDetails, fromDepartment, requestId, assignId, department, category, subject, description, next) => {
     let email = '';
     try {
         const departmentAdmin = await Staff.findOne({
@@ -808,6 +810,14 @@ const sendMail = async (requestId, assignId, department, category, subject, desc
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Description:</td>
                                 <td style="padding: 5px;">${description}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Request by:</td>
+                                <td style="padding: 5px;">${staffDetails.firstname + ' ' + staffDetails.lastname}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">From department:</td>
+                                <td style="padding: 5px;">${fromDepartment}</td>
                             </tr>
                         </table>
                         <p>Please log in to the helpdesk system to review and assign the ticket.</p>
@@ -889,7 +899,7 @@ const formatAMPM = (date) => {
     return strTime;
 };
 
-const sendAssignMail = async (requestId, assignId, department, category, subject, description, next) => {
+const sendAssignMail = async (staffDetails, fromDepartment, requestId, assignId, department, category, subject, description, next) => {
     let email = '';
     try {
         const departmentAdmin = await Staff.findOne({
@@ -946,6 +956,14 @@ const sendAssignMail = async (requestId, assignId, department, category, subject
                             <tr>
                                 <td style="padding: 5px; font-weight: bold;">Description:</td>
                                 <td style="padding: 5px;">${description}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">Request by:</td>
+                                <td style="padding: 5px;">${staffDetails.firstname + ' ' + staffDetails.lastname}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; font-weight: bold;">From department:</td>
+                                <td style="padding: 5px;">${fromDepartment}</td>
                             </tr>
                         </table>
                         <p>Please log in to the helpdesk system to check the assigned ticket.</p>
