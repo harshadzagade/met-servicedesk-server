@@ -172,8 +172,31 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
         }
         if (staff.role === 'admin') {
             const department = currentDepartment;
-            const technicians = await Staff.findAll({ where: { department: [department], role: 'engineer' } });
-            res.status(200).json({ message: 'Fetched all engineers as per specific department successfully.', technicians: technicians });
+            const technicians = await Staff.findAll({
+                where: {
+                    department: [department],
+                    role: 'engineer'
+                }
+            });
+            let engineers = [];
+            for (let index = 0; index < technicians.length; index++) {
+                const technician = technicians[index];
+                const request = await Request.findOne({ where: { assign: technician.id } });
+                const complaint = await Complaint.findOne({ where: { assign: technician.id } });
+                console.log(request, complaint);
+                if (!request && !complaint) {
+                    engineers.push({
+                        ...technician.dataValues,
+                        busyStatus: false
+                    });
+                } else {
+                    engineers.push({
+                        ...technician.dataValues,
+                        busyStatus: true
+                    });
+                }
+            }
+            res.status(200).json({ message: 'Fetched all engineers as per specific department successfully.', technicians: engineers });
         } else {
             const error = new Error('Invalid admin id');
             error.statusCode = 401;
