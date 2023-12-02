@@ -489,7 +489,6 @@ exports.assignComplaint = async (req, res, next) => {
             subadminActivities.activities = subadminActivities.activities !== null ? subadminActivities.activities.concat([{ activity: `Assigned complaint with ID ${complaint.ticketId} to ${staff.firstname + ' ' + staff.lastname}`, data: { type: 'complaint', id: complaint.id }, dateTime: new Date() }]) : [{ activity: `Assigned complaint with ID ${complaint.ticketId} to ${staff.firstname + ' ' + staff.lastname}`, data: { type: 'complaint', id: complaint.id }, dateTime: new Date() }];
             await subadminActivities.save();
             await sendSubadminActivityMail(admin.email, 'Complaint assigned to engineer', subadmin.firstname + ' ' + subadmin.lastname, `Assigned complaint with ID ${complaint.ticketId} to ${staff.firstname + ' ' + staff.lastname}`, getFormattedDate(new Date()));
-            const ticketRaiser = await Staff.findByPk(result.staffId);
             await sendAssignMail(ticketRaiser, result.staffDepartment, result.ticketId, assignId, result.department, result.category, result.subject, result.description, next);
             getIO().emit('complaintStatus');
             getIO().emit('subadminactivities');
