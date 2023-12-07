@@ -181,8 +181,8 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
             let engineers = [];
             for (let index = 0; index < technicians.length; index++) {
                 const technician = technicians[index];
-                const request = await Request.findOne({ where: { assign: technician.id } });
-                const complaint = await Complaint.findOne({ where: { assign: technician.id } });
+                const request = await Request.findOne({ where: { assign: technician.id, status: 'attending' } });
+                const complaint = await Complaint.findOne({ where: { assign: technician.id, status: 'attending' } });
                 if (!request && !complaint) {
                     engineers.push({
                         ...technician.dataValues,
