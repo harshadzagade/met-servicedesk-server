@@ -462,9 +462,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     await report.save();
                     const hod = await Staff.findOne({
                         where: {
-                            department: {
-                                [Op.overlap]: complaint.department
-                            },
+                            department: [complaint.department],
                             role: 'admin'
                         }
                     });
