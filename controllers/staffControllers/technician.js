@@ -462,7 +462,9 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     await report.save();
                     const hod = await Staff.findOne({
                         where: {
-                            department: [complaint.department],
+                            department: {
+                                [Op.contains]: [complaint.department]
+                            },
                             role: 'admin'
                         }
                     });
