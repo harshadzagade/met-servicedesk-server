@@ -31,7 +31,7 @@ exports.getAllStaff = async (req, res, next) => {
         }
         if (staff.role === 'admin') {
             const department = currentDepartment;
-            const totalStaff = await Staff.findAll({ where: { department: [department], id: { [Op.ne]: staff.id } } });
+            const totalStaff = await Staff.findAll({ where: { department: { [Op.contains]: [department] }, id: { [Op.ne]: staff.id } } });
             res.status(200).json({ message: 'Fetched all staff as per specific department successfully.', totalStaff: totalStaff });
         } else {
             const error = new Error('Invalid admin id');

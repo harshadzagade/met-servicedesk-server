@@ -144,7 +144,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                     const admin = await Staff.findOne({
                         where: {
                             department: {
-                                [Op.contains]: requester.department
+                                [Op.contains]: [requester.department]
                             },
                             role: 'admin'
                         }
@@ -404,7 +404,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     const admin = await Staff.findOne({
                         where: {
                             department: {
-                                [Op.contains]: complainan.department
+                                [Op.contains]: [complainan.department]
                             },
                             role: 'admin'
                         }
@@ -509,7 +509,7 @@ exports.getDepartmentTechnicians = async (req, res, next) => {
         }
         if (staff.role === 'engineer') {
             const department = currentDepartment;
-            const technicians = await Staff.findAll({ where: { department: [department], role: 'engineer', id: { [Op.ne]: [staffId] } } });
+            const technicians = await Staff.findAll({ where: { department: { [Op.contains]: [department] }, role: 'engineer', id: { [Op.ne]: [staffId] } } });
             res.status(200).json({ message: 'Fetched all engineers as per specific department successfully.', technicians: technicians });
         } else {
             const error = new Error('Invalid admin id');

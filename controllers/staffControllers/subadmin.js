@@ -30,7 +30,7 @@ exports.getAllStaff = async (req, res, next) => {
         }
         if (staff.role === 'subadmin') {
             const department = currentDepartment;
-            const totalStaff = await Staff.findAll({ where: { department: [department], role: { [Op.notIn]: ['subadmin', 'admin'] } } });
+            const totalStaff = await Staff.findAll({ where: { department: { [Op.contains]: [department] }, role: { [Op.notIn]: ['subadmin', 'admin'] } } });
             res.status(200).json({ message: 'Fetched all employees as per specific department successfully.', totalStaff: totalStaff });
         } else {
             const error = new Error('Invalid sub-admin id');
