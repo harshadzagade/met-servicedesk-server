@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const fileUpload = require('express-fileupload');
 
 const sequelize = require('./utils/database');
 const Staff = require('./models/staff');
@@ -10,6 +11,7 @@ const Staff = require('./models/staff');
 const loginRoute = require('./routes/login');
 const instituteRoutes = require('./routes/institute');
 const feedbackRoutes = require('./routes/feedback');
+const policyRoutes = require('./routes/policy');
 const departmentRoutes = require('./routes/department');
 const staffRoutes = require('./routes/staff');
 const trashRoutes = require('./routes/trash');
@@ -18,6 +20,7 @@ const complaintRoutes = require('./routes/complaint');
 const reportRoutes = require('./routes/report');
 
 app.use(cors());
+app.use(fileUpload());
 
 app.use(bodyParser.json());
 
@@ -26,6 +29,7 @@ app.use('/api/complaint', complaintRoutes);
 app.use('/api', loginRoute);
 app.use('/api/institute', instituteRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/policy', policyRoutes);
 app.use('/api/department', departmentRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/trash', trashRoutes);
