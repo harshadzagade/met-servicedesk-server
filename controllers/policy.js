@@ -47,4 +47,25 @@ exports.addPolicy = async (req, res, next) => {
     }
 };
 
-exports.deletePolicy = async (req, res, next) => { };
+exports.deletePolicy = async (req, res, next) => {
+    const policyId = req.params.policyId;
+    try {
+        const policy = await Policy.destroy({
+            where: {
+                id: policyId
+            }
+        });
+        if (policy === 0) {
+            const error = new Error('Policy not found');
+            error.statusCode = 404;
+            throw error;
+        } else {
+            res.status(200).json({ message: 'Policy deleted successfully' });
+        }
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
