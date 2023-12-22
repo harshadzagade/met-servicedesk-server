@@ -28,7 +28,7 @@ exports.addPolicy = async (req, res, next) => {
         const sanitizedPolicyName = policyName.replace(/ /g, '_').toLowerCase();
         const fileExtension = path.extname(policyFile.name);
         const uniqueFileName = `${sanitizedPolicyName}${fileExtension}`;
-        const directoryPath = path.join(__dirname, 'policies');
+        const directoryPath = path.join(__dirname, '..', 'policies');
         if (!fs.existsSync(directoryPath)) {
             fs.mkdirSync(directoryPath, { recursive: true });
         }
@@ -36,7 +36,7 @@ exports.addPolicy = async (req, res, next) => {
         await policyFile.mv(filePath);
         const newPolicy = await Policy.create({
             policyName: policyName,
-            policyFileReference: filePath
+            policyFileReference: uniqueFileName
         });
         res.status(201).json({ message: 'Policy added successfully', policy: newPolicy });
     } catch (error) {

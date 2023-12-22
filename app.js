@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser');
 const express = require('express');
+const path = require('path');
 const app = express();
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
@@ -21,8 +22,9 @@ const reportRoutes = require('./routes/report');
 
 app.use(cors());
 app.use(fileUpload());
-
 app.use(bodyParser.json());
+
+app.use('/policies', express.static(path.join(__dirname, 'policies')));
 
 app.use('/api/request', requestRoutes);
 app.use('/api/complaint', complaintRoutes);
