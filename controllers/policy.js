@@ -3,7 +3,17 @@ const fs = require('fs');
 const path = require('path');
 const { validationResult } = require("express-validator");
 
-exports.getAllPolicies = async (req, res, next) => { };
+exports.getAllPolicies = async (req, res, next) => {
+    try {
+        const policies = await Policy.findAll();
+        res.status(200).json({ message: 'Fetched all policies successfully', policies: policies });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
 
 exports.addPolicy = async (req, res, next) => {
     const errors = validationResult(req);
