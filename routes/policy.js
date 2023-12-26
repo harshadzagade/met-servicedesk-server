@@ -30,4 +30,6 @@ router.post('/addpolicy',
 
 router.delete('/deletepolicy/:policyId', policyController.deletePolicy);
 
+router.put('/editpolicy/:policyId', policyController.updatePolicy);
+
 module.exports = router;

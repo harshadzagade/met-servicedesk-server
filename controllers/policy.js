@@ -1,5 +1,6 @@
 const Policy = require("../models/policy");
 const fs = require('fs');
+const fsPromises = require('fs').promises;
 const path = require('path');
 const { validationResult } = require("express-validator");
 
@@ -62,6 +63,42 @@ exports.deletePolicy = async (req, res, next) => {
         } else {
             res.status(200).json({ message: 'Policy deleted successfully' });
         }
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.updatePolicy = async (req, res, next) => {
+    const policyId = req.params.policyId;
+    const policyName = req.body.policyName;
+    const policyFile = req.files.policyFile;
+    try {
+        const policy = await Policy.findByPk(policyId);
+        if (!policy) {
+            const error = new Error('Policy not found');
+            error.statusCode = 404;
+            throw error;
+        }
+        const sanitizedPolicyName = policyName.replace(/ /g, '_').toLowerCase();
+        const directoryPath = path.join(__dirname, '..', 'policies');
+        if (policyFile) {
+            const fileExtension = path.extname(policyFile.name);
+            const uniqueFileName = `${sanitizedPolicyName}${fileExtension}`;
+            const existingFilePath = path.join(directoryPath, policy.policyFileReference);
+            if (!fs.existsSync(directoryPath)) {
+                fs.mkdirSync(directoryPath, { recursive: true });
+            }
+            await fsPromises.unlink(existingFilePath);
+            const filePath = path.join(directoryPath, uniqueFileName);
+            await policyFile.mv(filePath);
+            policy.policyFileReference = uniqueFileName;
+        }
+        policy.policyName = policyName;
+        const result = await policy.save();
+        res.status(200).json({ message: 'Policy updated successfully', policy: result });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
