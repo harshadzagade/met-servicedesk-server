@@ -4,9 +4,16 @@ const fs = require('fs');
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        fs.mkdir('./files/',(error)=>{
-            cb(null,'files');
-        })
+        const destinationPath = './files/';
+
+        // Create the 'files' directory if it doesn't exist
+        fs.mkdir(destinationPath, (error) => {
+            if (error && error.code !== 'EEXIST') {
+                // Ignore the error if the directory already exists (EEXIST)
+                return cb(error);
+            }
+            cb(null, destinationPath);
+        });
     },
     filename: (req, file, cb) => {
         cb(null, new Date().getTime() + '-' + file.originalname);

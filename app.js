@@ -22,6 +22,7 @@ const reportRoutes = require('./routes/report');
 
 app.use(cors());
 app.use(fileUpload());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use('/policies', express.static(path.join(__dirname, 'policies')));
