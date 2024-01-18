@@ -5,6 +5,8 @@ const nodemailer = require('nodemailer');
 const { getIO } = require('../socket');
 const archiver = require('archiver');
 const fs = require('fs');
+const fsPromises = require('fs').promises;
+const path = require('path');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -41,16 +43,20 @@ exports.sendComplaint = async (req, res, next) => {
         const staffDetails = await Staff.findByPk(staffId);
         if (!staffDetails) {
             const error = new Error('Employee not found');
-                error.statusCode = 401;
-                throw error;
+            error.statusCode = 401;
+            throw error;
         }
-        if (req.files) {
-            for (let fileKey in req.files) {
-                const file = req.files[fileKey];
-                const uniqueFileName = new Date().getTime() + '-' + file.originalname;
+        const uploadDirectory = path.join(__dirname, '..', 'files');
+        if (!fs.existsSync(uploadDirectory)) {
+            fs.mkdirSync(uploadDirectory, { recursive: true });
+        }
+        if (req.files && req.files.file && req.files.file.length > 0) {
+            for (let i = 0; i < req.files.file.length; i++) {
+                const file = req.files.file[i];
+                const uniqueFileName = new Date().getTime() + '-' + file.name;
                 const filePath = path.join(__dirname, '..', 'files', uniqueFileName);
-                await file.mv(filePath);
-                files.push(filePath);
+                file.mv(filePath);
+                files.push(`files/${uniqueFileName}`);
             }
         }
         if (behalf) {

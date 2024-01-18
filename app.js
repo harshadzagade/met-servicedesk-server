@@ -25,6 +25,7 @@ app.use(fileUpload());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use('/files', express.static(path.join(__dirname, 'files')));
 app.use('/policies', express.static(path.join(__dirname, 'policies')));
 
 app.use('/api/request', requestRoutes);

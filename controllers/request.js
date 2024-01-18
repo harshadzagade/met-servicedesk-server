@@ -6,6 +6,7 @@ const fs = require('fs');
 const archiver = require('archiver');
 const Report = require('../models/report');
 const { getIO } = require('../socket');
+const path = require('path');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -48,13 +49,13 @@ exports.sendRequest = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (req.files) {
-            for (let fileKey in req.files) {
-                const file = req.files[fileKey];
-                const uniqueFileName = new Date().getTime() + '-' + file.originalname;
+        if (req.files && req.files.file && req.files.file.length > 0) {
+            for (let i = 0; i < req.files.file.length; i++) {
+                const file = req.files.file[i];
+                const uniqueFileName = new Date().getTime() + '-' + file.name;
                 const filePath = path.join(__dirname, '..', 'files', uniqueFileName);
-                await file.mv(filePath);
-                files.push(filePath);
+                file.mv(filePath);
+                files.push(`files/${uniqueFileName}`);
             }
         }
         if (behalf) {

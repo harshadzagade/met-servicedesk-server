@@ -131,3 +131,7 @@ dist
 *.pdf
 *.docx
 *.txt
+
+# folders
+files/
+policies/
