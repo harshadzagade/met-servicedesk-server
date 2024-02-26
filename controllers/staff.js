@@ -378,6 +378,24 @@ exports.getStaffExistance = async (req, res, next) => {
     }
 };
 
+exports.getNetworkEmployees = async (req, res, next) => {
+    try {
+        const staff = await Staff.findAll({
+            where: {
+                department: {
+                    [Op.contains]: ['NETWORK']
+                }
+            }
+        });
+        res.status(200).json({ message: 'Fetched network employees successfully', employees: staff });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 const getDepartments = async () => {
     const totalStaff = await Staff.findAll({ where: { id: { [Op.ne]: 1 } } });
     let allDept = [];

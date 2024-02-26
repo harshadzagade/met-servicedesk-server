@@ -62,6 +62,8 @@ router.get('/staffbydepartment/:department', staffController.getStaffByDepartmen
 
 router.get('/checkstaffexistence/:staffId', staffController.getStaffExistance);
 
+router.get('/network_staff', staffController.getNetworkEmployees);
+
 router.use('/superadmin', superAdminRoutes);
 
 router.use('/admin', adminRoutes);
