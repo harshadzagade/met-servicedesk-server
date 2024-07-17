@@ -50,7 +50,7 @@ exports.sendComplaint = async (req, res, next) => {
         if (!fs.existsSync(uploadDirectory)) {
             fs.mkdirSync(uploadDirectory, { recursive: true });
         }
-        if (req.files && req.files.file && req.files.file.length > 0) {
+        if (req.files && req.files.file && Array.isArray(req.files.file) && req.files.file.length > 0) {
             for (let i = 0; i < req.files.file.length; i++) {
                 const file = req.files.file[i];
                 const uniqueFileName = new Date().getTime() + '-' + file.name;
@@ -58,6 +58,12 @@ exports.sendComplaint = async (req, res, next) => {
                 file.mv(filePath);
                 files.push(`files/${uniqueFileName}`);
             }
+        } else if (req.files && req.files.file) {
+            const file = req.files.file;
+            const uniqueFileName = new Date().getTime() + '-' + file.name;
+            const filePath = path.join(__dirname, '..', 'files', uniqueFileName);
+            file.mv(filePath);
+            files.push(`files/${uniqueFileName}`);
         }
         if (behalf) {
             const behalfEmailId = req.body.behalfEmailId;

@@ -18,7 +18,6 @@ const transporter = nodemailer.createTransport({
 
 exports.sendRequest = async (req, res, next) => {
     const staffId = req.body.staffId;
-    console.log(staffId);
     let behalf = req.body.behalf || false;
     if (behalf === 'true') {
         behalf = true;
@@ -49,7 +48,7 @@ exports.sendRequest = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (req.files && req.files.file && req.files.file.length > 0) {
+        if (req.files && req.files.file && Array.isArray(req.files.file) && req.files.file.length > 0) {
             for (let i = 0; i < req.files.file.length; i++) {
                 const file = req.files.file[i];
                 const uniqueFileName = new Date().getTime() + '-' + file.name;
@@ -57,6 +56,12 @@ exports.sendRequest = async (req, res, next) => {
                 file.mv(filePath);
                 files.push(`files/${uniqueFileName}`);
             }
+        } else if (req.files && req.files.file) {
+            const file = req.files.file;
+            const uniqueFileName = new Date().getTime() + '-' + file.name;
+            const filePath = path.join(__dirname, '..', 'files', uniqueFileName);
+            file.mv(filePath);
+            files.push(`files/${uniqueFileName}`);
         }
         if (behalf) {
             const behalfEmailId = req.body.behalfEmailId;
