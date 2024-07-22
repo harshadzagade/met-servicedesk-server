@@ -54,7 +54,7 @@ router.get('/departments',
             .isLength({ min: 6 })
     ], staffController.getStaffDepartments);
 
-router.get('/contacts/:staffId', staffController.getAllContacts);
+router.get('/contacts', staffController.getAllContacts);
 
 router.get('/contactsearch/:staffId/:query', staffController.getSearchedContacts);
 

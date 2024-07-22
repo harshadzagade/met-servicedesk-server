@@ -273,14 +273,7 @@ const setOTP = async (OTP) => {
 };
 
 exports.getAllContacts = async (req, res, next) => {
-    const staffId = req.params.staffId;
     try {
-        const staff = await Staff.findByPk(staffId);
-        if (!staff) {
-            const error = new Error('Employee not found');
-            error.statusCode = 401;
-            throw error;
-        }
         const contacts = await Staff.findAll({
             where: { id: { [Op.ne]: 1 } },
             attributes: ['firstname', 'middlename', 'lastname', 'email', 'department', 'phoneNumber', 'contactExtension']
