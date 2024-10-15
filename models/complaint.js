@@ -63,7 +63,7 @@ const Complaint = sequelize.define('complaint', {
     allowNull: false
   },
   description: {
-    type: Sequelize.STRING,
+    type: Sequelize.TEXT,
     allowNull: false
   },
   attachment: {
@@ -77,15 +77,15 @@ const Complaint = sequelize.define('complaint', {
     allowNull: false
   },
   forwardComment: {
-    type: Sequelize.STRING,
+    type: Sequelize.TEXT,
     allowNull: true
   },
   problemDescription: {
-    type: Sequelize.STRING,
+    type: Sequelize.TEXT,
     allowNull: true
   },
   actionTaken: {
-    type: Sequelize.STRING,
+    type: Sequelize.TEXT,
     allowNull: true
   }
 });

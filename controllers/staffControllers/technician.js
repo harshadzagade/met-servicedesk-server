@@ -157,7 +157,7 @@ exports.changeRequestStatus = async (req, res, next) => {
                     hodEmail = admin.email;
                 }
                 const ticketRaiser = await Staff.findByPk(request.staffId);
-                await sendMail(ticketRaiser, request.staffDepartment, request.problemDescription, request.actionTaken, 'Request', requester.email, hodEmail, request.category, request.ticketId, request.subject, request.description, next);
+                // await sendMail(ticketRaiser, request.staffDepartment, request.problemDescription, request.actionTaken, 'Request', requester.email, hodEmail, request.category, request.ticketId, request.subject, request.description, next);
                 break;
 
             case 'forwarded':
@@ -417,7 +417,7 @@ exports.changeComplaintStatus = async (req, res, next) => {
                     hodEmail = admin.email;
                 }
                 const ticketRaiser = await Staff.findByPk(complaint.staffId);
-                await sendMail(ticketRaiser, complaint.staffDepartment, complaint.problemDescription, complaint.actionTaken, 'Complaint', complainan.email, hodEmail, complaint.category, complaint.ticketId, complaint.subject, complaint.description, next);
+                // await sendMail(ticketRaiser, complaint.staffDepartment, complaint.problemDescription, complaint.actionTaken, 'Complaint', complainan.email, hodEmail, complaint.category, complaint.ticketId, complaint.subject, complaint.description, next);
                 break;
 
             case 'forwarded':

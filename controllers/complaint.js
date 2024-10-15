@@ -121,7 +121,7 @@ exports.sendComplaint = async (req, res, next) => {
         const currentDate = new Date();
         setId.ticketId = '#C' + currentDate.getFullYear() + (String(currentDate.getMonth() + 1).padStart(2, '0')) + setId.id;
         const result = await setId.save();
-        await sendMail(staffDetails, staffDepartment, admin.email, result.department, category, result.ticketId, subject, description, next);
+        // await sendMail(staffDetails, staffDepartment, admin.email, result.department, category, result.ticketId, subject, description, next);
         getIO().emit('complaints');
         res.status(201).json({ message: 'Complaint created!', complaint: result });
     } catch (error) {

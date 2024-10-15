@@ -29,6 +29,10 @@ const Report = sequelize.define('report', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    staffInstitute:{
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     assignId: {
         type: Sequelize.INTEGER,
         allowNull: true

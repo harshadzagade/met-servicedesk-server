@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('helpdesk', 'postgres', 'root', {
     dialect: 'postgres',
-    host: 'localhost',
+    host: '192.168.4.39',
     define: {
         timestamps: true,
         freezeTableName: true

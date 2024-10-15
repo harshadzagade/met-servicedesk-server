@@ -619,7 +619,7 @@ exports.putApproval2 = async (req, res, next) => {
             report.approval2Status = 'approved';
             await report.save();
             const ticketRaiser = await Staff.findByPk(request.staffId);
-            await sendMail(ticketRaiser, result.staffDepartment, result.ticketId, staffId, result.department, result.category, result.subject, result.description, next);
+            // await sendMail(ticketRaiser, result.staffDepartment, result.ticketId, staffId, result.department, result.category, result.subject, result.description, next);
             getIO().emit('requestStatus');
             res.status(200).json({ message: 'Approved ticket', request: result });
         } else if (approval === 2) {

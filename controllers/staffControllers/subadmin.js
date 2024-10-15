@@ -742,7 +742,7 @@ exports.putApproval2 = async (req, res, next) => {
             await report.save();
             await subadminActivities.save();
             const ticketRaiser = await Staff.findByPk(result.staffId);
-            await sendMail(ticketRaiser, result.staffDepartment, result.ticketId, staffId, result.department, result.category, result.subject, result.description, next);
+            // await sendMail(ticketRaiser, result.staffDepartment, result.ticketId, staffId, result.department, result.category, result.subject, result.description, next);
             getIO().emit('subadminactivities');
             getIO().emit('requestStatus');
             res.status(200).json({ message: 'Employee details updated', request: result });

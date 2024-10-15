@@ -15,7 +15,7 @@ exports.getFullReport = async (req, res, next) => {
     }
 };
 
-/* exports.getDepartmentReport = async (req, res, next) => {
+exports.getDepartmentReport = async (req, res, next) => {
     const department = req.params.department;
     try {
         const report = await Report.findAll({ where: { department: department } });
@@ -26,7 +26,8 @@ exports.getFullReport = async (req, res, next) => {
         }
         next(error);
     }
-}; */
+};
+
 
 exports.getRequestReport = async (req, res, next) => {
     const staffId = req.params.staffId;

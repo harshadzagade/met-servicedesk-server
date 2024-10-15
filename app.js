@@ -19,6 +19,7 @@ const trashRoutes = require('./routes/trash');
 const requestRoutes = require('./routes/request');
 const complaintRoutes = require('./routes/complaint');
 const reportRoutes = require('./routes/report');
+const dashboardRoutes = require('./routes/dashboard');
 
 app.use(cors());
 app.use(fileUpload());
@@ -38,6 +39,7 @@ app.use('/api/department', departmentRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/trash', trashRoutes);
 app.use('/api/report', reportRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);

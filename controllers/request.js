@@ -209,7 +209,7 @@ exports.sendRequest = async (req, res, next) => {
         }
         await report.save();
         adminEmail = admin.email;
-        await sendMail(staff, result.staffDepartment, hodEmail, adminEmail, category, result.ticketId, subject, description, next);
+        // await sendMail(staff, result.staffDepartment, hodEmail, adminEmail, category, result.ticketId, subject, description, next);
         getIO().emit('requests');
         res.status(201).json({ message: 'Request created', request: result });
     } catch (error) {
